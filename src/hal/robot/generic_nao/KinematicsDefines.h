@@ -8,7 +8,7 @@
 #define UpperArmLength		105.0
 #define LowerArmLength		57.75
 #define HandOffsetX			55.95
-#define HandOffsetZ			12.81
+#define HandOffsetZ			12.31
 #define HipOffsetZ			85.0
 #define HipOffsetY			50.0
 #define ThighLength			100.0
@@ -88,26 +88,7 @@
 #define HeadPitchX			1.20
 #define HeadPitchY			-0.84
 #define HeadPitchZ			53.53
-//Left Hand
-#define LShoulderPitchMass	0.06996
-#define LShoulderPitchX		-1.78
-#define LShoulderPitchY		-24.96
-#define LShoulderPitchZ		0.18
 
-#define LShoulderRollMass	0.12309
-#define LShoulderRollX		18.85
-#define LShoulderRollY		5.77
-#define LShoulderRollZ		0.65
-
-#define LElbowYawMass		0.05971
-#define LElbowYawX			-25.60
-#define LElbowYawY			-0.01
-#define LElbowYawZ			-0.19
-
-#define LElbowRollMass		0.18500
-#define LElbowRollX			65.36
-#define LElbowRollY			0.34
-#define LElbowRollZ			-0.02
 //Right Hand
 #define RShoulderPitchMass	0.06996
 #define RShoulderPitchX		-1.78
@@ -128,36 +109,6 @@
 #define RElbowRollX			65.36
 #define RElbowRollY			-0.34
 #define RElbowRollZ			-0.02
-//LeftLeg Leg
-#define LHipYawPitchMass	0.07117
-#define LHipYawPitchX		-7.66
-#define LHipYawPitchY		-12.00
-#define LHipYawPitchZ		27.17
-
-#define LHipRollMass		0.13530
-#define LHipRollX			-16.49
-#define LHipRollY			0.29
-#define LHipRollZ			-4.75
-
-#define LHipPitchMass		0.39421
-#define LHipPitchX			1.32
-#define LHipPitchY			2.35
-#define LHipPitchZ			-53.52
-
-#define LKneePitchMass		0.29159
-#define LKneePitchX			4.22
-#define LKneePitchY			2.52
-#define LKneePitchZ			-48.68
-
-#define LAnklePitchMass		0.13892
-#define LAnklePitchX		1.42
-#define LAnklePitchY		0.28
-#define LAnklePitchZ		6.38
-
-#define LAnkleRollMass		0.16175
-#define LAnkleRollX			25.40
-#define LAnkleRollY			3.32
-#define LAnkleRollZ			-32.41
 //Right Leg
 #define RHipYawPitchMass	0.07117
 #define RHipYawPitchX		-7.66

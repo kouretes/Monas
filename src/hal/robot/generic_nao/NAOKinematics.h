@@ -75,10 +75,10 @@ private:
 	std::vector<kmatTable> T;
 
 	std::vector<AngleType> joints;
-	std::vector<KVecFloat3> coms;
+	std::vector<KVecDouble3> coms;
+	std::vector<float> masses;
 
-	kmatTable  LArmEndT, //RARM
-			   TBaseLLegInv, //LLEG
+	kmatTable  TBaseLLegInv, //LLEG
 			   TEndLLegInv,
 			   RotFixLLeg,
 			   TBaseRLegInv,   //RLEG
@@ -97,6 +97,8 @@ private:
 	 * @brief prepare dh matrices
 	 * */
 	bool prepareForward(KDeviceLists::ChainsNames=KDeviceLists::CHAINS_SIZE);
+
+	KVecDouble3 calculateCoMChain(Frames start, Frames BaseFrame, int startdown,float &mass);
 
 public:
 

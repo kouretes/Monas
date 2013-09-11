@@ -8,7 +8,7 @@ using namespace KDeviceLists;
 
 double PI=M_PI;
 double PI_2=M_PI_2;
-NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE)
+NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE),masses(FR_SIZE)
 	{
 		kmatTable t1,t2;
 		for (unsigned i=0;i<FR_SIZE;i++)
@@ -19,19 +19,88 @@ NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE)
 		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_HEAD], 0.0, 0.0,  NeckOffsetZ);
 		KMatTransf::makeRotationXYZ(T[FR_END_T+CHAIN_HEAD],  PI_2,  PI_2, 0.0);
 
+		coms[HEAD+YAW]=KVecDouble3(HeadYawX,HeadYawY,HeadYawZ);
+		masses[HEAD+YAW]=HeadYawMass;
+		coms[HEAD+PITCH]=KVecDouble3(HeadPitchX,HeadPitchY,HeadPitchZ);
+		//Get to pitch coordinate system
+		coms[HEAD+PITCH]=T[FR_END_T+CHAIN_HEAD].transform(coms[HEAD+PITCH]);
+		masses[HEAD+PITCH]=HeadPitchMass;
 
-		//--------LARM
-		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_L_ARM], 0.0,  ShoulderOffsetY, ShoulderOffsetZ);
-		KMatTransf::makeRotationXYZ(T[FR_END_T+CHAIN_L_ARM], 0.0, 0.0, -PI_2);
-		KMatTransf::makeTranslation(LArmEndT, (HandOffsetX + LowerArmLength),0.0,HandOffsetZ );
-		T[FR_END_T+CHAIN_L_ARM]*=LArmEndT;
+
+
+
+
 
 
 		//--------RARM
 
 
 		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_R_ARM], 0.0, -(ShoulderOffsetY), ShoulderOffsetZ);
-		T[FR_END_T+CHAIN_R_ARM]=T[FR_END_T+CHAIN_L_ARM];
+		KMatTransf::makeRotationXYZ(T[FR_END_T+CHAIN_R_ARM], 0.0, 0.0, -PI_2);
+		KMatTransf::makeTranslation(t1, (HandOffsetX + LowerArmLength),0.0,HandOffsetZ );
+		T[FR_END_T+CHAIN_R_ARM]*=t1;
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, 0.0, 0.0);
+		coms[R_ARM+SHOULDER_PITCH]=KVecDouble3(RShoulderPitchX,RShoulderPitchY,RShoulderPitchZ);
+		coms[R_ARM+SHOULDER_PITCH]=t1.transform(coms[R_ARM+SHOULDER_PITCH]);
+		masses[R_ARM+SHOULDER_PITCH]=RShoulderPitchMass;
+
+		KMatTransf::makeRotationXYZ(t1, 0.0, 0.0, -PI_2);
+		coms[R_ARM+SHOULDER_ROLL]=KVecDouble3(RShoulderRollX,RShoulderRollY,RShoulderRollZ);
+		coms[R_ARM+SHOULDER_ROLL]=t1.transform(coms[R_ARM+SHOULDER_ROLL]);
+		masses[R_ARM+SHOULDER_ROLL]=RShoulderRollMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, -PI_2, 0.0, -PI_2);
+		coms[R_ARM+ELBOW_YAW]=KVecDouble3(RElbowYawX,RElbowYawY,RElbowYawZ);
+		coms[R_ARM+ELBOW_YAW]=t1.transform(coms[R_ARM+ELBOW_YAW]);
+		masses[R_ARM+ELBOW_YAW]=RElbowYawMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, 0.0, 0.0, -PI_2);
+		coms[R_ARM+ELBOW_ROLL]=KVecDouble3(RElbowRollX,RElbowRollY,RElbowRollZ);
+		coms[R_ARM+ELBOW_ROLL]=t1.transform(coms[R_ARM+ELBOW_ROLL]);
+		masses[R_ARM+ELBOW_ROLL]=RElbowRollMass;
+
+		//--------LARM
+		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_L_ARM], 0.0, (ShoulderOffsetY), ShoulderOffsetZ);
+		T[FR_END_T+CHAIN_L_ARM]=T[FR_END_T+CHAIN_R_ARM];
+
+		for(unsigned i=0;i<ARM_SIZE;i++)
+		{
+			coms[L_ARM+i]=coms[R_ARM+i];
+            masses[L_ARM+i]=masses[R_ARM+i];
+		}
+		//Now mirror directions that we need
+		coms[L_ARM+SHOULDER_PITCH](2)=-coms[L_ARM+SHOULDER_PITCH](2);
+		coms[L_ARM+SHOULDER_ROLL](0)=-coms[L_ARM+SHOULDER_ROLL](0);
+		coms[L_ARM+ELBOW_YAW](0)=-coms[L_ARM+ELBOW_YAW](0);
+		coms[L_ARM+ELBOW_ROLL](0)=-coms[L_ARM+ELBOW_ROLL](0);
+
+
+
+		//-----RLEG
+		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_R_LEG], 0.0, -HipOffsetY, -HipOffsetZ);
+		TBaseRLegInv=T[FR_BASE_T+CHAIN_R_LEG];
+		TBaseRLegInv.fast_invert();
+		KMatTransf::makeRotationZYX(T[FR_END_T+CHAIN_R_LEG],  PI ,  -PI_2, 0.0);
+
+
+		RotRLeg=T[FR_END_T+CHAIN_R_LEG];
+		KMatTransf::makeTranslation(t1, 0.0, 0.0, -FootHeight);
+		T[FR_END_T+CHAIN_R_LEG]*=t1;
+		TEndRLegInv=t1;
+		TEndRLegInv.fast_invert();
+
+		KMatTransf::makeRotationXYZ(RotFixRLeg,  -PI_2 / 2, 0.0, 0.0);
+
+
+
+		KMatTransf::makeRotationXYZ(t1, -PI_2 /2, 0.0, -PI_2);
+		coms[R_LEG+HIP_YAW_PITCH]=KVecDouble3(RHipYawPitchX,RHipYawPitchY,RHipYawPitchZ);
+		coms[R_LEG+HIP_YAW_PITCH]=t1.transform(coms[R_LEG+HIP_YAW_PITCH]);
+		masses[R_ARM+SHOULDER_PITCH]=RHipYawPitchMass;
+
 
 
 		//------LLEG
@@ -51,49 +120,12 @@ NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE)
 		KMatTransf::makeRotationXYZ(RotFixLLeg,  PI_2 / 2, 0.0, 0.0);
 
 
-		//-----RLEG
-		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_R_LEG], 0.0, -HipOffsetY, -HipOffsetZ);
-		TBaseRLegInv=T[FR_BASE_T+CHAIN_R_LEG];
-		TBaseRLegInv.fast_invert();
-		KMatTransf::makeRotationZYX(T[FR_END_T+CHAIN_R_LEG],  PI ,  -PI_2, 0.0);
 
-
-		RotRLeg=T[FR_END_T+CHAIN_R_LEG];
-		KMatTransf::makeTranslation(t1, 0.0, 0.0, -FootHeight);
-		T[FR_END_T+CHAIN_R_LEG]*=t1;
-		TEndRLegInv=t1;
-		TEndRLegInv.fast_invert();
-
-		KMatTransf::makeRotationXYZ(RotFixRLeg,  -PI_2 / 2, 0.0, 0.0);
 
 		//Effectors
 		KMatTransf::makeTranslation(T[FR_END_T+EFF_CAMERA_BOT], CameraBotomX, 0.0, CameraBotomZ);
 		KMatTransf::makeTranslation(T[FR_END_T+EFF_CAMERA_TOP], CameraTopX, 0.0, CameraTopZ);
 
-
-		//---Calculate Coms------
-		coms[HEAD+YAW]=KVecFloat3(HeadYawX,HeadYawY,HeadYawZ).scalar_mult(HeadYawMass);
-		coms[HEAD+PITCH]=KVecFloat3(HeadPitchX,HeadPitchY,HeadPitchZ).scalar_mult(HeadPitchMass);
-
-
-		coms[L_ARM+SHOULDER_PITCH]=KVecFloat3(LShoulderPitchX,LShoulderPitchY,LShoulderPitchZ)
-									.scalar_mult(LShoulderPitchMass);
-		coms[L_ARM+SHOULDER_ROLL]=KVecFloat3(LShoulderRollX,LShoulderRollY,LShoulderRollZ)
-									.scalar_mult(LShoulderRollMass);
-		coms[L_ARM+ELBOW_YAW]=KVecFloat3(LElbowYawX,LElbowYawY,LElbowYawZ)
-									.scalar_mult(LElbowYawMass);
-		coms[L_ARM+ELBOW_ROLL]=KVecFloat3(LElbowRollX,LElbowRollY,LElbowRollZ)
-									.scalar_mult(LElbowRollMass);
-
-
-		coms[R_ARM+SHOULDER_PITCH]=KVecFloat3(RShoulderPitchX,RShoulderPitchY,RShoulderPitchZ)
-									.scalar_mult(RShoulderPitchMass);
-		coms[R_ARM+SHOULDER_ROLL]=KVecFloat3(RShoulderRollX,RShoulderRollY,RShoulderRollZ)
-									.scalar_mult(RShoulderRollMass);
-		coms[R_ARM+ELBOW_YAW]=KVecFloat3(RElbowYawX,RElbowYawY,RElbowYawZ)
-									.scalar_mult(RElbowYawMass);
-		coms[R_ARM+ELBOW_ROLL]=KVecFloat3(RElbowRollX,RElbowRollY,RElbowRollZ)
-									.scalar_mult(RElbowRollMass);
 
 		prepareForward();
 
@@ -213,9 +245,62 @@ NAOKinematics::kmatTable NAOKinematics::getForwardFromTo(Effectors start, Effect
 	return t1;
 }
 
+
+KVecDouble3 NAOKinematics::calculateCoMChain(Frames start, Frames BaseFrame, int startdown, float & mass)
+{
+
+	KVecDouble3 pp,cp;
+	float pm=0;
+	pp.zero();
+	cp.zero();
+
+	for(int i=startdown-1;i>=0;i--)
+	{
+		//std::cout<<i<<"-------"<<std::endl;
+		//std::cout<<i<<std::endl;
+		pp=pp*pm+coms[start+i]*masses[start+i];
+		pm=pm+masses[start+i];
+
+		//pp.prettyPrint();
+		//std::cout<<pm<<std::endl;
+		if(pm>0)
+			pp.scalar_mult(1.0/pm);
+
+		//c.prettyPrint();
+		pp=T[start+i].transform(pp);
+		//coms[start+i].prettyPrint();
+		//pp.prettyPrint();
+
+	}
+	pp=T[BaseFrame].transform(pp);
+	mass=pm;
+	return pp;
+}
+
 KVecDouble3 NAOKinematics::calculateCenterOfMass()
 {
 
+	KVecDouble3 p1,p2,t;
+	float m1,m2;
+
+	//p=calculateCoMChain((Frames)HEAD,(Frames) (FR_BASE_T+CHAIN_HEAD),HEAD_SIZE,m);
+
+
+	p1=calculateCoMChain((Frames)L_ARM,(Frames) (FR_BASE_T+CHAIN_L_ARM),ARM_SIZE,m1);
+	p1.prettyPrint();
+	p2=calculateCoMChain((Frames)R_ARM,(Frames) (FR_BASE_T+CHAIN_R_ARM),ARM_SIZE,m2);
+
+	p2.prettyPrint();
+	t=p1*m1+p2*m2;
+	t.scalar_mult(1./(m1+m2));
+	//t.prettyPrint();
+
+
+	//std::cout<<m1<<" "<<m2<<std::endl;
+
+
+
+	return t;
 }
 
 NAOKinematics::AngleContainer NAOKinematics::inverseHead(const FKvars s, bool withAngles, bool topCamera)
