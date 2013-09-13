@@ -81,10 +81,7 @@ private:
 	kmatTable  TBaseLLegInv, //LLEG
 			   TEndLLegInv,
 			   RotFixLLeg,
-			   TBaseRLegInv,   //RLEG
-			   RotRLeg,
-			   RotFixRLeg,
-			   TEndRLegInv;
+			   RotRLeg;
 
 	typedef KMath::KMat::transformations KMatTransf;
 
@@ -108,6 +105,7 @@ public:
 	 * @brief Set Joint values
 	 * */
 	bool setJoints(std::vector<AngleType> jointsset);
+	bool setChain(KDeviceLists::ChainsNames ch,std::vector<AngleType> jointsset);
 
 
 

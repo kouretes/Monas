@@ -81,27 +81,48 @@ NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE),masses
 
 		//-----RLEG
 		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_R_LEG], 0.0, -HipOffsetY, -HipOffsetZ);
-		TBaseRLegInv=T[FR_BASE_T+CHAIN_R_LEG];
-		TBaseRLegInv.fast_invert();
 		KMatTransf::makeRotationZYX(T[FR_END_T+CHAIN_R_LEG],  PI ,  -PI_2, 0.0);
-
 
 		RotRLeg=T[FR_END_T+CHAIN_R_LEG];
 		KMatTransf::makeTranslation(t1, 0.0, 0.0, -FootHeight);
 		T[FR_END_T+CHAIN_R_LEG]*=t1;
-		TEndRLegInv=t1;
-		TEndRLegInv.fast_invert();
-
-		KMatTransf::makeRotationXYZ(RotFixRLeg,  -PI_2 / 2, 0.0, 0.0);
 
 
 
 		KMatTransf::makeRotationXYZ(t1, -PI_2 /2, 0.0, -PI_2);
 		coms[R_LEG+HIP_YAW_PITCH]=KVecDouble3(RHipYawPitchX,RHipYawPitchY,RHipYawPitchZ);
+		t1.fast_invert();
 		coms[R_LEG+HIP_YAW_PITCH]=t1.transform(coms[R_LEG+HIP_YAW_PITCH]);
-		masses[R_ARM+SHOULDER_PITCH]=RHipYawPitchMass;
+		masses[R_LEG+HIP_YAW_PITCH]=RHipYawPitchMass;
 
 
+		KMatTransf::makeRotationXYZ(t1, PI, PI_2,0.0);
+		coms[R_LEG+HIP_ROLL]=KVecDouble3(RHipRollX,RHipRollY,RHipRollZ);
+		coms[R_LEG+HIP_ROLL]=t1.transform(coms[R_LEG+HIP_ROLL]);
+		masses[R_LEG+HIP_ROLL]=RHipRollMass;
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[R_LEG+HIP_PITCH]=KVecDouble3(RHipPitchX,RHipPitchY,RHipPitchZ);
+		coms[R_LEG+HIP_PITCH]=t1.transform(coms[R_LEG+HIP_PITCH]);
+		masses[R_LEG+HIP_PITCH]=RHipPitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[R_LEG+KNEE_PITCH]=KVecDouble3(RKneePitchX,RKneePitchY,RKneePitchZ);
+		coms[R_LEG+KNEE_PITCH]=t1.transform(coms[R_LEG+KNEE_PITCH]);
+		masses[R_LEG+KNEE_PITCH]=RKneePitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[R_LEG+ANKLE_PITCH]=KVecDouble3(RAnklePitchX,RAnklePitchY,RAnklePitchZ);
+		coms[R_LEG+ANKLE_PITCH]=t1.transform(coms[R_LEG+ANKLE_PITCH]);
+		masses[R_LEG+ANKLE_PITCH]=RAnklePitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI, PI_2,0.0);
+		coms[R_LEG+ANKLE_ROLL]=KVecDouble3(RAnkleRollX,RAnkleRollY,RAnkleRollZ);
+		coms[R_LEG+ANKLE_ROLL]=t1.transform(coms[R_LEG+ANKLE_ROLL]);
+		masses[R_LEG+ANKLE_ROLL]=RAnkleRollMass;
 
 		//------LLEG
 		KMatTransf::makeTranslation(T[FR_BASE_T+CHAIN_L_LEG], 0.0, HipOffsetY, -HipOffsetZ);
@@ -109,6 +130,7 @@ NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE),masses
 		TBaseLLegInv.fast_invert();
 
 		KMatTransf::makeRotationZYX(T[FR_END_T+CHAIN_L_LEG], PI ,  -PI_2, 0.0);
+		KMatTransf::makeRotationXYZ(RotFixLLeg,  PI_2 / 2, 0.0, 0.0);
 
 
 		KMatTransf::makeTranslation(t1, 0.0, 0.0, -FootHeight);
@@ -117,7 +139,43 @@ NAOKinematics::	NAOKinematics() :T(FR_SIZE),joints(FR_SIZE),coms(FR_SIZE),masses
 		TEndLLegInv=t1;
 		TEndLLegInv.fast_invert();
 
-		KMatTransf::makeRotationXYZ(RotFixLLeg,  PI_2 / 2, 0.0, 0.0);
+
+
+
+		KMatTransf::makeRotationXYZ(t1, -(3*PI) /4, 0.0, -PI_2);
+		coms[L_LEG+HIP_YAW_PITCH]=KVecDouble3(RHipYawPitchX,-RHipYawPitchY,RHipYawPitchZ);
+		t1.fast_invert();
+		coms[L_LEG+HIP_YAW_PITCH]=t1.transform(coms[L_LEG+HIP_YAW_PITCH]);
+		masses[L_LEG+HIP_YAW_PITCH]=RHipYawPitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI, PI_2,0.0);
+		coms[L_LEG+HIP_ROLL]=KVecDouble3(RHipRollX,-RHipRollY,RHipRollZ);
+		coms[L_LEG+HIP_ROLL]=t1.transform(coms[L_LEG+HIP_ROLL]);
+		masses[L_LEG+HIP_ROLL]=RHipRollMass;
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[L_LEG+HIP_PITCH]=KVecDouble3(RHipPitchX,-RHipPitchY,RHipPitchZ);
+		coms[L_LEG+HIP_PITCH]=t1.transform(coms[L_LEG+HIP_PITCH]);
+		masses[L_LEG+HIP_PITCH]=RHipPitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[L_LEG+KNEE_PITCH]=KVecDouble3(RKneePitchX,-RKneePitchY,RKneePitchZ);
+		coms[L_LEG+KNEE_PITCH]=t1.transform(coms[L_LEG+KNEE_PITCH]);
+		masses[L_LEG+KNEE_PITCH]=RKneePitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI_2, PI_2,0.0);
+		coms[L_LEG+ANKLE_PITCH]=KVecDouble3(RAnklePitchX,-RAnklePitchY,RAnklePitchZ);
+		coms[L_LEG+ANKLE_PITCH]=t1.transform(coms[L_LEG+ANKLE_PITCH]);
+		masses[L_LEG+ANKLE_PITCH]=RAnklePitchMass;
+
+
+		KMatTransf::makeRotationXYZ(t1, PI, PI_2,0.0);
+		coms[L_LEG+ANKLE_ROLL]=KVecDouble3(RAnkleRollX,-RAnkleRollY,RAnkleRollZ);
+		coms[L_LEG+ANKLE_ROLL]=t1.transform(coms[L_LEG+ANKLE_ROLL]);
+		masses[L_LEG+ANKLE_ROLL]=RAnkleRollMass;
 
 
 
@@ -138,6 +196,49 @@ bool NAOKinematics::setJoints(std::vector<AngleType> jointsset)
 		return false;
 	joints=jointsset;
 	return prepareForward();
+}
+
+bool NAOKinematics::setChain(KDeviceLists::ChainsNames ch,std::vector<AngleType> jointsset)
+{
+	unsigned chsize;
+	Frames frstart;
+	switch(ch)
+	{
+
+		case CHAIN_HEAD:
+				frstart=(Frames)HEAD;
+				chsize=HEAD_SIZE;
+				break;
+		case CHAIN_L_LEG:
+				frstart=(Frames)L_LEG;
+				chsize=LEG_SIZE;
+				break;
+		case CHAIN_R_LEG:
+				frstart=(Frames)R_LEG;
+				chsize=LEG_SIZE;
+				break;
+		case CHAIN_L_ARM:
+				frstart=(Frames)L_ARM;
+				chsize=ARM_SIZE;
+				break;
+		case CHAIN_R_ARM:
+				frstart=(Frames)R_ARM;
+				chsize=ARM_SIZE;
+				break;
+		default :
+			return false;
+	}
+
+
+	if(jointsset.size() != chsize)
+		return false;
+
+	for(unsigned i=0;i<chsize;i++)
+	{
+		joints[frstart+i]=jointsset[i];
+		//std::cout<<jointsset[i]<<std::endl;
+	}
+	return prepareForward(ch);
 }
 bool NAOKinematics::prepareForward(KDeviceLists::ChainsNames ch)
 {
@@ -183,8 +284,8 @@ bool NAOKinematics::prepareForward(KDeviceLists::ChainsNames ch)
 		KMatTransf::makeDHTransformation(T[HEAD+YAW], 0.0, 0.0, 0.0, (double)joints[HEAD+YAW]);
 		KMatTransf::makeDHTransformation(T[HEAD+PITCH], 0.0, -PI_2, 0.0, (double)joints[HEAD+PITCH] - PI_2);
 	}
-	for( unsigned i=0;i<T.size();i++)
-		T[i].check();
+	//for( unsigned i=0;i<T.size();i++)
+	//	T[i].check();
 
 	return true;
 }
@@ -286,11 +387,18 @@ KVecDouble3 NAOKinematics::calculateCenterOfMass()
 	//p=calculateCoMChain((Frames)HEAD,(Frames) (FR_BASE_T+CHAIN_HEAD),HEAD_SIZE,m);
 
 
-	p1=calculateCoMChain((Frames)L_ARM,(Frames) (FR_BASE_T+CHAIN_L_ARM),ARM_SIZE,m1);
+	/*p1=calculateCoMChain((Frames)L_ARM,(Frames) (FR_BASE_T+CHAIN_L_ARM),ARM_SIZE,m1);
 	p1.prettyPrint();
 	p2=calculateCoMChain((Frames)R_ARM,(Frames) (FR_BASE_T+CHAIN_R_ARM),ARM_SIZE,m2);
 
+	p2.prettyPrint();*/
+
+	p1=calculateCoMChain((Frames)L_LEG,(Frames) (FR_BASE_T+CHAIN_L_LEG),LEG_SIZE,m1);
+	p1.prettyPrint();
+	p2=calculateCoMChain((Frames)R_LEG,(Frames) (FR_BASE_T+CHAIN_R_LEG),LEG_SIZE,m2);
+
 	p2.prettyPrint();
+
 	t=p1*m1+p2*m2;
 	t.scalar_mult(1./(m1+m2));
 	//t.prettyPrint();
