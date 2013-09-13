@@ -15,10 +15,10 @@ int main ()
 	ptime end, start;
 	NAOKinematics kin;
 	std::vector<float> joints(NUMOFJOINTS);
-	joints[L_ARM+SHOULDER_ROLL]=M_PI_2;//-M_PI/4;//+0.01;//-M_PI/2-0.001ĵ;
-	joints[R_ARM+SHOULDER_ROLL]=-M_PI_2;//M_PI/4;//-0.01;//-M_PI/2-0.001ĵ;
-	joints[R_ARM+ELBOW_YAW]=M_PI_2;//M_PI/4;//-M_PI/2-0.001;
-	joints[L_ARM+ELBOW_YAW]=-M_PI_2;//-M_PI/4;//M_PI/2-0.001;
+	joints[L_ARM+SHOULDER_ROLL]=0;
+	joints[R_ARM+SHOULDER_ROLL]=0;
+	joints[R_ARM+ELBOW_YAW]=M_PI /4;
+	joints[L_ARM+ELBOW_YAW]=-M_PI /4;
 	kin.setJoints(joints);
 	Table l,r,t;
 	kin.calculateCenterOfMass().prettyPrint();
@@ -74,7 +74,7 @@ int main ()
 
 
     }
-    return 0;
+
 	for (int k=0;k<10;k++)
 	{
 		    cout<<k<<"============================================================="<<std::endl;
@@ -82,16 +82,16 @@ int main ()
 		sl.p(0)=0;
 		sl.p(1)=k*1.0;
 		sl.p(2)=-290.0+k*1.0;
-		sl.a(0)=0;//-((float) k)/100.0;
-		sl.a(1)=0;//-((float) k)/100.0;
+		sl.a(0)=-((float) k)/100.0;
+		sl.a(1)=k/200;
 		sl.a(2)=-((float) k)/100.0;
 		sl.p.prettyPrint();
 		sl.a.prettyPrint();
 		sr.p(0)=0;
 		sr.p(1)=-k*1.0;
 		sr.p(2)=-290.0+k*1.0;
-		sr.a(0)=0;//+((float) k)/100.0;
-		sr.a(1)=0;
+		sr.a(0)=+((float) k)/100.0;
+		sr.a(1)=k/200;
 		sr.a(2)=((float) k)/100.0;
 
 		sr.p.prettyPrint();
@@ -102,6 +102,7 @@ int main ()
 
 		//t=kin.getForwardFromTo((NAOKinematics::Effectors)CHAIN_L_LEG,(NAOKinematics::Effectors)CHAIN_R_LEG);
 		//t.prettyPrint();
+		std::vector<float> resl,resr;
 
 		{
 			//std::cout<<"Left Leg:"<<std::endl;
@@ -114,6 +115,8 @@ int main ()
 					std::cout<<(res[i])[j]<<" ";
 				std::cout<<std::endl;
 			}
+			if(res.size()>0)
+				resl=res[0];
 		}
 
 		 {
@@ -126,9 +129,20 @@ int main ()
 				for(unsigned j=0;j<(res[i]).size();j++)
 					std::cout<<(res[i])[j]<<" ";
 				std::cout<<std::endl;
+
+			}
+			if(res.size()>0)
+			{
+				resr=res[0];
+				//std::cout<<"set vector"<<std::endl;
 			}
 
+
+
 		}
+		kin.setChain(CHAIN_L_LEG,resl);
+		kin.setChain(CHAIN_R_LEG,resr);
+		kin.calculateCenterOfMass().prettyPrint();
 
 	}
 
