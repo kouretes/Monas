@@ -33,12 +33,14 @@ class RobotParameters
 			WalkParameters[H0] = 0.060;
 			WalkParameters[ComZ] = 0.260;
 			WalkParameters[Tstep] = 0.600; //Tstep = 0.35;//0.4;
-			WalkParameters[Tds] = 0.250 * Tstep; //0.300 * Tstep;
-			WalkParameters[Tss] = 0.7500 * Tstep;
+			WalkParameters[Tds] = 0.250 * WalkParameters[Tstep]; //0.300 * Tstep;
+			WalkParameters[Tss] = 0.7500 * WalkParameters[Tstep];
 			WalkParameters[MaxStepX] = 0.0400;
 			WalkParameters[MaxStepY] = 0.0400;
 			WalkParameters[MaxStepTheta] = 0.6980;
 			WalkParameters[g] = 9.81;
+
+
 		}
 		;
 		float getWalkParameter(int);

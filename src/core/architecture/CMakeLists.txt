@@ -3,7 +3,7 @@ message ( STATUS " _..::: Configuring Architecture :::.._ " )
 message ( STATUS "" )
 
 add_subdirectory ( ./messaging/ )
-add_subdirectory ( ./statechartEngine/ )
+#add_subdirectory ( ./statechartEngine/ )
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
