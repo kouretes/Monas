@@ -31,7 +31,7 @@ add_library ( MonasCore ${LibBuildType}
 			statechartWrapper.h
 )
 
-target_link_libraries ( MonasCore M_tinyxml )
+target_link_libraries ( MonasCore M_tinyxml z )
 
 install ( TARGETS MonasCore
         RUNTIME DESTINATION   bin
