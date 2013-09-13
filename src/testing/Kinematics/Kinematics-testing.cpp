@@ -15,15 +15,17 @@ int main ()
 	ptime end, start;
 	NAOKinematics kin;
 	std::vector<float> joints(NUMOFJOINTS);
-	joints[L_ARM+SHOULDER_ROLL]=0;
-	joints[R_ARM+SHOULDER_ROLL]=0;
-	joints[R_ARM+ELBOW_YAW]=M_PI /4;
-	joints[L_ARM+ELBOW_YAW]=-M_PI /4;
+	joints[L_ARM+SHOULDER_ROLL]=M_PI_2;
+	joints[R_ARM+SHOULDER_ROLL]=-M_PI_2;
+	joints[R_ARM+ELBOW_YAW]=0;
+	joints[L_ARM+ELBOW_YAW]=0;
+	joints[L_LEG+HIP_ROLL]=M_PI_2;
+	joints[R_LEG+HIP_ROLL]=-M_PI_2;
 	kin.setJoints(joints);
 	Table l,r,t;
 	kin.calculateCenterOfMass().prettyPrint();
-	joints[HEAD+YAW]=-M_PI/2;
-	joints[HEAD+PITCH]=M_PI/4;
+	//joints[HEAD+YAW]=-M_PI/2;
+	//joints[HEAD+PITCH]=M_PI/4;
 	kin.setJoints(joints);
 	kin.calculateCenterOfMass().prettyPrint();
 
