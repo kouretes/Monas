@@ -381,34 +381,57 @@ KVecDouble3 NAOKinematics::calculateCoMChain(Frames start, Frames BaseFrame, int
 KVecDouble3 NAOKinematics::calculateCenterOfMass()
 {
 
-	KVecDouble3 p1,p2,t;
-	float m1,m2;
+	KVecDouble3 p,t,sumc,torso,bat;
+	float m,summass;
+	summass=0;
+    sumc.zero();
 
-	//p=calculateCoMChain((Frames)HEAD,(Frames) (FR_BASE_T+CHAIN_HEAD),HEAD_SIZE,m);
+	p=calculateCoMChain((Frames)HEAD,(Frames) (FR_BASE_T+CHAIN_HEAD),HEAD_SIZE,m);
+	sumc=p;
+	summass=m;
+
+	p=calculateCoMChain((Frames)L_ARM,(Frames) (FR_BASE_T+CHAIN_L_ARM),ARM_SIZE,m);
+
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
+
+	p=calculateCoMChain((Frames)R_ARM,(Frames) (FR_BASE_T+CHAIN_R_ARM),ARM_SIZE,m);
+
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
+
+	p=calculateCoMChain((Frames)L_LEG,(Frames) (FR_BASE_T+CHAIN_L_LEG),LEG_SIZE,m);
+
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
+
+	p=calculateCoMChain((Frames)R_LEG,(Frames) (FR_BASE_T+CHAIN_R_LEG),LEG_SIZE,m);
+
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
+
+	p=KVecDouble3(TorsoX,TorsoY,TorsoZ);
+	m=TorsoMass;
+
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
 
 
-	/*p1=calculateCoMChain((Frames)L_ARM,(Frames) (FR_BASE_T+CHAIN_L_ARM),ARM_SIZE,m1);
-	p1.prettyPrint();
-	p2=calculateCoMChain((Frames)R_ARM,(Frames) (FR_BASE_T+CHAIN_R_ARM),ARM_SIZE,m2);
 
-	p2.prettyPrint();*/
+	p=KVecDouble3(BatX,BatY,BatZ);
+	m=BatMass;
 
-	p1=calculateCoMChain((Frames)L_LEG,(Frames) (FR_BASE_T+CHAIN_L_LEG),LEG_SIZE,m1);
-	p1.prettyPrint();
-	p2=calculateCoMChain((Frames)R_LEG,(Frames) (FR_BASE_T+CHAIN_R_LEG),LEG_SIZE,m2);
-
-	p2.prettyPrint();
-
-	t=p1*m1+p2*m2;
-	t.scalar_mult(1./(m1+m2));
-	//t.prettyPrint();
+	sumc=sumc*summass+p*m;
+	summass+=m;
+	sumc.scalar_mult(1./summass);
 
 
-	//std::cout<<m1<<" "<<m2<<std::endl;
-
-
-
-	return t;
+	return sumc;
 }
 
 NAOKinematics::AngleContainer NAOKinematics::inverseHead(const FKvars s, bool withAngles, bool topCamera)

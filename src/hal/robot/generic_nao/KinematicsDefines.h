@@ -71,13 +71,19 @@
 #define RAnkleRollLow		-1.1864
 
 //Masses defines
-//Total mass
-#define TotalMassH21		4.879
+//Total mass + battery
+#define TotalMassH21		(4.879+0.345)
 //Torso
 #define TorsoMass			1.03948
 #define TorsoX				-4.15
 #define TorsoY				0.07
 #define TorsoZ				42.58
+
+
+#define BatMass				0.345
+#define BatX				-30.00
+#define BatY				0.00
+#define BatZ				39.00
 //Head
 #define HeadYawMass			0.05930
 #define HeadYawX			-0.02
