@@ -10,7 +10,6 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "core/elements/Singleton.hpp"
 
 /// Returns a map from joint ids (enum Joint names) to almemory string "path" names
 namespace KDeviceLists

@@ -107,13 +107,12 @@ public:
 	bool setJoints(std::vector<AngleType> jointsset);
 	bool setChain(KDeviceLists::ChainsNames ch,std::vector<AngleType> jointsset);
 
-
-
 	/**
 	 * @fn kmatTable  getForwardEffector(Effector ef)
 	 * @brief Get Forward Kinematics Solution
 	 * */
 	kmatTable  getForwardEffector(Effectors ef);
+	
 	/**
 	 * @fn kmatTable  forwardFromTo(Effectors start, Effectors stop)
 	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the transformation table.
@@ -139,7 +138,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
-	AngleContainer  inverseHead(const FKvars s, bool withAngles, bool topCamera);
+	AngleContainer inverseHead(const FKvars s, bool withAngles, bool topCamera);
 	AngleContainer inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
 
 	/**
@@ -177,13 +176,13 @@ public:
 	AngleContainer inverseRightLeg(const FKvars s);
 	AngleContainer inverseRightLeg(kmatTable targetPoint);
 
-
 	static kmatTable getTransformation(const FKvars s)
 	{
 		kmatTable T;
 		KMatTransf::makeTransformation(T, s.p(0), s.p(1), s.p(2), s.a(0), s.a(1), s.a(2));
 		return T;
 	}
+	
 	static void mirrorTransformation(kmatTable & targetPoint)
 	{
 		//This can be proved by the analytical construction of a rotation matrix from axis-angle rotation
