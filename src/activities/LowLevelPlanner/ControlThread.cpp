@@ -120,7 +120,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
 
     for (unsigned int i=0;i<=50;i++,l++)
     {
-        if (i<=ZmpBuffer.size())
+        if (i<ZmpBuffer.size())
            ZMPReference(l)=ZmpBuffer[i];
         else
            ZMPReference(l)=ZmpBuffer[ZmpBuffer.size()-1];
@@ -157,7 +157,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
     State+=temp;
     //Estimated COM position
     Com=State(0);
-    std::cout << " Com " << Com << std::endl;
+    //std::cout << " Com " << Com << std::endl;
 }
 
 
@@ -167,7 +167,7 @@ void LIPMPreviewController::LIPMComPredictor(std::vector<float> ZMP)
     unsigned int l=0;
     for (unsigned int i=counter;i<=counter+50;i++)
     {
-        if (i<=ZMP.size())
+        if (i<ZMP.size())
         {
             ZMPReference(l)=ZMP[i];//ZMP[i];
         }
@@ -175,7 +175,9 @@ void LIPMPreviewController::LIPMComPredictor(std::vector<float> ZMP)
         {
             ZMPReference(l)=ZMP.back();
         }
+     //   std::cout << " l: " << l << " i " << i << std::endl;
         l++;
+
 
         
     }

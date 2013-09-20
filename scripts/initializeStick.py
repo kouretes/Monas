@@ -90,9 +90,9 @@ print "Working directory: " + pwd
 
 print "Changing /etc/profile"
 ssh_mkdir = "ssh nao@" + ip + " 'mkdir ./.ssh'"
-ssh_transfer0 = "scp ./PartialConfiguration/authorized_keys nao@" + ip + ':/home/nao/.ssh/authorized_keys' 
-ssh_transfer1 = "scp ./PartialConfiguration/autoload.ini_etc nao@" + ip + ':/home/nao/autoload.ini' 
-ssh_transfer2 = "scp connman nao@" + ip + ':/home/nao/connman' 
+ssh_transfer0 = "scp ./PartialConfiguration/authorized_keys nao@" + ip + ':/home/nao/.ssh/authorized_keys'
+ssh_transfer1 = "scp ./PartialConfiguration/autoload.ini_etc nao@" + ip + ':/home/nao/autoload.ini'
+ssh_transfer2 = "scp connman nao@" + ip + ':/home/nao/connman'
 ssh_transfer3 = "scp enable_krobot.sh disable_krobot.sh nao@" + ip + ':~/'
 ssh_transfer4 = "scp ./PartialConfiguration/empty_autodiagnostic_behavior.xar nao@" + ip + ':/home/nao/behavior.xar'
 ssh_transfer5 = "scp ./PartialConfiguration/autoload.ini nao@" + ip + ':/home/nao/naoqi/preferences/autoload.ini'
@@ -113,10 +113,11 @@ os.system(ssh_transfer5)
 
 echo_command1 = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib/ >> /etc/profile"
 echo_command2 = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib/ >> /etc/profile.d/dbus-session.sh"
+echo_command3 = "echo UseDNS no >> /etc/ssh.conf/sshd_config"
 mv_command1 = "mv /home/nao/connman /etc/init.d/connman"
 mv_command2 = "mv /home/nao/autoload.ini /etc/naoqi/autoload.ini"
 mv_command3 = "mv /home/nao/behavior.xar /usr/share/diagnostic/aldebaran_auto_diagnostic/behavior.xar"
-ssh_profile = 'ssh -t nao@'+ip+ " 'su -c \"if [ ! -e \\\"/.init\\\" ]; then " + echo_command1 + ";" + echo_command2 + ";" + mv_command1 + ";" + mv_command2 + ";" + mv_command3 + "; chmod a+s /sbin/shutdown; chmod a+s /etc/init.d/naoqi; echo initialized > /.init; else rm /home/nao/connman /home/nao/autoload.ini; fi\"'"
+ssh_profile = 'ssh -t nao@'+ip+ " 'su -c \"if [ ! -e \\\"/.init\\\" ]; then " + echo_command1 + ";" + echo_command2 + ";"+ echo_command3 + ";"  + mv_command1 + ";" + mv_command2 + ";" + mv_command3 + "; chmod a+s /sbin/shutdown; chmod a+s /etc/init.d/naoqi; echo initialized > /.init; else rm /home/nao/connman /home/nao/autoload.ini; fi\"'"
 print ssh_profile
 os.system(ssh_profile)
 

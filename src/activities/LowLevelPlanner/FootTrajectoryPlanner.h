@@ -22,11 +22,11 @@ class FootTrajectoryPlanner
 		RobotParameters Robot;
 		int fillcounter[4][2];
 	public:
-		//std::vector<float> Xl, Yl, Zl, Thl, Xr, Yr, Zr, Thr;
+		std::vector<float> Xl, Yl, Zl, Thl, Xr, Yr, Zr, Thr;
 		FootTrajectoryPlanner();
 
 		void FootTrajectoryInitialize(Stepplanner*, RobotParameters, KWalkMat);
-		//void FootTrajectoryInitStep();
+		void FootTrajectoryInitStep();
 		int FootTrajectoryInitStep(float Buffer[3][2][MAX_TRAJECTORY_LENGTH]);
 		//void FootTrajectoryInterpolate();
 		int FootTrajectoryInterpolate(float Buffer[3][2][MAX_TRAJECTORY_LENGTH],int append);

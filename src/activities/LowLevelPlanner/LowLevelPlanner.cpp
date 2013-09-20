@@ -43,7 +43,7 @@ void LowLevelPlanner::UserInit()
 	/**
 	 Set Body Stiffness
 	 **/
-	//setStiffness(0.75f);
+	setStiffness(0.75f);
 	state = DO_NOTHING;
 	dcm_state = DCM_STOP;
 	Reset();
@@ -62,7 +62,7 @@ void LowLevelPlanner::Reset()
 	dcm_length[1] = 0;
 
 	current_buffer = 0;
-
+	setStiffness(0.75f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 }
 
@@ -89,7 +89,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 4.2;	//3.4;
+		x = 3.2;	//3.4;
 		y = 0;
 		z = 0;
 		s = 0;
@@ -121,6 +121,7 @@ int LowLevelPlanner::Execute()
 		{
 			if (state == DO_NOTHING)
 			{
+				dcm_counter = 0;
 				state = INIT_WALK;
 				std::cout << "Message arrived should initialize walk" << std::endl;
 			}
@@ -150,7 +151,7 @@ int LowLevelPlanner::Execute()
 	if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
 		state = FINAL_STEP;
 
-	std::cout << " State " << state << std::endl;
+	std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
 
 	switch (state)
 	{
@@ -158,9 +159,11 @@ int LowLevelPlanner::Execute()
 			return 0;
 			break;
 
+
 		case INIT_WALK:
 			//initialize
 			NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep(ZmpTrajectory[next_2B_inserted]);
+			//NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep();
 			dcm_length[next_2B_inserted] = NaoFootTrajectoryPlanner.FootTrajectoryInitStep(FeetTrajectory[next_2B_inserted]);
 
 
@@ -179,6 +182,7 @@ int LowLevelPlanner::Execute()
 		case DO_STEPS:
 			/*Plan two consecutive Steps with the Predefined Speed
 			 **/
+
 			NaoPlanner.oneStep(speed);
 			NaoPlanner.oneStep(speed);
 			Calculate_Tragectories();
@@ -211,7 +215,7 @@ int LowLevelPlanner::Execute()
 
 void LowLevelPlanner::Calculate_Tragectories()
 {
-	int X=0;
+	int X=0, ready_size;
 	for (unsigned int i = 0; i < 2; i++)
 	{
 		/**
@@ -227,7 +231,7 @@ void LowLevelPlanner::Calculate_Tragectories()
 		//NaoFootTrajectoryPlanner.FootTrajectoryInterpolate();
 
 		X = NaoFootTrajectoryPlanner.FootTrajectoryInterpolate(FeetTrajectory[next_2B_inserted], i);
-		std::cout << "NaoFootPlannersize " << X << " append " <<  i << std::endl;
+		std::cout << "NaoFootPlannersize " << X << " append " <<  i << " "<<  next_2B_inserted << std::endl;
 		/**
 		 Calculate the Next ZMP Points to Interpolate
 		 **/
@@ -237,10 +241,12 @@ void LowLevelPlanner::Calculate_Tragectories()
 		/**
 		 ZMP Trajectory computation
 		 **/
-
-		dcm_length[next_2B_inserted] = NaoZmpTrajectoryPlanner.ZMPTrajectoryInterpolate(ZmpTrajectory[next_2B_inserted], i);
-		std::cout << "NaoZmpTrajectoryPlanner " << dcm_length[next_2B_inserted] << " append " <<  i << std::endl;
+		//NaoZmpTrajectoryPlanner.ZMPTrajectoryInterpolate();
+		ready_size = NaoZmpTrajectoryPlanner.ZMPTrajectoryInterpolate(ZmpTrajectory[next_2B_inserted], i);
+		std::cout << "NaoZmpTrajectoryPlanner " << ready_size << " append " <<  i << std::endl;
 	}
+
+	dcm_length[next_2B_inserted] = X ;
 }
 
 void LowLevelPlanner::Calculate_Desired_COM()
@@ -288,6 +294,7 @@ void LowLevelPlanner::Calculate_Desired_COM()
 	}
 	if(ZmpBuffer[X]->size()  < 51)
 		std::cout << " ZmpBuffer size " << ZmpBuffer[X]->size() << std::endl;
+
 	//NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
 	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]);
 	//NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
@@ -302,7 +309,7 @@ int LowLevelPlanner::DCMcallback()
 
 	if (dcm_counter >= dcm_length[current_buffer]) //buffer end;
 	{
-		std::cout << "Switch" << std::endl;
+		std::cout << "Switch " << std::endl;
 		int next_buffer = (current_buffer + 1) % 2;
 		if (dcm_length[next_buffer] > 0)
 		{ //ready to switch buffers
@@ -540,17 +547,19 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	 //NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
 	 **/
 
-	NewL[0] = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18;
+	NewL[0] = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
 	NewL[1] = 1000 * (FeetTrajectory[current_buffer][Y][LEFT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
 	NewL[2] = 1000 * (FeetTrajectory[current_buffer][Z][LEFT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
-	NewR[0] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoLIPMx->Com) + 18.18; //+ calc_com.pointX;
+	NewR[0] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30; //+ calc_com.pointX;
 	NewR[1] = 1000 * (FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter] - NaoLIPMy->Com) - 0.0726; // + calc_com.pointY;
-	NewR[2] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoRobot.getWalkParameter(ComZ) - 46.76e-3); // + calc_com.pointZ;
+	NewR[2] = 1000 * (FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter] - NaoRobot.getWalkParameter(ComZ) - 46.76e-3); // + calc_com.pointZ;
+
+
+	//std::cout << "Buffer: "<< FeetTrajectory[current_buffer][X][LEFT][dcm_counter]  << " Com X: " << NaoLIPMx->Com << " Y: " << NaoLIPMy->Com << std::endl;
+	std::cout << FeetTrajectory[current_buffer][X][LEFT][dcm_counter] <<  " Left[" << dcm_counter << "]  = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
 
 	dcm_counter++;
-
-	std::cout << "Left(end+1,:) = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
 
 	yawL = 0;
 	yawR = 0;

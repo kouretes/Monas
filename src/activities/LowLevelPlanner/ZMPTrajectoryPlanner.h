@@ -27,6 +27,7 @@ class ZMPTrajectoryPlanner
             int ZMPTrajectoryInitStep(float Buffer[3][MAX_TRAJECTORY_LENGTH]);
             void ZMPTrajectoryInterpolate();
             void NextTrajectory();
+            void ZMPTrajectoryInitStep();
 };
 
 

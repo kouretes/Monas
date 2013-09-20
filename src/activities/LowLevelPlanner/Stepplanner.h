@@ -13,7 +13,7 @@
 
 enum
 {
-	X = 0, Y, Z, Theta
+	X = 0, Y, Z, Theta, SIZE_OF_TRAJECTORY_ELEMENTS
 };
 enum
 {

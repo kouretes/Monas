@@ -103,7 +103,7 @@ class LowLevelPlanner: public IActivity
 		KWalkMat KWalkMath;
 		bool finalStep;
 
-		float FeetTrajectory[2][3][2][MAX_TRAJECTORY_LENGTH];
+		float FeetTrajectory[2][SIZE_OF_TRAJECTORY_ELEMENTS][2][MAX_TRAJECTORY_LENGTH];
 		float ZmpTrajectory[2][2][MAX_TRAJECTORY_LENGTH];
 		CircularBuffer<float> *ZmpBuffer[2];
 		int dcm_counters[2];

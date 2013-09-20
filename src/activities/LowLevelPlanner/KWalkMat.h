@@ -17,10 +17,11 @@ class KWalkMat
 		void LinearInterpolation(float *buffer, int &counter, float start, float end, float Ts, float T)
 		{
 			//std::cout << counter<< "Ts " << Ts << " T " << T << std::endl;
-			for (float t = 0; t <= 1; t += Ts / T, counter++)
+			for (float t = 0; t <= 1; t += Ts / T, counter++){
 				buffer[counter] = (1 - t) * start + t * end; //    vec.push_back();
 
-				//std::cout << counter << std::endl;
+			//	std::cout << counter << " "<< buffer[counter] <<  std::endl;
+			}
 		}
 
 		void CubicBezierInterpolation(float *buffer, int &counter, float start, float end, float Ts, float Tss)
