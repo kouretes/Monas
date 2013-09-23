@@ -19,15 +19,15 @@ class ZMPTrajectoryPlanner
             RobotParameters Robot;
             int fillcounter[2];
     public :
-            std::vector <float> ZMPX,ZMPY;
+            //std::vector <float> ZMPX,ZMPY;
             ZMPTrajectoryPlanner();
             void ZMPTrajectoryInitialize(Stepplanner* ,RobotParameters , KWalkMat );
             int ZMPTrajectoryInterpolate(float Buffer[3][MAX_TRAJECTORY_LENGTH], int append);
 
             int ZMPTrajectoryInitStep(float Buffer[3][MAX_TRAJECTORY_LENGTH]);
-            void ZMPTrajectoryInterpolate();
+          //  void ZMPTrajectoryInterpolate();
             void NextTrajectory();
-            void ZMPTrajectoryInitStep();
+          //  void ZMPTrajectoryInitStep();
 };
 
 

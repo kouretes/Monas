@@ -8,6 +8,7 @@
 #include "core/elements/math/KMat.hpp"
 #include <vector>
 #include "RobotParameters.h"
+#include <iostream>
 #ifndef __Kouretes_Walk_Engine__ControlThread__
 #define __Kouretes_Walk_Engine__ControlThread__
 
@@ -23,6 +24,7 @@ class CircularBuffer
 		int count;/* index at which to write new element  */
 		T *elems; /* vector of elements                   */
 
+		int allcounter;
 		/* This approach replaces the CircularBuffer 'end' field with the
 		 'count' field and changes these functions: */
 	public:
@@ -31,6 +33,7 @@ class CircularBuffer
 			buffer_size = maxsize;
 			start = 0;
 			count = 0;
+			allcounter = 0;
 			elems = new T[maxsize];
 		}
 		~CircularBuffer()
@@ -48,12 +51,25 @@ class CircularBuffer
 			return count == 0;
 		}
 
-		int getBufferSize(){
+		int getBufferSize()
+		{
 			return buffer_size;
 		}
 
 		void cbPush(T elem)
 		{
+			int end = (start + count) % buffer_size;
+			elems[end] = elem;
+			if (count == buffer_size)
+				start = (start + 1) % buffer_size; /* full, overwrite */
+			else
+				++count;
+		}
+
+		void cbPush(T elem, bool print)
+		{
+			std::cout << " Inserted "  << allcounter << std::endl;
+			allcounter++;
 			int end = (start + count) % buffer_size;
 			elems[end] = elem;
 			if (count == buffer_size)
@@ -102,13 +118,14 @@ class LIPMPreviewController
 		KMath::KMat::GenMatrix<float, 1, 3> Gx;
 		KMath::KMat::GenMatrix<float, 50, 1> Gd;
 		KMath::KMat::GenMatrix<float, 51, 1> ZMPReference;
+		KMath::KMat::GenMatrix<float, 51, 1> ZMPReference2;
 		float Gi, Integrationfb, Statefb, Predictionfb, ZMPMeasured, u;
 		int counter;
 		RobotParameters OurRobot;
 	public:
 		LIPMPreviewController(RobotParameters robot);
 		void LIPMComPredictor(std::vector<float> ZMP);
-		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer);
+		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer/*, std::vector<float>, bool print*/);
 		std::vector<float> COM;
 		float Com;
 

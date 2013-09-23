@@ -51,7 +51,7 @@ void LowLevelPlanner::UserInit()
 
 void LowLevelPlanner::Reset()
 {
-	memset(FeetTrajectory, 0, sizeof(float) * (2 * 3 * 2 * MAX_TRAJECTORY_LENGTH));
+	memset(FeetTrajectory, 0, sizeof(float) * (2 * 4 * 2 * MAX_TRAJECTORY_LENGTH));
 	memset(ZmpTrajectory, 0, sizeof(float) * (2 * 2 * MAX_TRAJECTORY_LENGTH));
 	//NaoPlanner.clear();
 	//NaoFootTrajectoryPlanner.FootTrajectoryClear();
@@ -64,6 +64,7 @@ void LowLevelPlanner::Reset()
 	current_buffer = 0;
 	setStiffness(0.75f);
 	std::cout << "Walk Engine Reseted" << std::endl;
+	sleep(1);
 }
 
 int LowLevelPlanner::Execute()
@@ -89,8 +90,8 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 3.2;	//3.4;
-		y = 0;
+		x = -2;	//3.4;
+		y = -2;
 		z = 0;
 		s = 0;
 		wmot->set_command("setWalkTargetVelocity");
@@ -162,19 +163,20 @@ int LowLevelPlanner::Execute()
 
 		case INIT_WALK:
 			//initialize
-			NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep(ZmpTrajectory[next_2B_inserted]);
+			int zmplength;
+			zmplength = NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep(ZmpTrajectory[next_2B_inserted]);
 			//NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep();
 			dcm_length[next_2B_inserted] = NaoFootTrajectoryPlanner.FootTrajectoryInitStep(FeetTrajectory[next_2B_inserted]);
+			std::cout << " Zmplength " << zmplength << " foot len: " << dcm_length[next_2B_inserted] << std::endl;
 
-
-			for (int i = 0; i < dcm_length[next_2B_inserted] || i < 51; i++)
+			for (int i = 0; i < dcm_length[next_2B_inserted] && i < 51; i++)
 			{
 				ZmpBuffer[X]->cbPush(ZmpTrajectory[next_2B_inserted][X][i]);
 				ZmpBuffer[Y]->cbPush(ZmpTrajectory[next_2B_inserted][Y][i]);
 			}
 			state = DO_STEPS;
 			dcm_counter = 0;
-			dcm_state = DCM_RUN;
+
 			std::cout << "Walk Engine is Executed Walk should start" << std::endl;
 
 			break;
@@ -185,7 +187,10 @@ int LowLevelPlanner::Execute()
 
 			NaoPlanner.oneStep(speed);
 			NaoPlanner.oneStep(speed);
+
 			Calculate_Tragectories();
+
+			dcm_state = DCM_RUN;
 			break;
 
 		case FINAL_STEP:
@@ -251,6 +256,10 @@ void LowLevelPlanner::Calculate_Tragectories()
 
 void LowLevelPlanner::Calculate_Desired_COM()
 {
+	//NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
+	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]/*,NaoZmpTrajectoryPlanner.ZMPX,false*/);
+	//NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
+	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y]/*,NaoZmpTrajectoryPlanner.ZMPY,false*/);
 
 	if (dcm_length[current_buffer] > (dcm_counter + PredictionHorizon))
 	{
@@ -272,14 +281,17 @@ void LowLevelPlanner::Calculate_Desired_COM()
 //					p++;
 //				}
 				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer]; //we need more
-				for (p = 0; p < pos; p++)
+				//std::cout <<" Need to add " << pos << std::endl;
+				for (p = 0; p <pos ; p++)
 				{
 					ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][p]);
 					ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][p]);
 				}
 			} else
 			{ //just load the next from the other ready buffer
+
 				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer];
+				//std::cout <<"From next buffer " << pos << std::endl;
 				ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][pos]);
 				ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][pos]);
 			}
@@ -289,16 +301,13 @@ void LowLevelPlanner::Calculate_Desired_COM()
 			ZmpBuffer[X]->pop();
 			ZmpBuffer[Y]->pop();
 		}
-		ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][dcm_counter]);
-		ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][dcm_counter]);
+//		ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][dcm_counter]);
+//		ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][dcm_counter]);
 	}
 	if(ZmpBuffer[X]->size()  < 51)
 		std::cout << " ZmpBuffer size " << ZmpBuffer[X]->size() << std::endl;
 
-	//NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
-	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]);
-	//NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
-	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y]);
+
 }
 
 int LowLevelPlanner::DCMcallback()

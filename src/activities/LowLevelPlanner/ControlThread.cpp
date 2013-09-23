@@ -113,7 +113,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
 }
 
 
-void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
+void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer/*, std::vector<float> ZMP,bool print*/ )
 {
     //Setting the Reference Signal
     unsigned int l=0;
@@ -126,8 +126,22 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
            ZMPReference(l)=ZmpBuffer[ZmpBuffer.size()-1];
 
     }
-    //counter++;
-
+//    l=0;
+//    for (unsigned int i=counter;i<=counter+50;i++)
+//    {
+//        if (i<ZMP.size())
+//            ZMPReference2(l)=ZMP[i];//ZMP[i];
+//        else
+//            ZMPReference2(l)=ZMP.back();
+//
+//        l++;
+//    }
+//
+//
+//    if(print)
+//    for (unsigned int i=0;i<=50;i++)
+//    	std::cout << "Counter "<< counter << " i = " << i << " ZMPReference " << ZMPReference(i) <<  " ZMPReference2 " << ZMPReference2(i) << std::endl;
+//    counter++;
     ZMPMeasured=State(2);
 
     //State Feedback Computation

@@ -39,18 +39,25 @@ int ZMPTrajectoryPlanner::ZMPTrajectoryInterpolate(float Buffer[2][MAX_TRAJECTOR
 	KWalkMath.LinearInterpolation(Buffer[X],fillcounter[X],target.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	KWalkMath.LinearInterpolation(Buffer[Y],fillcounter[Y],target.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
+//	//Interpolating the DS Phase
+//	KWalkMath.LinearInterpolation(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
+//	KWalkMath.LinearInterpolation(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
+//	//Interpolating the SS Phase
+//	KWalkMath.LinearInterpolation(ZMPX,target.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+//	KWalkMath.LinearInterpolation(ZMPY,target.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+
 	return fillcounter[0];
 }
 
-void ZMPTrajectoryPlanner::ZMPTrajectoryInterpolate()
-{
-	//Interpolating the DS Phase
-	KWalkMath.LinearInterpolation(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
-	KWalkMath.LinearInterpolation(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
-	//Interpolating the SS Phase
-	KWalkMath.LinearInterpolation(ZMPX,target.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	KWalkMath.LinearInterpolation(ZMPY,target.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-}
+//void ZMPTrajectoryPlanner::ZMPTrajectoryInterpolate()
+//{
+//	//Interpolating the DS Phase
+//	KWalkMath.LinearInterpolation(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
+//	KWalkMath.LinearInterpolation(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
+//	//Interpolating the SS Phase
+//	KWalkMath.LinearInterpolation(ZMPX,target.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+//	KWalkMath.LinearInterpolation(ZMPY,target.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+//}
 
 int ZMPTrajectoryPlanner::ZMPTrajectoryInitStep(float Buffer[2][MAX_TRAJECTORY_LENGTH])
 {
@@ -63,15 +70,22 @@ int ZMPTrajectoryPlanner::ZMPTrajectoryInitStep(float Buffer[2][MAX_TRAJECTORY_L
 	KWalkMath.LinearInterpolation(Buffer[X],fillcounter[X],start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
 	KWalkMath.LinearInterpolation(Buffer[Y],fillcounter[Y],start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
 
+//	KWalkMath.LinearInterpolationINIT(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
+//	KWalkMath.LinearInterpolationINIT(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
+
+//	for(int i = 0; i < ZMPX.size(); i++){
+//		std::cout << " Buffer[X] " << Buffer[X][i] << "  Zmpx " <<  ZMPX[i] << std::endl;
+//	}
+
 	return fillcounter[0];
 }
 
-void ZMPTrajectoryPlanner::ZMPTrajectoryInitStep()
-{
-	start=Planner->ZmpQ.front();
-	target=start;
-	Planner->ZmpQ.pop();
-
-    KWalkMath.LinearInterpolationINIT(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
-    KWalkMath.LinearInterpolationINIT(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
-}
+//void ZMPTrajectoryPlanner::ZMPTrajectoryInitStep()
+//{
+//	start=Planner->ZmpQ.front();
+//	target=start;
+//	Planner->ZmpQ.pop();
+//
+//    KWalkMath.LinearInterpolationINIT(ZMPX,start.x, target.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
+//    KWalkMath.LinearInterpolationINIT(ZMPY,start.y, target.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tstep));
+//}
