@@ -83,9 +83,6 @@ void Stepplanner::afterStep()
 }
 void Stepplanner::finalStep()
 {
-
-    
-    
 	float temp;
     temp=Step.y;
 	Time = Time + Robot.getWalkParameter(Tstep);

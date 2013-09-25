@@ -68,7 +68,7 @@ class CircularBuffer
 
 		void cbPush(T elem, bool print)
 		{
-			std::cout << " Inserted "  << allcounter << std::endl;
+			std::cout << " Inserted " << allcounter << std::endl;
 			allcounter++;
 			int end = (start + count) % buffer_size;
 			elems[end] = elem;
@@ -124,9 +124,9 @@ class LIPMPreviewController
 		RobotParameters OurRobot;
 	public:
 		LIPMPreviewController(RobotParameters robot);
-		void LIPMComPredictor(std::vector<float> ZMP);
-		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer/*, std::vector<float>, bool print*/);
-		std::vector<float> COM;
+
+		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer);
+
 		float Com;
 
 };
