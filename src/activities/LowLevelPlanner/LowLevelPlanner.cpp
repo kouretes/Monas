@@ -531,17 +531,30 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	/** Calculate COM
 	 //NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
 	 **/
+	NAOKinematics::FKvars invl,invr;
+	invl.p.zero();
+	invl.a.zero();
+	invr.p.zero();
+	invr.a.zero();
 
-	NewL[0] = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
-	NewL[1] = 1000 * (FeetTrajectory[current_buffer][Y][LEFT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
-	NewL[2] = 1000 * (FeetTrajectory[current_buffer][Z][LEFT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
+	invl.p(0) = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
+	invl.p(1) = 1000 * (FeetTrajectory[current_buffer][Y][LEFT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
+	invl.p(2) = 1000 * (FeetTrajectory[current_buffer][Z][LEFT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
-	NewR[0] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
-	NewR[1] = 1000 * (FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
-	NewR[2] = 1000 * (FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter] - NaoRobot.getWalkParameter(ComZ) - 46.76e-3);
+	invr.p(0) = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
+	invr.p(1) = 1000 * (FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
+	invr.p(2) = 1000 * (FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
 	//std::cout << "Buffer: "<< FeetTrajectory[current_buffer][X][LEFT][dcm_counter]  << " Com X: " << NaoLIPMx->Com << " Y: " << NaoLIPMy->Com << std::endl;
-	std::cout << FeetTrajectory[current_buffer][X][LEFT][dcm_counter] <<  " Left[" << dcm_counter << "]  = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
+	std::cout<<"TargetLeft:"<<std::endl;
+	invl.p.prettyPrint();
+	invl.a.prettyPrint();
+
+	std::cout<<"TargetRight:"<<std::endl;
+	invr.p.prettyPrint();
+	invr.a.prettyPrint();
+
+	//std::cout << FeetTrajectory[current_buffer][X][LEFT][dcm_counter] <<  " Left[" << dcm_counter << "]  = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
 
 	dcm_counter++;
 
@@ -550,8 +563,8 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 	std::vector<std::vector<float> > resultR, resultL;
 
-	resultL = nkin->inverseLeftLeg(NewL[0], NewL[1], NewL[2], 0, 0, yawL);
-	resultR = nkin->inverseRightLeg(NewR[0], NewR[1], NewR[2], 0, 0, yawR);
+	resultL = nkin->inverseLeftLeg(invl);
+	resultR = nkin->inverseRightLeg(invr);
 
 	if (!resultL.empty())
 	{
