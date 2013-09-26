@@ -1327,10 +1327,20 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 		{
 			return B;
 		}
+
+
 		GenMatrix < T, S - 1, S - 1 > getRotation() const
 		{
 			return A;
 		}
+
+		ATMatrix<T, S> & setTranslation ( GenMatrix < T, S - 1, 1 > const& rop)
+		{
+
+			B=rop;
+			BisZero=false;
+			return *this;
+		};
 		GenMatrix < T, S - 1, 1 > getEulerAngles() const
 		{
 			GenMatrix < T, S - 1, 1 > r;
