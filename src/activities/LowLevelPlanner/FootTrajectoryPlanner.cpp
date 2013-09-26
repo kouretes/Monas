@@ -56,15 +56,15 @@ int FootTrajectoryPlanner::FootTrajectoryInterpolate(float Buffer[3][2][MAX_TRAJ
 	    KWalkMath.LinearInterpolation(Buffer[Z][RIGHT], fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
 	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], fillcounter[Theta][RIGHT], startR.theta, startR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
 
-	    KWalkMath.LinearInterpolation(Buffer[X][LEFT], fillcounter[X][LEFT], startL.x, targetL.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Y][LEFT], fillcounter[Y][LEFT], startL.y, targetL.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.CubicBezierInterpolation(Buffer[Z][LEFT], fillcounter[Z][LEFT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Theta][LEFT],fillcounter[Theta][LEFT],startL.theta, targetL.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[X][LEFT], --fillcounter[X][LEFT], startL.x, targetL.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Y][LEFT], --fillcounter[Y][LEFT], startL.y, targetL.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.CubicBezierInterpolation(Buffer[Z][LEFT], --fillcounter[Z][LEFT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Theta][LEFT],--fillcounter[Theta][LEFT],startL.theta, targetL.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
-	    KWalkMath.LinearInterpolation(Buffer[X][RIGHT], fillcounter[X][RIGHT], startR.x, startR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Y][RIGHT], fillcounter[Y][RIGHT], startR.y, startR.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Z][RIGHT], fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], fillcounter[Theta][RIGHT], startR.theta, startR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[X][RIGHT], --fillcounter[X][RIGHT], startR.x, startR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Y][RIGHT], --fillcounter[Y][RIGHT], startR.y, startR.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Z][RIGHT], --fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], --fillcounter[Theta][RIGHT], startR.theta, startR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	}
 	else
 	{
@@ -80,15 +80,15 @@ int FootTrajectoryPlanner::FootTrajectoryInterpolate(float Buffer[3][2][MAX_TRAJ
 	    KWalkMath.LinearInterpolation(Buffer[Z][RIGHT], fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
 	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], fillcounter[Theta][RIGHT], startR.theta, startR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tds));
 
-	    KWalkMath.LinearInterpolation(Buffer[X][LEFT], fillcounter[X][LEFT], targetL.x, targetL.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Y][LEFT], fillcounter[Y][LEFT], targetL.y, targetL.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Z][LEFT], fillcounter[Z][LEFT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Theta][LEFT],fillcounter[Theta][LEFT], targetL.theta, targetL.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[X][LEFT], --fillcounter[X][LEFT], targetL.x, targetL.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Y][LEFT], --fillcounter[Y][LEFT], targetL.y, targetL.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Z][LEFT], --fillcounter[Z][LEFT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Theta][LEFT], --fillcounter[Theta][LEFT], targetL.theta, targetL.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
-	    KWalkMath.LinearInterpolation(Buffer[X][RIGHT], fillcounter[X][RIGHT], startR.x, targetR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Y][RIGHT], fillcounter[Y][RIGHT], startR.y, targetR.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.CubicBezierInterpolation(Buffer[Z][RIGHT], fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], fillcounter[Theta][RIGHT], startR.theta, targetR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[X][RIGHT], --fillcounter[X][RIGHT], startR.x, targetR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Y][RIGHT], --fillcounter[Y][RIGHT], startR.y, targetR.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.CubicBezierInterpolation(Buffer[Z][RIGHT], --fillcounter[Z][RIGHT], 0.000, 0.000 ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.LinearInterpolation(Buffer[Theta][RIGHT], --fillcounter[Theta][RIGHT], startR.theta, targetR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
 	}
 

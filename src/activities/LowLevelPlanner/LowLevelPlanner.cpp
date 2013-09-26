@@ -598,6 +598,8 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	//Get Tps
 	NAOKinematics::kmatTable Tsp=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
 	Tsp.fast_invert();//Tps->Tsp
+
+
 	NAOKinematics::kmatTable Tip,Tpi,Til,Tir;
 	Tip=Tis*Tsp;
 	Tpi=Tip;
@@ -623,72 +625,86 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 				0.0,
 				(double)FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter]
 				);
-	NAOKinematics::kmatTable Tpprimei; //Transformation of next pelvis p' pprime :)
+	NAOKinematics::kmatTable Tpprimei,Tipprime; //Transformation of next pelvis p' pprime :)
 
 
-
-
-	KVecDouble3 measured = nkin->calculateCenterOfMass();
-	KVecDouble3 com_error,desired;//All in pelvis frame;
+	KVecDouble3 com_error,desired;//All in inertial frame;
 	//std::cout<<NaoRobot.getWalkParameter(ComZ)<<std::endl;
-	desired=Tpi.transform(KVecDouble3( NaoLIPMx->Com,NaoLIPMy->Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000) );
-	/*std::cout<<"d,m:"<<std::endl;
-	desired.prettyPrint();
-	measured.prettyPrint();*/
-	com_error=desired;
-	com_error-=measured;
-	//com_error(0)*=0.6;
-	com_error.scalar_mult(1.0);
-	com_error(2)*=0.89;
-	//Fix rotation first, using yawpitchroll coupling
-	//First generate Tipprime and then invert
-    KMath::KMat::transformations::makeRotationXYZ(Tpprimei,
-												0.0,
-												0.0,
-												(double)
-												(FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]+
-												 FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter])/2
-												);
-
-	//Tpprimei.identity();
-	Tpprimei.setTranslation(Tip.transform(com_error));
-	Tpprimei.fast_invert(); // Tip'->Tp'i
-	//Generate inverse kin targets as Tp'{l,r}
-	//Tpprimei.prettyPrint();
-
-	NAOKinematics::kmatTable Tpprimel,Tpprimer;
-
-	Tpprimel=Tpprimei*Til;
-	Tpprimer=Tpprimei*Tir;
-
-	/*Tpprimel.prettyPrint();
-	Tpprimer.prettyPrint();*/
-
-	//Because Stelios is a fucking idiot, I need to add the footX offset to the targets now
-
-	Tpprimel(0,3)-=30;
-	Tpprimer(0,3)-=30;
-
-
+	desired=KVecDouble3( NaoLIPMx->Com,NaoLIPMy->Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
 
 	std::vector<float> ret;
-	//(com_error).prettyPrint();
-
-
-	std::vector<std::vector<float> > resultR, resultL;
-
-	resultL = nkin->inverseLeftLeg(Tpprimel);
-	resultR = nkin->inverseRightLeg(Tpprimer);
-
-	if (!resultL.empty())
+	Tipprime=Tip;
+	for(unsigned iter=0;iter<3;iter++)
 	{
-		ret = resultL.at(0);
-		if (!resultR.empty())
-			ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
-		else
-			std::cerr << "Right Leg EMPTY VECTOR " << std::endl;
-	} else
-		std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
+
+		KVecDouble3 measured = nkin->calculateCenterOfMass();
+		com_error=desired;
+		com_error-=Tipprime.transform(measured);
+		//com_error(0)*=0.6;
+		//com_error.scalar_mult(0.999);
+		com_error.scalar_mult(1);
+		//Fix rotation first, using yawpitchroll coupling
+		//First generate Tipprime and then invert
+		KMath::KMat::transformations::makeRotationXYZ(Tpprimei,
+													0.0,
+													0.0,
+													(double)
+													(FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]+
+													 FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter])/2
+													);
+
+		//Tpprimei.identity();
+		Tpprimei.setTranslation(com_error+Tipprime.getTranslation());
+		Tipprime=Tpprimei;
+		Tpprimei.fast_invert(); // Tip'->Tp'i
+		//Generate inverse kin targets as Tp'{l,r}
+		//Tpprimei.prettyPrint();
+
+		NAOKinematics::kmatTable Tpprimel,Tpprimer;
+
+		Tpprimel=Tpprimei*Til;
+		Tpprimer=Tpprimei*Tir;
+
+		/*Tpprimel.prettyPrint();
+		Tpprimer.prettyPrint();*/
+
+		//Because Stelios is a fucking idiot, I need to add the footX offset to the targets now
+
+		Tpprimel(0,3)-=30;
+		Tpprimer(0,3)-=30;
+
+
+
+
+		//(com_error).prettyPrint();
+
+
+		std::vector<std::vector<float> > resultR, resultL;
+
+		resultL = nkin->inverseLeftLeg(Tpprimel);
+		resultR = nkin->inverseRightLeg(Tpprimer);
+
+
+		if (!resultL.empty())
+		{
+			ret = resultL.at(0);
+			if (!resultR.empty())
+			{
+				ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
+				nkin->setChain(KDeviceLists::CHAIN_L_LEG,resultL[0]);
+				nkin->setChain(KDeviceLists::CHAIN_R_LEG,resultR[0]);
+			}
+
+			else
+				std::cerr << "Right Leg EMPTY VECTOR " << std::endl;
+		} else
+			std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
+
+
+	}
+
+	//com_error.prettyPrint();
+
 
 	//std::cout << " Number of joint values : " << ret.size() <<std::endl;
 
