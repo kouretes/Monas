@@ -12,7 +12,6 @@
 #include "tools/toString.h"
 
 //using boost::posix_time::milliseconds;
-
 ACTIVITY_REGISTER(LowLevelPlanner)
 ;
 
@@ -43,9 +42,12 @@ void LowLevelPlanner::UserInit()
 	/**
 	 Set Body Stiffness
 	 **/
-	setStiffness(0.75f);
+	setStiffness(0.5f);
 	state = DO_NOTHING;
 	dcm_state = DCM_STOP;
+
+	whichleg=KDeviceLists::SUPPORT_LEG_NONE;
+	nextleg=KDeviceLists::SUPPORT_LEG_NONE;
 	Reset();
 }
 
@@ -70,6 +72,9 @@ int LowLevelPlanner::Execute()
 
 	if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
 	{
+		Tis.identity();
+		whichleg=KDeviceLists::SUPPORT_LEG_NONE;
+		nextleg=KDeviceLists::SUPPORT_LEG_NONE;
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
 		firstrun = false;
 	}
@@ -87,9 +92,9 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = -2;	//3.4;
-		y = -2;
-		z = 0;
+		x = 0.5;
+		y = 0.5;
+		z = 0.0;
 		s = 0;
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->add_parameter(x);
@@ -299,7 +304,7 @@ int LowLevelPlanner::DCMcallback()
 
 	if (dcm_counter >= dcm_length[current_buffer]) //buffer end;
 	{
-		std::cout << "Switch " << std::endl;
+		std::cout << "Switch Buffer" << std::endl;
 		int next_buffer = (current_buffer + 1) % 2;
 		if (dcm_length[next_buffer] > 0)
 		{ //ready to switch buffers
@@ -318,10 +323,21 @@ int LowLevelPlanner::DCMcallback()
 	}
 	//std::cout << dcm_counter << " " << current_buffer << " " << dcm_length[current_buffer] << std::endl;
 	Calculate_Desired_COM();
+	whichleg=nextleg;
+	if(dcm_counter<=dcm_length[current_buffer]/2)//(NaoRobot.getWalkParameter(Tstep)/NaoRobot.getWalkParameter(Ts)))
+		nextleg=KDeviceLists::SUPPORT_LEG_RIGHT;
+	else
+		nextleg=KDeviceLists::SUPPORT_LEG_LEFT;
+	//std::cout<<"Sup:"<<whichleg<<","<<nextleg<<std::endl;
+
 	std::vector<float> joints_action = Calculate_IK();
 	if (joints_action.size() != 12)
 	{
 		std::cerr << "Not enough joint values" << std::endl;
+
+			/*int *test;
+			test=0;
+			*test=5;*/
 		return 0;
 	}
 
@@ -339,6 +355,11 @@ int LowLevelPlanner::DCMcallback()
 	{
 		throw ALERROR("KWalk", "execute_action", "Error when sending command to DCM : " + e.toString());
 	}
+
+
+
+
+
 	return 0;
 }
 
@@ -520,51 +541,144 @@ void LowLevelPlanner::setStiffness(const float& stiffnessValue)
 
 std::vector<float> LowLevelPlanner::Calculate_IK()
 {
-	float NewL[3], NewR[3];
-	float yawL, yawR;
-	std::vector<float> ret;
-
 	/** Read Values of joints **/
-	//for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
-	//	alljoints[j] = *jointPtr[i];
+	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+	alljoints[j] = *jointPtr[i];
 
 	/** Calculate COM
-	 //NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
+
 	 **/
-	NAOKinematics::FKvars invl,invr;
-	invl.p.zero();
-	invl.a.zero();
-	invr.p.zero();
-	invr.a.zero();
+	nkin->setJoints(alljoints); //Feed to kinematics
+	KDeviceLists::ChainsNames chainsupport= (nextleg==KDeviceLists::SUPPORT_LEG_RIGHT)?
+											KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
 
-	invl.p(0) = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
-	invl.p(1) = 1000 * (FeetTrajectory[current_buffer][Y][LEFT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
-	invl.p(2) = 1000 * (FeetTrajectory[current_buffer][Z][LEFT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
-	invr.p(0) = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter] - NaoLIPMx->Com) + 18.18 - 30;
-	invr.p(1) = 1000 * (FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter] - NaoLIPMy->Com) - 0.0726;
-	invr.p(2) = 1000 * (FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
+	if(whichleg==KDeviceLists::SUPPORT_LEG_NONE) //Initialize to support leg
+	{
+		Tis=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
 
-	//std::cout << "Buffer: "<< FeetTrajectory[current_buffer][X][LEFT][dcm_counter]  << " Com X: " << NaoLIPMx->Com << " Y: " << NaoLIPMy->Com << std::endl;
-	std::cout<<"TargetLeft:"<<std::endl;
-	invl.p.prettyPrint();
-	invl.a.prettyPrint();
+		NAOKinematics::FKvars t;
+		t.p=Tis.getTranslation();
+		t.a=Tis.getEulerAngles();
+		t.p(2)=0;
+		t.a(0)=0;
+		t.a(1)=0;
 
-	std::cout<<"TargetRight:"<<std::endl;
-	invr.p.prettyPrint();
-	invr.a.prettyPrint();
 
-	//std::cout << FeetTrajectory[current_buffer][X][LEFT][dcm_counter] <<  " Left[" << dcm_counter << "]  = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
 
-	dcm_counter++;
 
-	yawL = 0;
-	yawR = 0;
+		Tis=NAOKinematics::getTransformation(t);
+		//Tis.fast_invert();
+	}
+
+	else if(whichleg!=nextleg )
+	{
+		KDeviceLists::ChainsNames oldsupport= (whichleg==KDeviceLists::SUPPORT_LEG_RIGHT)?
+											KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
+		NAOKinematics::kmatTable merger=nkin->getForwardFromTo(
+																(NAOKinematics::Effectors)oldsupport,
+																(NAOKinematics::Effectors)chainsupport
+															  );
+
+		NAOKinematics::FKvars t;
+		t.p=merger.getTranslation();
+		t.a=merger.getEulerAngles();
+		t.p(2)=0;
+		t.a(0)=0;
+		t.a(1)=0;
+
+		std::cout<<"Switch"<<dcm_counter<<std::endl;
+
+		Tis*=NAOKinematics::getTransformation(t);
+
+	}
+	/*std::cout<<"Tis:"<<std::endl;
+    Tis.prettyPrint();*/
+
+	//Get Tps
+	NAOKinematics::kmatTable Tsp=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
+	Tsp.fast_invert();//Tps->Tsp
+	NAOKinematics::kmatTable Tip,Tpi,Til,Tir;
+	Tip=Tis*Tsp;
+	Tpi=Tip;
+	Tpi.fast_invert();//Get Inverse transform
+	/*std::cout<<"Tip:"<<std::endl;
+	Tip.prettyPrint();
+	Tpi.prettyPrint();*/
+
+	//Construct Ti{l,r}
+	KMath::KMat::transformations::makeTransformation(Til,
+				(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000,
+				0.0,
+				0.0,
+				(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]
+				);
+	KMath::KMat::transformations::makeTransformation(Tir,
+				(double)FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter]*1000,
+				0.0,
+				0.0,
+				(double)FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter]
+				);
+	NAOKinematics::kmatTable Tpprimei; //Transformation of next pelvis p' pprime :)
+
+
+
+
+	KVecDouble3 measured = nkin->calculateCenterOfMass();
+	KVecDouble3 com_error,desired;//All in pelvis frame;
+	//std::cout<<NaoRobot.getWalkParameter(ComZ)<<std::endl;
+	desired=Tpi.transform(KVecDouble3( NaoLIPMx->Com,NaoLIPMy->Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000) );
+	/*std::cout<<"d,m:"<<std::endl;
+	desired.prettyPrint();
+	measured.prettyPrint();*/
+	com_error=desired;
+	com_error-=measured;
+	//com_error(0)*=0.6;
+	com_error.scalar_mult(1.0);
+	com_error(2)*=0.89;
+	//Fix rotation first, using yawpitchroll coupling
+	//First generate Tipprime and then invert
+    KMath::KMat::transformations::makeRotationXYZ(Tpprimei,
+												0.0,
+												0.0,
+												(double)
+												(FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]+
+												 FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter])/2
+												);
+
+	//Tpprimei.identity();
+	Tpprimei.setTranslation(Tip.transform(com_error));
+	Tpprimei.fast_invert(); // Tip'->Tp'i
+	//Generate inverse kin targets as Tp'{l,r}
+	//Tpprimei.prettyPrint();
+
+	NAOKinematics::kmatTable Tpprimel,Tpprimer;
+
+	Tpprimel=Tpprimei*Til;
+	Tpprimer=Tpprimei*Tir;
+
+	/*Tpprimel.prettyPrint();
+	Tpprimer.prettyPrint();*/
+
+	//Because Stelios is a fucking idiot, I need to add the footX offset to the targets now
+
+	Tpprimel(0,3)-=30;
+	Tpprimer(0,3)-=30;
+
+
+
+	std::vector<float> ret;
+	//(com_error).prettyPrint();
+
 
 	std::vector<std::vector<float> > resultR, resultL;
 
-	resultL = nkin->inverseLeftLeg(invl);
-	resultR = nkin->inverseRightLeg(invr);
+	resultL = nkin->inverseLeftLeg(Tpprimel);
+	resultR = nkin->inverseRightLeg(Tpprimer);
 
 	if (!resultL.empty())
 	{
@@ -577,6 +691,12 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
 
 	//std::cout << " Number of joint values : " << ret.size() <<std::endl;
+
+
+
+	dcm_counter++;
+
+
 
 	return ret;
 }

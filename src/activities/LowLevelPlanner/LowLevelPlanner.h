@@ -150,7 +150,9 @@ class LowLevelPlanner: public IActivity
 		LIPMPreviewController * NaoLIPMx ,*NaoLIPMy;
 
 		int state, dcm_state;
-
+		/** Real odometry **/
+		NAOKinematics::kmatTable Tis;//Odometry, from supportleg to inertial
+        KDeviceLists::SupportLeg whichleg,nextleg;
 	};
 	ACTIVITY_END
 #endif
