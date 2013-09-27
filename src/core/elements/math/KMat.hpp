@@ -1350,9 +1350,10 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return r;
 		}
 		//Project a point !
-		GenMatrix < T, S - 1, 1 > transform(GenMatrix < T, S - 1, 1 > const & c, T hom = 1) const
+		template<unsigned M>
+		GenMatrix < T, S - 1, 1 > transform(GenMatrix < T, S - 1, M > const & c, T hom = 1) const
 		{
-			GenMatrix < T, S - 1, 1 > nc;
+			GenMatrix < T, S - 1, M > nc;
 
 			if (AisZero == true) //A matrix zero, dont try to do the math:p
 			{
@@ -1369,9 +1370,10 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 			if (BisZero == false) //do some more math for the translatonal part
 			{
-				GenMatrix < T, S - 1, 1 > t = B;
+
+				GenMatrix < T, S - 1, M > t = B;
 				t.scalar_mult(hom);
-				nc += t;
+				nc.column_add(t);
 			}
 
 			return nc;
