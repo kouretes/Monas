@@ -29,7 +29,7 @@ class KWalkMat
 		 float H=0.020 for max stepping height 0.015m
 		 **/
 
-			float H = 0.027, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
+			float H = 0.015, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
 			for (float t = 0; t <= 1; t = t + Ts / Tss, counter++)
 
 				buffer[counter] = (pow(1 - t, 3) * P0 + 3 * pow(1 - t, 2) * t * P1 + 3 * (1 - t) * pow(t, 2) * P2 + pow(t, 3) * P3);
@@ -56,10 +56,10 @@ class KWalkMat
 		}
 		void CubicBezierInterpolation(std::vector<float> &vec, float start, float end, float Ts, float Tss)
 		{ /**
-		 float H=0.020 for max stepping height 0.015m
+		 float H=0.0207 for max stepping height 0.020m
 		 **/
 
-			float H = 0.027, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
+			float H = 0.020, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
 			for (float t = 0; t <= 1; t = t + Ts / Tss)
 			{
 				vec.push_back(pow(1 - t, 3) * P0 + 3 * pow(1 - t, 2) * t * P1 + 3 * (1 - t) * pow(t, 2) * P2 + pow(t, 3) * P3);

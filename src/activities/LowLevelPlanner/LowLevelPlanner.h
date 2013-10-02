@@ -151,8 +151,15 @@ class LowLevelPlanner: public IActivity
 
 		int state, dcm_state;
 		/** Real odometry **/
-		NAOKinematics::kmatTable Tis;//Odometry, from supportleg to inertial
-        KDeviceLists::SupportLeg whichleg,nextleg;
+		NAOKinematics::kmatTable Tis,Tssprime;//Odometry, from supportleg to inertial, transformation from support leg to other leg
+		NAOKinematics::kmatTable Tilerror,Tirerror;
+        KDeviceLists::SupportLeg supportleg;
+        KDeviceLists::ChainsNames chainsupport; //Corresponds to this supportleg
+        bool double_support;
+        /** FSR Transform **/
+        KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
+
+        KVecFloat2 getCoP();
 	};
 	ACTIVITY_END
 #endif

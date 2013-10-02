@@ -8,11 +8,12 @@
 #include "core/elements/math/KMat.hpp"
 #include <vector>
 #include "RobotParameters.h"
+#include <queue>
 #include <iostream>
 #ifndef __Kouretes_Walk_Engine__ControlThread__
 #define __Kouretes_Walk_Engine__ControlThread__
 
-#define PredictionHorizon 51
+#define PreviewWindow 51
 
 template<typename T>
 class CircularBuffer
@@ -109,26 +110,32 @@ class CircularBuffer
 		;
 
 };
+class LIPMPreviewController{
+    private:
+    KMath::KMat::GenMatrix<float, 3, 3> Aobs,Ad;
+    KMath::KMat::GenMatrix<float, 3, 1> Bd,State,Cd,temp;
+    KMath::KMat::GenMatrix<float, 3, 2>  L;
+    //float StateKalman,StatePredict,P,bias;
+    float s,MeasurementNoise;
+    std::queue<float> uBuffer;
+	KMath::KMat::GenMatrix<float,1,2> Ckalman;
+	KMath::KMat::GenMatrix<float, 2, 3>  C;
+	KMath::KMat::GenMatrix<float,2,2>Akalman,ProcessNoise,P;
+	KMath::KMat::GenMatrix<float,2,1>StateKalman,StatePredict,Bkalman,Kgain,tempg;
 
-class LIPMPreviewController
-{
-	private:
-		KMath::KMat::GenMatrix<float, 3, 3> Aobs, Ad;
-		KMath::KMat::GenMatrix<float, 3, 1> Bd, Cd, L, State, temp;
-		KMath::KMat::GenMatrix<float, 1, 3> Gx;
-		KMath::KMat::GenMatrix<float, 50, 1> Gd;
-		KMath::KMat::GenMatrix<float, 51, 1> ZMPReference;
-		KMath::KMat::GenMatrix<float, 51, 1> ZMPReference2;
-		float Gi, Integrationfb, Statefb, Predictionfb, ZMPMeasured, u;
-		int counter;
-		RobotParameters OurRobot;
-	public:
+    KMath::KMat::GenMatrix<float,1,3> Gx;
+    KMath::KMat::GenMatrix<float, PreviewWindow-1, 1> Gd;
+    KMath::KMat::GenMatrix<float,PreviewWindow,1> ZMPReference;
+    float Gi,Integrationfb,Statefb,Predictionfb,u;
+    RobotParameters OurRobot;
+
+ 	public:
 		LIPMPreviewController(RobotParameters robot);
-
-		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer);
+		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured);
 
 		float Com;
-
+		float d;
 };
+
 
 #endif /* defined(__Kouretes_Walk_Engine__ControlThread__) */

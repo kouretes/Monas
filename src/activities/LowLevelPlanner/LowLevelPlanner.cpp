@@ -46,8 +46,9 @@ void LowLevelPlanner::UserInit()
 	state = DO_NOTHING;
 	dcm_state = DCM_STOP;
 
-	whichleg=KDeviceLists::SUPPORT_LEG_NONE;
-	nextleg=KDeviceLists::SUPPORT_LEG_NONE;
+	supportleg=KDeviceLists::SUPPORT_LEG_NONE;
+
+
 	Reset();
 }
 
@@ -61,7 +62,7 @@ void LowLevelPlanner::Reset()
 	dcm_length[1] = 0;
 
 	current_buffer = 0;
-	setStiffness(0.75f);
+	setStiffness(0.9f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -73,8 +74,7 @@ int LowLevelPlanner::Execute()
 	if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
 	{
 		Tis.identity();
-		whichleg=KDeviceLists::SUPPORT_LEG_NONE;
-		nextleg=KDeviceLists::SUPPORT_LEG_NONE;
+		supportleg=KDeviceLists::SUPPORT_LEG_NONE;
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
 		firstrun = false;
 	}
@@ -92,8 +92,8 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.5;
-		y = 0.5;
+		x = 0.0;
+		y = 0.001;
 		z = 0.0;
 		s = 0;
 		wmot->set_command("setWalkTargetVelocity");
@@ -147,8 +147,8 @@ int LowLevelPlanner::Execute()
 	if (speed.size() < 3)
 		std::cerr << "Not Enought Speed Values" << std::endl;
 
-	if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
-		state = FINAL_STEP;
+	/*if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
+		state = FINAL_STEP;*/
 
 	//std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
 
@@ -183,7 +183,6 @@ int LowLevelPlanner::Execute()
 		case DO_STEPS:
 			/*Plan two consecutive Steps with the Predefined Speed
 			 **/
-
 			NaoPlanner.oneStep(speed);
 			NaoPlanner.oneStep(speed);
 
@@ -252,14 +251,26 @@ void LowLevelPlanner::Calculate_Tragectories()
 void LowLevelPlanner::Calculate_Desired_COM()
 {
 
-	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]);
 
-	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y]);
 
-	if (dcm_length[current_buffer] > (dcm_counter + PredictionHorizon))
+	KVecFloat2 copi=getCoP();
+	NAOKinematics::kmatTable t=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
+	t.fast_invert();
+	KVecDouble3 CoMm =(Tis*t).transform(nkin->calculateCenterOfMass());// (Tis*t).transform();
+	CoMm.scalar_mult(1.0/1000.0);
+
+	//CoMm.prettyPrint();
+
+	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X],CoMm(0),copi(0));
+
+	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y],CoMm(1),copi(1));
+
+	//std::cout<<NaoLIPMx->Com<<" "<<NaoLIPMy->Com<<std::endl;
+
+	if (dcm_length[current_buffer] > (dcm_counter + PreviewWindow))
 	{
-		ZmpBuffer[X]->cbPush(ZmpTrajectory[current_buffer][X][dcm_counter + PredictionHorizon]);
-		ZmpBuffer[Y]->cbPush(ZmpTrajectory[current_buffer][Y][dcm_counter + PredictionHorizon]);
+		ZmpBuffer[X]->cbPush(ZmpTrajectory[current_buffer][X][dcm_counter + PreviewWindow]);
+		ZmpBuffer[Y]->cbPush(ZmpTrajectory[current_buffer][Y][dcm_counter + PreviewWindow]);
 	} else
 	{
 		//buffer at the end must load from the other buffer
@@ -271,7 +282,7 @@ void LowLevelPlanner::Calculate_Desired_COM()
 			{
 				int p;
 
-				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer]; //we need more
+				int pos = dcm_counter + PreviewWindow - dcm_length[current_buffer]; //we need more
 				//std::cout <<" Need to add " << pos << std::endl;
 				for (p = 0; p <pos ; p++)
 				{
@@ -281,7 +292,7 @@ void LowLevelPlanner::Calculate_Desired_COM()
 			} else
 			{ //just load the next from the other ready buffer
 
-				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer];
+				int pos = dcm_counter + PreviewWindow - dcm_length[current_buffer];
 				ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][pos]);
 				ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][pos]);
 			}
@@ -296,11 +307,117 @@ void LowLevelPlanner::Calculate_Desired_COM()
 	//	std::cout << " ZmpBuffer size " << ZmpBuffer[X]->size() << std::endl;
 }
 
+KVecFloat2 LowLevelPlanner::getCoP()
+{
+
+	KVecFloat2 res;
+	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
+	KVecDouble3 copl,copr,copi,cops,copsprime;
+	float weightl,weightr,weights, weightsprime;
+
+	for(int i=0;i<4;i++)
+	{
+		fsrl(i)=*sensorPtr[KDeviceLists::L_FSR+i];
+		fsrr(i)=*sensorPtr[KDeviceLists::R_FSR+i];
+	}
+	/*fsrl.prettyPrint();
+	fsrr.prettyPrint();*/
+	/*fsrposl.prettyPrint();
+	fsrposr.prettyPrint();*/
+	//weightl=sqrt(fsrl.norm2());
+	//weightr=sqrt(fsrr.norm2());
+
+	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
+	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
+	//fsrposr=fsrposl;
+	copl=fsrposl*fsrl;
+	copr=fsrposr*fsrr;
+
+	copl.scalar_mult(1./(weightl));
+	copr.scalar_mult(1./(weightr));
+
+	if(weightl<0.05)
+	{
+		copl.zero();
+		weightl=0;
+	}
+
+	if(weightr<0.05)
+	{
+		copr.zero();
+		weightr=0;
+	}
+#define Margin 0.002
+
+	if(weightl==0 || weightr==0)
+	{
+		if(copl(1)>=fsrposl(0,1)-Margin || copl(1)<= fsrposl(1,1)+Margin || copl(0)>=fsrposl(0,0)-Margin ||copl(0)<=fsrposl(2,0)+Margin)
+		{
+			weightl=0;
+			copl.zero();
+		}
+
+
+		if(copr(1)>=fsrposr(0,1) -Margin|| copr(1)<= fsrposr(1,1)+Margin || copr(0)>=fsrposr(0,0)-Margin ||copr(0)<=fsrposr(2,0)+Margin)
+		{
+			weightr=0;
+			copr.zero();
+		}
+
+	}
+
+	copl.scalar_mult(1000);
+	copr.scalar_mult(1000);
+
+	/*copl.prettyPrint();
+	copr.prettyPrint();*/
+
+	/*copr.prettyPrint();
+	copl.prettyPrint();*/
+	if(chainsupport==KDeviceLists::CHAIN_R_LEG)
+	{
+		cops=copr;
+		copsprime=copl;
+		weights=weightr;
+		weightsprime=weightl;
+	}
+	else
+	{
+		cops=copl;
+		copsprime=copr;
+		weights=weightl;
+		weightsprime=weightr;
+	}
+
+
+
+	//std::cout<<"-----------"<<std::endl;
+	/*cops.prettyPrint();
+	copsprime.prettyPrint();
+	std::cout<<weights<<" "<<weightsprime<<std::endl; */
+    //copi=(Tis.transform(cops)).scalar_mult(weights)+ ((Tis*Tssprime).transform(copsprime)).scalar_mult(weightsprime);
+    copi=(Tis.transform(cops)).scalar_mult(weights)+ ((Tis*Tssprime).transform(copsprime)).scalar_mult(weightsprime);
+    copi.scalar_mult(1./(weights+weightsprime));
+
+
+    copi.scalar_mult(1.0/1000.0);
+    //std::cout<<"COP"<<std::endl;
+    //copi.prettyPrint();
+    if((weights+weightsprime)<1)
+		copi.zero();
+
+	res(0)=copi(0);
+	res(1)=copi(1);
+	//res.prettyPrint();
+
+	return res;
+}
+
 int LowLevelPlanner::DCMcallback()
 {
+
 	if (dcm_state == DCM_STOP) //Nothing to execute
 		return 0;
-
 
 	if (dcm_counter >= dcm_length[current_buffer]) //buffer end;
 	{
@@ -311,6 +428,14 @@ int LowLevelPlanner::DCMcallback()
 			dcm_length[current_buffer] = 0;
 			current_buffer = next_buffer;
 			dcm_counter = 0;
+
+			KMath::KMat::transformations::makeTransformation(Tis,
+									(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
+									(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
+									(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000*0,
+									0.0,
+									0.0,
+									(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]);
 		} else
 		{
 			//provlima i telos mallon telos
@@ -321,16 +446,93 @@ int LowLevelPlanner::DCMcallback()
 			return 0;
 		}
 	}
+
+	/** Read Values of joints **/
+	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+	alljoints[j] = *jointPtr[i];
+
+	nkin->setJoints(alljoints); //Feed to kinematics
+
+	KDeviceLists::SupportLeg oldsupportleg=supportleg;
+
+	float pe=(NaoRobot.getWalkParameter(Tds)/2)/NaoRobot.getWalkParameter(Tstep);
+	bool rightsupport=dcm_counter>(dcm_length[current_buffer]/2)*pe &&
+					   dcm_counter<(dcm_length[current_buffer]/2)*(1+pe);
+
+    double_support=(dcm_counter<(dcm_length[current_buffer]/2)*pe*2) ||
+					(dcm_counter>dcm_length[current_buffer]/2 &&
+					 dcm_counter<(dcm_length[current_buffer]/2)*(1+pe*2));
+	//rightsupport=true;
+	if(rightsupport==true)
+		supportleg=KDeviceLists::SUPPORT_LEG_RIGHT;
+	else
+		supportleg=KDeviceLists::SUPPORT_LEG_LEFT;
+
+	//float percentage_ss=NaoRobot.getWalkParameter(Tss)/NaoRobot.getWalkParameter(Tstep);
+	//double_support=dcm_counter>dcm_length[current_buffer]*percentage_ss/2;
+
+
+	//nextleg=KDeviceLists::SUPPORT_LEG_RIGHT;
+	chainsupport= (rightsupport==true)?KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
+
+	KDeviceLists::ChainsNames otherleg= (rightsupport==true)?
+										KDeviceLists::CHAIN_L_LEG:KDeviceLists::CHAIN_R_LEG;
+	NAOKinematics::kmatTable merger=nkin->getForwardFromTo(
+															(NAOKinematics::Effectors)chainsupport,
+															(NAOKinematics::Effectors)otherleg
+														  );
+
+	NAOKinematics::FKvars t;
+	t.p=merger.getTranslation();
+	t.a=merger.getEulerAngles();
+
+	t.p(2)/=10000.0;
+	t.a(0)/=10000.0;
+	t.a(1)/=10000.0;
+
+	Tssprime=NAOKinematics::getTransformation(t);
+
+
+
+	if(oldsupportleg==KDeviceLists::SUPPORT_LEG_NONE) //Initialize to support leg
+	{
+		std::cout<<"RESET ODOMETRY----"<<std::endl;
+		Tis=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
+
+		NAOKinematics::FKvars t;
+		t.p=Tis.getTranslation();
+		t.a=Tis.getEulerAngles();
+		t.p(2)=0;
+		t.a(0)=0;
+		t.a(1)=0;
+
+
+
+
+		Tis=NAOKinematics::getTransformation(t);
+		//Tis.fast_invert();
+	}
+
+	else if(oldsupportleg!=supportleg )
+	{
+		NAOKinematics::kmatTable t=Tssprime;
+		t.fast_invert();
+		std::cout<<"SWITCH LEG----"<<std::endl;
+		Tis*=t;
+	}
+
+
+
 	//std::cout << dcm_counter << " " << current_buffer << " " << dcm_length[current_buffer] << std::endl;
 	Calculate_Desired_COM();
-	whichleg=nextleg;
-	if(dcm_counter<=dcm_length[current_buffer]/2)//(NaoRobot.getWalkParameter(Tstep)/NaoRobot.getWalkParameter(Ts)))
-		nextleg=KDeviceLists::SUPPORT_LEG_RIGHT;
-	else
-		nextleg=KDeviceLists::SUPPORT_LEG_LEFT;
+
+
+
+
 	//std::cout<<"Sup:"<<whichleg<<","<<nextleg<<std::endl;
 
 	std::vector<float> joints_action = Calculate_IK();
+	dcm_counter++;
 	if (joints_action.size() != 12)
 	{
 		std::cerr << "Not enough joint values" << std::endl;
@@ -389,63 +591,43 @@ void LowLevelPlanner::initialise_devices()
 	{
 		LogEntry(LogLevel::FatalError, GetName()) << "Error in getting motion proxy" << e.getDescription();
 	}
-
-	int leg = LEG::LEFT_LEG;
-
-	std::string device_string;
-
-	int idx = 0;
 	//Initialise ptr
 	std::vector<std::string> jointKeys = KDeviceLists::getJointKeys();
 	std::vector<std::string> sensorKeys = KDeviceLists::getSensorKeys();
 
-	for (leg = 0; leg < 2; leg++) //both legs
+
+	fsrposl(0,0)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontLeft/Sensor/XPosition");
+	fsrposl(0,1)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontRight/Sensor/XPosition");
+	fsrposl(0,2)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearLeft/Sensor/XPosition");
+	fsrposl(0,3)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearRight/Sensor/XPosition");
+
+	fsrposr(0,0)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontLeft/Sensor/XPosition");
+	fsrposr(0,1)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontRight/Sensor/XPosition");
+	fsrposr(0,2)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearLeft/Sensor/XPosition");
+	fsrposr(0,3)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearRight/Sensor/XPosition");
+
+
+	fsrposl(1,0)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontLeft/Sensor/YPosition");
+	fsrposl(1,1)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontRight/Sensor/YPosition");
+	fsrposl(1,2)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearLeft/Sensor/YPosition");
+	fsrposl(1,3)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearRight/Sensor/YPosition");
+
+	fsrposr(1,0)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontLeft/Sensor/YPosition");
+	fsrposr(1,1)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontRight/Sensor/YPosition");
+	fsrposr(1,2)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearLeft/Sensor/YPosition");
+	fsrposr(1,3)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearRight/Sensor/YPosition");
+
+
+	/*for(int i=0;i<4;i++)
 	{
-		if (leg == LEG::LEFT_LEG)
-			idx = KDeviceLists::L_FSR;
-		else if (leg == LEG::RIGHT_LEG)
-			idx = KDeviceLists::R_FSR;
-		else
-			std::cerr << "The robot has 2 legs only leg :" << leg << " unrecognized.!! " << std::endl;
+		fsrposl(1,i)=-fsrposl(1,i);
+		fsrposr(1,i)=-fsrposr(1,i);
+	}*/
 
-		std::string supportleg_prefix = (leg == LEG::LEFT_LEG) ? "L" : "R";
-		for (int i = 0; i < 2; i++)
-		{
-			std::string axis = (i == 0) ? "Y" : "X";
-			fsr_position[0][i][leg] = ((i == 0) ? -1 : 1) * (float) memory->getData("Device/SubDeviceList/" + supportleg_prefix + "Foot/FSR/FrontLeft/Sensor/" + axis + "Position");
-			fsr_position[1][i][leg] = ((i == 0) ? -1 : 1)
-					* (float) memory->getData("Device/SubDeviceList/" + supportleg_prefix + "Foot/FSR/FrontRight/Sensor/" + axis + "Position");
-			fsr_position[2][i][leg] = ((i == 0) ? -1 : 1) * (float) memory->getData("Device/SubDeviceList/" + supportleg_prefix + "Foot/FSR/RearLeft/Sensor/" + axis + "Position");
-			fsr_position[3][i][leg] = ((i == 0) ? -1 : 1) * (float) memory->getData("Device/SubDeviceList/" + supportleg_prefix + "Foot/FSR/RearRight/Sensor/" + axis + "Position");
-
-			for (int j = 0; j < 4; j++)
-				std::cout << "FSR pos axis " << axis << " " << j << " " << (float) fsr_position[j][i][leg] << std::endl;
-		}
-
-		for (int i = idx; i < (idx + 4/* KDeviceLists::FSR_SIZE*/); i++)
-		{
-			device_string = sensorKeys[i];
-			sensorPtr.push_back((float *) memory->getDataPtr(device_string));
-			std::cout << "sensorKeys[" << i - idx << "]:  " << device_string << std::endl;
-
-		}
-	}
-
-	for (int i = 0; i < KDeviceLists::GYR_SIZE; i++)
+	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
+	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++)
 	{
-		sensorPtr.push_back((float *) memory->getDataPtr(sensorKeys[KDeviceLists::GYR + i]));
-		std::cout << "sensorKeys[end]:  " << sensorKeys[KDeviceLists::GYR + i] << std::endl;
-		//cout << "Value[" << i << "]: " << *(sensorPtr.end()) <<std::endl;
-		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::GYR + i] << std::endl;
-
-	}
-	std::cout << "sensorPtr.size" << sensorPtr.size();
-	for (int i = 0; i < KDeviceLists::ACC_SIZE; i++)
-	{
-		sensorPtr.push_back((float *) memory->getDataPtr(sensorKeys[KDeviceLists::ACC + i]));
-
-		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::ACC + i] << std::endl;
-
+		sensorPtr[i] = (float *) memory->getDataPtr(sensorKeys[i]);
 	}
 
 	jointPtr.resize(KDeviceLists::NUMOFJOINTS);
@@ -459,6 +641,7 @@ void LowLevelPlanner::initialise_devices()
 	}
 
 	std::cout << " Number of position joints " << jointPtr.size() << std::endl;
+	std::cout << " Number of sensor values " << sensorPtr.size() << std::endl;
 	createJointsPositionActuatorAlias();
 	prepareJointsPositionActuatorCommand();
 
@@ -541,69 +724,81 @@ void LowLevelPlanner::setStiffness(const float& stiffnessValue)
 
 std::vector<float> LowLevelPlanner::Calculate_IK()
 {
-	/** Read Values of joints **/
-	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
-	alljoints[j] = *jointPtr[i];
 
-	/** Calculate COM
-
-	 **/
-	nkin->setJoints(alljoints); //Feed to kinematics
-	KDeviceLists::ChainsNames chainsupport= (nextleg==KDeviceLists::SUPPORT_LEG_RIGHT)?
-											KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
-
-
-	if(whichleg==KDeviceLists::SUPPORT_LEG_NONE) //Initialize to support leg
-	{
-		Tis=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
-
-		NAOKinematics::FKvars t;
-		t.p=Tis.getTranslation();
-		t.a=Tis.getEulerAngles();
-		t.p(2)=0;
-		t.a(0)=0;
-		t.a(1)=0;
-
-
-
-
-		Tis=NAOKinematics::getTransformation(t);
-		//Tis.fast_invert();
-	}
-
-	else if(whichleg!=nextleg )
-	{
-		KDeviceLists::ChainsNames oldsupport= (whichleg==KDeviceLists::SUPPORT_LEG_RIGHT)?
-											KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
-		NAOKinematics::kmatTable merger=nkin->getForwardFromTo(
-																(NAOKinematics::Effectors)oldsupport,
-																(NAOKinematics::Effectors)chainsupport
-															  );
-
-		NAOKinematics::FKvars t;
-		t.p=merger.getTranslation();
-		t.a=merger.getEulerAngles();
-		t.p(2)=0;
-		t.a(0)=0;
-		t.a(1)=0;
-
-		std::cout<<"Switch"<<dcm_counter<<std::endl;
-
-		Tis*=NAOKinematics::getTransformation(t);
-
-	}
-	/*std::cout<<"Tis:"<<std::endl;
-    Tis.prettyPrint();*/
-
-	//Get Tps
+		//Get Tps
 	NAOKinematics::kmatTable Tsp=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
 	Tsp.fast_invert();//Tps->Tsp
 
 
 	NAOKinematics::kmatTable Tip,Tpi,Til,Tir;
 	Tip=Tis*Tsp;
+
 	Tpi=Tip;
 	Tpi.fast_invert();//Get Inverse transform
+
+
+	if(dcm_counter==0)
+	{
+		Tilerror.identity();
+		Tirerror.identity();
+	}
+	else
+	{
+
+		NAOKinematics::kmatTable l=nkin->getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
+		NAOKinematics::kmatTable r=nkin->getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
+		NAOKinematics::kmatTable Tilold,Tirold;
+
+		KMath::KMat::transformations::makeTransformation(Tilold,
+				(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter-1]*1000,
+				(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter-1]*1000,
+				(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter-1]*1000,
+				0.0,
+				0.0,
+				(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter-1]
+				);
+
+		KMath::KMat::transformations::makeTransformation(Tirold,
+				(double)FeetTrajectory[current_buffer][X][RIGHT][dcm_counter-1]*1000,
+				(double)FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter-1]*1000,
+				(double)FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter-1]*1000,
+				0.0,
+				0.0,
+				(double)FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter-1]
+				);
+		l=Tip*l;
+		l.fast_invert();
+		r=Tip*r;
+		r.fast_invert();
+		Tilerror=l*Tilold;
+		Tirerror=r*Tirold;
+
+		NAOKinematics::FKvars t;
+		t.p=Tilerror.getTranslation();
+		t.a=Tilerror.getEulerAngles();
+
+		t.p.scalar_mult(0.1);
+		t.a.scalar_mult(0.1);
+
+		Tilerror=NAOKinematics::getTransformation(t);
+
+		t.p=Tirerror.getTranslation();
+		t.a=Tirerror.getEulerAngles();
+
+		t.p.scalar_mult(0.1);
+		t.a.scalar_mult(0.1);
+
+		Tirerror=NAOKinematics::getTransformation(t);
+
+
+
+
+
+
+	}
+
+
+
 	/*std::cout<<"Tip:"<<std::endl;
 	Tip.prettyPrint();
 	Tpi.prettyPrint();*/
@@ -631,18 +826,39 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	KVecDouble3 com_error,desired;//All in inertial frame;
 	//std::cout<<NaoRobot.getWalkParameter(ComZ)<<std::endl;
 	desired=KVecDouble3( NaoLIPMx->Com,NaoLIPMy->Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
-
+	/*desired(1)/=2;
+	desired(2)/=2;*/
+	//Til.getTranslation().prettyPrint();
+	//.prettyPrint();
+	//Tis.getTranslation().prettyPrint();
+	//desired.prettyPrint();
 	std::vector<float> ret;
 	Tipprime=Tip;
-	for(unsigned iter=0;iter<3;iter++)
+
+
+	for(unsigned iter=0;iter<1;iter++)
 	{
 
 		KVecDouble3 measured = nkin->calculateCenterOfMass();
+		measured(2)=-40;
 		com_error=desired;
 		com_error-=Tipprime.transform(measured);
+		/*com_error(0)*=0.1;
+		com_error(1)*=0.1;*/
+		//if(double_support==false)
+			//com_error(2)*=0.99;
+		//com_error(2)*=0.1;
+
+		//com_error.scalar_mult(0.001);
+		//com_error(2)/=2;
+		//com_error.scalar_mult(-1);
+		//com_error.scalar_mult(0.5);
+		//com_error(2)*=2;
+		//com_error.prettyPrint();
+		//com_error.zero();
 		//com_error(0)*=0.6;
 		//com_error.scalar_mult(0.999);
-		com_error.scalar_mult(1);
+		//com_error.scalar_mult(1.0/100);
 		//Fix rotation first, using yawpitchroll coupling
 		//First generate Tipprime and then invert
 		KMath::KMat::transformations::makeRotationXYZ(Tpprimei,
@@ -655,23 +871,26 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 		//Tpprimei.identity();
 		Tpprimei.setTranslation(com_error+Tipprime.getTranslation());
+		//Tpprimei(2,3)=270;
 		Tipprime=Tpprimei;
+
+
 		Tpprimei.fast_invert(); // Tip'->Tp'i
 		//Generate inverse kin targets as Tp'{l,r}
 		//Tpprimei.prettyPrint();
 
 		NAOKinematics::kmatTable Tpprimel,Tpprimer;
 
-		Tpprimel=Tpprimei*Til;
-		Tpprimer=Tpprimei*Tir;
+		Tpprimel=Tpprimei*Til*Tilerror;
+		Tpprimer=Tpprimei*Tir*Tirerror;
 
 		/*Tpprimel.prettyPrint();
 		Tpprimer.prettyPrint();*/
 
-		//Because Stelios is a fucking idiot, I need to add the footX offset to the targets now
 
-		Tpprimel(0,3)-=30;
-		Tpprimer(0,3)-=30;
+		/*Tpprimel(0,3)-=30;
+		Tpprimer(0,3)-=30;*/
+
 
 
 
@@ -680,6 +899,30 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 		std::vector<std::vector<float> > resultR, resultL;
+		/*
+
+		KVecDouble3 l=KVecDouble3(
+				(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000
+				);
+		KVecDouble3 r=KVecDouble3(
+				(double)FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter]*1000,
+				(double)FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter]*1000
+				);
+		KVecDouble3 temptemp;
+		temptemp=desired;
+		temptemp-=measured;
+		temptemp.scalar_mult(-1);
+		l=l+temptemp;
+		r=r+temptemp;
+
+		Tpprimel.identity();
+		Tpprimer.identity();
+		Tpprimel.setTranslation(l);
+		Tpprimer.setTranslation(r);
+		*/
 
 		resultL = nkin->inverseLeftLeg(Tpprimel);
 		resultR = nkin->inverseRightLeg(Tpprimer);
@@ -705,15 +948,17 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 	//com_error.prettyPrint();
 
+	//Store Com for feedback
+
 
 	//std::cout << " Number of joint values : " << ret.size() <<std::endl;
 
 
 
-	dcm_counter++;
 
 
 
+	//ret.clear();
 	return ret;
 }
 
