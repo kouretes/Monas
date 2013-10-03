@@ -95,7 +95,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x =0.0;
+		x =2.00;
 		y = 0.001;
 		z = 0.0;
 		s = 1;

@@ -52,7 +52,7 @@ OurRobot=robot;
     Cd(2)=1;
 
 
-     //Defining the Optimal Gains for the Preview Controller for Preview Horizon 50 and ComZ=0.268
+    //Defining the Optimal Gains for the Preview Controller for Preview Horizon 50 and ComZ=0.268
     //Integral Feedback Gain
     Gi=-56.7626;
     //State Feedback Gain
@@ -111,16 +111,16 @@ OurRobot=robot;
     Gd(48)=  7.7201;
     Gd(49)=  7.2774;
 
-    //Defining the Optimal Observer Gain L
+    //Defining the Optimal Observer Gain L KALMAN BUCY
     /*L(0)=0.0359;
     L(1)=-0.3438;
     L(2)=-0.5050;*/
-    L(0,0)=0.1161;
-    L(0,1)=0.0301;
-    L(1,0)=-0.1401;
-    L(1,1)=-0.3260 ;
-    L(2,0)=2.3890;
-    L(2,1)=-0.5792;
+    L(0,0)=0.1155;
+    L(0,1)=-0.0052;
+    L(1,0)=-0.7272;
+    L(1,1)=-0.0730 ;
+    L(2,0)=-0.0052;
+    L(2,1)=0.0083;
 
     State(0)=0.000;
     State(1)=0.000;
@@ -258,7 +258,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     temp.scalar_mult(u);
 
     State+=temp;
-    State+=L*error;
+    State+=Ad*L*error;
     //std::cout<<"State:"<<std::endl;
     //State.prettyPrint();
     //temp=L;
