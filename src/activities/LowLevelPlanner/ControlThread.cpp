@@ -266,7 +266,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
 
    	//Estimated COM position
-	Com = State(0)+State(1)*2*OurRobot.getWalkParameter(Ts);///2;
+	Com = State(0)+State(1)*uBuffer.size()*OurRobot.getWalkParameter(Ts)/2;
 	//d=State(1)*OurRobot.getWalkParameter(Ts);
 	//std::cout<<"ddd"<<d<<std::endl;
 }

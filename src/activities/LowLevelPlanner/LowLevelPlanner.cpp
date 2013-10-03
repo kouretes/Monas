@@ -48,6 +48,9 @@ void LowLevelPlanner::UserInit()
 
 	supportleg=KDeviceLists::SUPPORT_LEG_NONE;
 
+	Tilerror.identity();
+	Tirerror.identity();
+
 
 	Reset();
 }
@@ -92,10 +95,10 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.0;
+		x =0.0;
 		y = 0.001;
 		z = 0.0;
-		s = 0;
+		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->add_parameter(x);
 		wmot->add_parameter(y);
@@ -463,6 +466,20 @@ int LowLevelPlanner::DCMcallback()
 					(dcm_counter>dcm_length[current_buffer]/2 &&
 					 dcm_counter<(dcm_length[current_buffer]/2)*(1+pe*2));
 	//rightsupport=true;
+	//progress of double support
+	if(dcm_counter<dcm_length[current_buffer]/2.0)
+	{
+		double_support_progress=(dcm_counter*1.0)/(dcm_length[current_buffer]/2.0);
+	}
+	else
+	{
+		double_support_progress=(dcm_counter*1.0-dcm_length[current_buffer]/2.0)/(dcm_length[current_buffer]/2);
+	}
+	double_support_progress/=(NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tstep));
+
+	if(double_support==false)
+			double_support_progress=0;
+	std::cout<<"double_support_progress:"<<double_support_progress<<std::endl;
 	if(rightsupport==true)
 		supportleg=KDeviceLists::SUPPORT_LEG_RIGHT;
 	else
@@ -736,13 +753,18 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	Tpi=Tip;
 	Tpi.fast_invert();//Get Inverse transform
 
+	float corr=double_support_progress;
+	//if(double_support)
+		//corr=1;
+	if(corr>0.5) corr=corr-0.5;
+	corr*=2;
+	if(corr<0.7) corr=0.7;
 
-	if(dcm_counter==0)
-	{
-		Tilerror.identity();
-		Tirerror.identity();
-	}
-	else
+
+
+
+
+	if(dcm_counter>0)
 	{
 
 		NAOKinematics::kmatTable l=nkin->getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
@@ -777,16 +799,16 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		t.p=Tilerror.getTranslation();
 		t.a=Tilerror.getEulerAngles();
 
-		t.p.scalar_mult(0.1);
-		t.a.scalar_mult(0.1);
+		t.p.scalar_mult(corr/100);
+		t.a.scalar_mult(corr/100);
 
 		Tilerror=NAOKinematics::getTransformation(t);
 
 		t.p=Tirerror.getTranslation();
 		t.a=Tirerror.getEulerAngles();
 
-		t.p.scalar_mult(0.1);
-		t.a.scalar_mult(0.1);
+		t.p.scalar_mult(corr/100);
+		t.a.scalar_mult(corr/100);
 
 		Tirerror=NAOKinematics::getTransformation(t);
 
@@ -836,15 +858,18 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	Tipprime=Tip;
 
 
-	for(unsigned iter=0;iter<1;iter++)
+	for(unsigned iter=0;iter<2;iter++)
 	{
 
 		KVecDouble3 measured = nkin->calculateCenterOfMass();
-		measured(2)=-40;
+		//measured(2)=-40;
 		com_error=desired;
 		com_error-=Tipprime.transform(measured);
-		/*com_error(0)*=0.1;
-		com_error(1)*=0.1;*/
+
+
+		com_error(2)*=corr;
+
+
 		//if(double_support==false)
 			//com_error(2)*=0.99;
 		//com_error(2)*=0.1;

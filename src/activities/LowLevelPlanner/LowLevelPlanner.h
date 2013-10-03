@@ -156,6 +156,7 @@ class LowLevelPlanner: public IActivity
         KDeviceLists::SupportLeg supportleg;
         KDeviceLists::ChainsNames chainsupport; //Corresponds to this supportleg
         bool double_support;
+        float double_support_progress;//Progress of double support, zero in single supports
         /** FSR Transform **/
         KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
 
