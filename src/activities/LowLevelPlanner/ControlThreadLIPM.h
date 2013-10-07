@@ -115,7 +115,8 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float, 3, 3> Aobs,Ad;
     KMath::KMat::GenMatrix<float, 3, 1> Bd,State,Cd,temp;
     KMath::KMat::GenMatrix<float, 3, 2>  L;
-
+    //float StateKalman,StatePredict,P,bias;
+    float s,MeasurementNoise;
     std::queue<float> uBuffer;
 	KMath::KMat::GenMatrix<float,1,2> Ckalman;
 	KMath::KMat::GenMatrix<float, 2, 3>  C;
@@ -125,7 +126,7 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float,1,3> Gx;
     KMath::KMat::GenMatrix<float, PreviewWindow-1, 1> Gd;
     KMath::KMat::GenMatrix<float,PreviewWindow,1> ZMPReference;
-    float Gi,Integrationfb,Statefb,Predictionfb,u,s,MeasurementNoise;
+    float Gi,Integrationfb,Statefb,Predictionfb,u;
     RobotParameters OurRobot;
 
  	public:

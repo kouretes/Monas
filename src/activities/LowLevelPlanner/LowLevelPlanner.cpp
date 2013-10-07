@@ -95,7 +95,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x =2.00;
+		x =0.00;
 		y = 0.001;
 		z = 0.0;
 		s = 1;
@@ -435,7 +435,7 @@ int LowLevelPlanner::DCMcallback()
 			KMath::KMat::transformations::makeTransformation(Tis,
 									(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
 									(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
-									(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000*0,
+									(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000,
 									0.0,
 									0.0,
 									(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]);
