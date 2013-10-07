@@ -32,8 +32,8 @@ void LowLevelPlanner::UserInit()
 	 Initializing DCM
 	 **/
 	initialise_devices();
-	ZmpBuffer[X] = new CircularBuffer<float>(51);
-	ZmpBuffer[Y] = new CircularBuffer<float>(51);
+	ZmpBuffer[X] = new CircularBuffer<float>(PreviewWindow);
+	ZmpBuffer[Y] = new CircularBuffer<float>(PreviewWindow);
 
 	next_2B_inserted = 0;
 
@@ -95,8 +95,8 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x =0.00;
-		y = 0.001;
+		x =0.000;
+		y = 0.0001;
 		z = 0.0;
 		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
@@ -171,7 +171,7 @@ int LowLevelPlanner::Execute()
 
 			//std::cout << " Zmplength " << zmplength << " foot len: " << dcm_length[next_2B_inserted] << std::endl;
 
-			for (int i = 0; i < dcm_length[next_2B_inserted] && i < 51; i++)
+			for (int i = 0; i < dcm_length[next_2B_inserted] && i < PreviewWindow; i++)
 			{
 				ZmpBuffer[X]->cbPush(ZmpTrajectory[next_2B_inserted][X][i]);
 				ZmpBuffer[Y]->cbPush(ZmpTrajectory[next_2B_inserted][Y][i]);
@@ -306,8 +306,7 @@ void LowLevelPlanner::Calculate_Desired_COM()
 			ZmpBuffer[Y]->pop();
 		}
 	}
-	//if(ZmpBuffer[X]->size()  < 51)
-	//	std::cout << " ZmpBuffer size " << ZmpBuffer[X]->size() << std::endl;
+
 }
 
 KVecFloat2 LowLevelPlanner::getCoP()
@@ -443,6 +442,7 @@ int LowLevelPlanner::DCMcallback()
 		{
 			//provlima i telos mallon telos
 			std::cout << "Just stopping " << std::endl;
+			//sleep(10);
 			state = DO_NOTHING;
 			dcm_state = DCM_STOP;
 			dcm_counter = 0;
@@ -479,7 +479,7 @@ int LowLevelPlanner::DCMcallback()
 
 	if(double_support==false)
 			double_support_progress=0;
-	std::cout<<"double_support_progress:"<<double_support_progress<<std::endl;
+	//std::cout<<"double_support_progress:"<<double_support_progress<<std::endl;
 	if(rightsupport==true)
 		supportleg=KDeviceLists::SUPPORT_LEG_RIGHT;
 	else
@@ -534,7 +534,7 @@ int LowLevelPlanner::DCMcallback()
 	{
 		NAOKinematics::kmatTable t=Tssprime;
 		t.fast_invert();
-		std::cout<<"SWITCH LEG----"<<std::endl;
+		//std::cout<<"SWITCH LEG----"<<std::endl;
 		Tis*=t;
 	}
 
@@ -970,18 +970,6 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 	}
-
-	//com_error.prettyPrint();
-
-	//Store Com for feedback
-
-
-	//std::cout << " Number of joint values : " << ret.size() <<std::endl;
-
-
-
-
-
 
 	//ret.clear();
 	return ret;
