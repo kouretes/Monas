@@ -13,7 +13,7 @@
 #ifndef __Kouretes_Walk_Engine__ControlThread__
 #define __Kouretes_Walk_Engine__ControlThread__
 
-#define PreviewWindow 51
+#define PreviewWindow 81
 
 template<typename T>
 class CircularBuffer
