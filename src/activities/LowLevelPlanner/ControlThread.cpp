@@ -207,7 +207,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)));//StatePredict(0));
-	error.scalar_mult(0.5);
+	error.scalar_mult(0.8);
 
     State=Ad*State;
 
@@ -219,5 +219,5 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
 
     //Estimated COM position
-    Com=State(0)+State(1)*OurRobot.getWalkParameter(Ts)/2;
+    Com=State(0)+(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts)*3;
 }
