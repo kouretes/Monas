@@ -116,21 +116,25 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float, 3, 1> Bd,State,Cd,temp;
     KMath::KMat::GenMatrix<float, 3, 2>  L;
 
-    std::queue<float> uBuffer;
-	KMath::KMat::GenMatrix<float,1,2> Ckalman;
+    std::queue<float> uBuffer,combuffer;
+	KMath::KMat::GenMatrix<float,2,1> Ckalman;
+	KMath::KMat::GenMatrix<float,1,2> Kgain;
 	KMath::KMat::GenMatrix<float, 2, 3>  C;
-	KMath::KMat::GenMatrix<float,2,2>Akalman,ProcessNoise,P;
-	KMath::KMat::GenMatrix<float,2,1>StateKalman,StatePredict,Bkalman,Kgain,tempg;
+	KMath::KMat::GenMatrix<float,2,2>s,MeasurementNoise;
+	KMath::KMat::GenMatrix<float,1,1>P, ProcessNoise;
+	KMath::KMat::GenMatrix<float,2,1> ykalman;
+	KMath::KMat::GenMatrix<float,1,1>StateKalman,StatePredict,Bkalman;
+	KMath::KMat::GenMatrix<float,3,1>ybias;
 
     KMath::KMat::GenMatrix<float,1,3> Gx;
     KMath::KMat::GenMatrix<float, PreviewWindow-1, 1> Gd;
     KMath::KMat::GenMatrix<float,PreviewWindow,1> ZMPReference;
-    float Gi,Integrationfb,Statefb,Predictionfb,u,s,MeasurementNoise;
+    float Gi,Integrationfb,Statefb,Predictionfb,u;
     RobotParameters OurRobot;
 
  	public:
 		LIPMPreviewController(RobotParameters robot);
-		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured);
+		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured,int supportleg);
 
 		float Com;
 		float d;

@@ -29,10 +29,57 @@ class KWalkMat
 		 float H=0.020 for max stepping height 0.015m
 		 **/
 
-			float H = 0.015, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
+			float H = 0.02, P0 = start, P1 = start + H, P2 = end + H, P3 = end;
 			for (float t = 0; t <= 1; t = t + Ts / Tss, counter++)
 
 				buffer[counter] = (pow(1 - t, 3) * P0 + 3 * pow(1 - t, 2) * t * P1 + 3 * (1 - t) * pow(t, 2) * P2 + pow(t, 3) * P3);
+
+		}
+
+		void trigInterpolation(float *buffer, int &counter, float Ts, float Tss)
+		{
+			float Hover2 = 0.006;
+			for (float t = 0; t <= Tss; t = t + Ts , counter++)
+				buffer[counter]  =Hover2*(1-cos((t*M_PI*2)/Tss));
+
+		}
+
+		void FifthOrderPolynomialInterpolation(float *buffer, int &counter, float Ts, float T)
+		{
+			float zi[2] = { 0, 0.0414 };
+			float zf[2] = { 0.0414, 0 };
+			float zdoti[2] = { 0, 0.0004 };
+			float zddoti[2] = { 0, -0.00002 };
+			float zdotf[2] = { 0.0004, 0 };
+			float zddotf[2] = { -0.00002, 0 };
+			float w1[2] = { 0, 0 };
+			float w2[2] = { 0, 0 };
+			float w3[2] = { 0, 0 };
+			float w4[2] = { 0, 0 };
+			float w5[2] = { 0, 0 };
+			float w6[2] = { 0, 0 };
+			for (unsigned j = 0; j < 2; j++)
+			{
+				w1[j] = zi[j];
+				w2[j] = zdoti[j];
+				w3[j] = zddoti[j] / 2;
+				w4[j] = 10 * ((zf[j] - zi[j]) / (pow(T, 3)) - zdoti[j] / pow(T, 2) - zddoti[j] / (2 * T)) - 4 * ((zdotf[j] - zdoti[j]) / pow(T, 2) - zddoti[j] / T)
+						+ (1 / 2) * ((zddotf[j] - zddoti[j]) / T);
+
+				w5[j] = -15 * ((zf[j] - zi[j]) / pow(T, 4) - zdoti[j] / pow(T, 3) - zddoti[j] / (2 * pow(T, 2))) + 7 * ((zdotf[j] - zdoti[j]) / pow(T, 3) - zddoti[j] / pow(T, 2))
+						- ((zddotf[j] - zddoti[j]) / pow(T, 2));
+				w6[j] = 6 * ((zf[j] - zi[j]) / pow(T, 5) - zdoti[j] / pow(T, 4) - zddoti[j] / pow(T, 3)) - 3 * ((zdotf[j] - zdoti[j]) / pow(T, 4) - zddoti[j] / pow(T, 3))
+						+ (1 / 2) * ((zddotf[j] - zddoti[j]) / pow(T, 3));
+			}
+			for (float t = 0; t <= T; t += Ts,counter++)
+			{
+
+				if (t < T / 2)
+					buffer[counter]=(w6[1] * pow(t, 5) + w5[1] * pow(t, 4) + w4[1] * pow(t, 3) + w3[1] * pow(t, 2) + w2[1] * t + w1[1]);
+				else
+					buffer[counter]=(w6[2] * pow(t, 5) + w5[2] * pow(t, 4) + w4[2] * pow(t, 3) + w3[2] * pow(t, 2) + w2[2] * t + w1[2]);
+
+			}
 
 		}
 

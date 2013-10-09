@@ -38,76 +38,75 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     Cd(1)=0.0000;
     Cd(2)=-OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g);
 
-
  //Defining the Optimal Gains for the Preview Controller
     //Integral Feedback Gain
-    Gi=652.5882;
+    Gi=1.5277e+03;
     //State Feedback Gain
-    Gx(0,0)=1.0e+04 * 2.3094;
-    Gx(0,1)=1.0e+04 * 0.4202;
-    Gx(0,2)=1.0e+04 * 0.0078;
+    Gx(0,0)=1.0e+04 * 5.2363 ;
+    Gx(0,1)=1.0e+04 * 0.9236;
+    Gx(0,2)=1.0e+04 * 0.0122;
     //Predicted Reference Gain
-    Gd(0)=-0.6526;
-    Gd(1)=-0.7654;
-    Gd(2)=-0.8979;
-    Gd(3)=-1.0025;
-    Gd(4)=-1.0622;
-    Gd(5)=-1.0777;
-    Gd(6)=-1.0583;
-    Gd(7)=-1.0154;
-    Gd(8)=-0.9595;
-    Gd(9)=-0.8986;
-    Gd(10)=-0.8380;
-    Gd(11)=-0.7807;
-    Gd(12)=-0.7280;
-    Gd(13)=-0.6802;
-    Gd(14)=-0.6369;
-    Gd(15)=-0.5974;
-    Gd(16)=-0.5613;
-    Gd(17)=-0.5278;
-    Gd(18)=-0.4966;
-    Gd(19)=-0.4673;
-    Gd(20)=-0.4398;
-    Gd(21)=-0.4138;
-    Gd(22)=-0.3893;
-    Gd(23)=-0.3662;
-    Gd(24)=-0.3445;
-    Gd(25)=-0.3239;
-    Gd(26)=-0.3046;
-    Gd(27)=-0.2865;
-    Gd(28)=-0.2694;
-    Gd(29)=-0.2533;
-    Gd(30)=-0.2382;
-    Gd(31)=-0.2240;
-    Gd(32)=-0.2107;
-    Gd(33)=-0.1981;
-    Gd(34)=-0.1863;
-    Gd(35)=-0.1752;
-    Gd(36)=-0.1648;
-    Gd(37)=-0.1550;
-    Gd(38)=-0.1458;
-    Gd(39)=-0.1371;
-    Gd(40)=-0.1289;
-    Gd(41)=-0.1212;
-    Gd(42)=-0.1140;
-    Gd(43)=-0.1072;
-    Gd(44)=-0.1008;
-    Gd(45)=-0.0948;
-    Gd(46)=-0.0892;
-    Gd(47)=-0.0839;
-    Gd(48)=-0.0789;
-    Gd(49)=-0.0742;
+    Gd(0)=-1.5277;
+    Gd(1)=-2.1459;
+    Gd(2)=-2.5852;
+    Gd(3)=-2.7168;
+    Gd(4)=-2.6433;
+    Gd(5)=-2.4842;
+    Gd(6)=-2.3114;
+    Gd(7)=-2.1535;
+    Gd(8)=-2.0149;
+    Gd(9)=-1.8916;
+    Gd(10)=-1.7789;
+    Gd(11)=-1.6738;
+    Gd(12)=-1.5748;
+    Gd(13)=-1.4813;
+    Gd(14)=-1.3932;
+    Gd(15)=-1.3102;
+    Gd(16)=-1.2321;
+    Gd(17)=-1.1586;
+    Gd(18)=-1.0896;
+    Gd(19)=-1.0246;
+    Gd(20)=-0.9636;
+    Gd(21)=-0.9062;
+    Gd(22)=-0.8522;
+    Gd(23)=-0.8014;
+    Gd(24)=-0.7537;
+    Gd(25)=-0.7088;
+    Gd(26)=-0.6665;
+    Gd(27)=-0.6268;
+    Gd(28)=-0.5895;
+    Gd(29)=-0.5543;
+    Gd(30)=-0.5213;
+    Gd(31)=-0.4902;
+    Gd(32)=-0.4610;
+    Gd(33)=-0.4336;
+    Gd(34)=-0.4077;
+    Gd(35)=-0.3834;
+    Gd(36)=-0.3606;
+    Gd(37)=-0.3391;
+    Gd(38)=-0.3189;
+    Gd(39)=-0.2999;
+    Gd(40)=-0.2820;
+    Gd(41)=-0.2652;
+    Gd(42)=-0.2494;
+    Gd(43)=-0.2346;
+    Gd(44)=-0.2206;
+    Gd(45)=-0.2074;
+    Gd(46)=-0.1951;
+    Gd(47)=-0.1835;
+    Gd(48)=-0.1725;
+    Gd(49)=-0.1622;
     Gd.scalar_mult(1.0e+03);
-    //Defining the O    ptimal Observer Gain L
-    //L(0)=0.0360;
+    //Defining the Optimal Observer Gain L
+    //L(0)=0.0360;;
     //L(1)=-0.3445;
     //L(2)=-0.5056;
-    L(0,0)=0.1051;
-    L(0,1)=0.1063;
-    L(1,0)=-0.2455;
-    L(1,1)=-0.3425;
-    L(2,0)=-18.2483;
-    L(2,1)=-27.8822;
+    L(0,0)=0.0257;
+    L(0,1)=0.0431;
+    L(1,0)=-0.1277;
+    L(1,1)=-0.2691;
+    L(2,0)=-4.4608;
+    L(2,1)=-8.7208;
 
     State(0)=0;
     State(1)=0;
@@ -116,50 +115,105 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     Integrationfb=0;
     Statefb=0;
     Predictionfb=0;
-    Akalman(0,0)=1.000;
+    /*Akalman(0,0)=1.000;
     Akalman(0,1)=0;//-OurRobot.getWalkParameter(Ts);
     Akalman(1,0)=0.000;
-    Akalman(1,1)=1.000;
+    Akalman(1,1)=1.000;*/
+    Bkalman.zero();
     Bkalman(0)=1.000;//OurRobot.getWalkParameter(Ts);
-    Bkalman(1)=0.000;
-	StateKalman(0)=0.000;
-	StateKalman(1)=0.000;
-	ProcessNoise.zero();
-	ProcessNoise(0,0)=1e-5;
-	ProcessNoise(1,1)=1e-7;
+    //Bkalman(1)=0.000;
+    StateKalman.zero();
+    ProcessNoise.zero();
+	ProcessNoise(0,0)=1e-10;
 	P.zero();
-	P(0,0)=0.0001;
-	P(1,1)=0.0000005;
-	MeasurementNoise=0.001;
-	uBuffer.push(0);
+	P(0,0)=1e-8;
+	MeasurementNoise.identity();
+	MeasurementNoise(0,0)=0.0001;
+	MeasurementNoise(1,1)=0.5;
+	Ckalman.zero();
 	Ckalman(0,0)=1.000;
-	Ckalman(0,1)=1.000;
+	Ckalman(1,0)=1;
+
+	//MeasurementNoise.scalar_mult(0.1);
+	uBuffer.push(0);
+	ybias.zero();
+
+
+
+
 }
 
 
 
-void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMMeasured,float ZMPMeasured)
+void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMMeasured,float ZMPMeasured,int supportleg)
 {
     //Update
 		/*Kalman filter for the ZMP in the corresponding axis taking into account the bias of the FSRs */
         //Predict
-		StateKalman=Akalman*StateKalman+Bkalman*uBuffer.front();
-		P=(Akalman*P*Akalman.transp())+ProcessNoise;
+		supportleg-=1;
+
+		StateKalman=StateKalman+Bkalman*uBuffer.front();
+
+
+		float ct1=0,ct2=0;
+		float zmpfromcom=0;
+		bool doup=false;
 		if(fabs(ZMPMeasured)>1e-15)
 		{
+			P=(P)+ProcessNoise;
+			doup=true;
 
-			float y=ZMPMeasured-Ckalman*StateKalman; //innovation value
-			s=Ckalman*P*Ckalman.transp()+MeasurementNoise;
-			Kgain=(Akalman*P*Ckalman.transp());
-			Kgain.scalar_mult(1/s);
-			StateKalman+=Kgain*y;
-			tempg=Kgain;
-			tempg.scalar_mult(-1);
-			P+=tempg*Ckalman*P;
+			if(combuffer.size()==2)
+			{
+
+
+				ct2=combuffer.front();
+				combuffer.pop();
+				ct1=combuffer.front();
+				combuffer.pop();
+				combuffer.push(ct1);
+
+				//std::cout<<"CoMMeasured:"<<CoMMeasured<<std::endl;
+				//std::cout<<"ct1:"<<ct1<<std::endl;
+				//std::cout<<"ct2:"<<ct2<<std::endl;
+				float comddot=(CoMMeasured-2*ct1+ct2)/(OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts) );
+				//std::cout<<"comddot:"<<comddot<<std::endl;
+				zmpfromcom=CoMMeasured-(OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g))*comddot;
+				//std::cout<<"zmpfromcom:"<<zmpfromcom<<std::endl;
+			}
+
 		}
 
-	if(uBuffer.size()>3)
-		uBuffer.pop();
+
+
+
+		combuffer.push(CoMMeasured);
+
+		if(doup)
+		{
+			ykalman=KVecFloat2(ZMPMeasured,zmpfromcom);
+			ykalman.prettyPrint();
+			ykalman+=(Ckalman*(StateKalman)).scalar_mult(-1.0);//innovation value
+			float b=ybias(supportleg);
+			ybias(supportleg)=ybias(supportleg)*0.999+ykalman(0)*0.001;
+			ykalman(0)-=b;
+			s=Ckalman*P*Ckalman.transp()+MeasurementNoise;
+			s.fast_invert();
+			Kgain=(P*Ckalman.transp())*s;
+			StateKalman+=Kgain*ykalman;
+		}
+
+        //StateKalman.prettyPrint();
+		ybias.prettyPrint();
+
+		Kgain.scalar_mult(-1);
+		P+=Kgain*Ckalman*P;
+		if(combuffer.size()>2)
+			combuffer.pop();
+
+
+		if(uBuffer.size()>2)
+			uBuffer.pop();
 
 
 
@@ -167,7 +221,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 	unsigned bufsize=uBuffer.size();
 	for(unsigned i=0;i<bufsize;i++)
 	{
-		StatePredict=Akalman*StatePredict+Bkalman*uBuffer.front();
+		StatePredict=StatePredict+Bkalman*uBuffer.front();
 		uBuffer.push(uBuffer.front());
 		uBuffer.pop();
 	}
@@ -202,12 +256,13 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     //Optimal Preview Control
     u=-Statefb-Integrationfb-Predictionfb;
 
-	//uBuffer.push((ZMPReference(1)-ZMPReference(0)));
+	uBuffer.push((ZMPReference(1)-ZMPReference(0)));
     //Updating the Dynamics
 
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
+
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)));//StatePredict(0));
-	error.scalar_mult(0.8);
+	//error.scalar_mult(0.7);
 
     State=Ad*State;
 
@@ -219,5 +274,5 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
 
     //Estimated COM position
-    Com=State(0)+(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts)*3;
+    Com=State(0);//+(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);
 }

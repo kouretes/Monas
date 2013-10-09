@@ -159,8 +159,10 @@ class LowLevelPlanner: public IActivity
         float double_support_progress;//Progress of double support, zero in single supports
         /** FSR Transform **/
         KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
+        KMath::KMat::GenMatrix<double,4,1> fsrlbias,fsrrbias;
 
         KVecFloat2 getCoP();
 	};
 	ACTIVITY_END
 #endif
+

@@ -16,7 +16,7 @@ Stepplanner::Stepplanner()
 void Stepplanner::initialize(RobotParameters OurRobot)
 {
 	Robot = OurRobot;
-    Pelvis.x=-0.03;
+    Pelvis.x=-0.02;
 	Pelvis.y=0;
     Pelvis.theta=0;
     /** Initialize the ZMP Assuming Standing Position with Both Feet **/
@@ -35,7 +35,7 @@ void Stepplanner::initialize(RobotParameters OurRobot)
             PrevAnkle.y=Ankle.y;
             PrevAnkle.theta=Ankle.theta;
         }
-        Ankle.x=-0.03;
+        Ankle.x=-0.02;
         Ankle.y=Step.y;
         Ankle.theta=Step.theta;
         FootQ.push(Ankle);
@@ -115,7 +115,7 @@ void Stepplanner::oneStep(std::vector<float> v)
     Ankle.x=1.5*dx*Robot.getWalkParameter(MaxStepX);
     Ankle.y=1.5*dy*Robot.getWalkParameter(MaxStepY)+LEG*Robot.getWalkParameter(H0);
     Ankle.theta=dtheta*Robot.getWalkParameter(MaxStepTheta);
-    Step.x=Ankle.x+0.03;
+    Step.x=Ankle.x+0.02;
     Step.y=Ankle.y;
     Step.theta=Ankle.theta;
     if(fabs(dy*Robot.getWalkParameter(MaxStepY)-Ankle.y)

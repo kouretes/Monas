@@ -50,6 +50,8 @@ void LowLevelPlanner::UserInit()
 
 	Tilerror.identity();
 	Tirerror.identity();
+	fsrlbias.zero();
+	fsrrbias.zero();
 
 
 	Reset();
@@ -65,7 +67,7 @@ void LowLevelPlanner::Reset()
 	dcm_length[1] = 0;
 
 	current_buffer = 0;
-	setStiffness(0.9f);
+	setStiffness(0.75f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -95,7 +97,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x =4.000;
+		x =0.000;
 		y = 0.0001;
 		z = 0.0;
 		s = 1;
@@ -179,6 +181,7 @@ int LowLevelPlanner::Execute()
 			state = DO_STEPS;
 			dcm_counter = 0;
 
+
 			std::cout << "Walk Engine is Executed Walk should start" << std::endl;
 
 			break;
@@ -261,12 +264,31 @@ void LowLevelPlanner::Calculate_Desired_COM()
 	t.fast_invert();
 	KVecDouble3 CoMm =(Tis*t).transform(nkin->calculateCenterOfMass());// (Tis*t).transform();
 	CoMm.scalar_mult(1.0/1000.0);
-
+	//std::cout<<"Com:"<<std::endl;
 	//CoMm.prettyPrint();
 
-	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X],CoMm(0),copi(0));
+	/*
+	NAOKinematics::kmatTable Tsp=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
+	Tsp.fast_invert();//Tps->Tsp
 
-	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y],CoMm(1),copi(1));
+
+	NAOKinematics::kmatTable Tip;
+	Tip=Tis*Tsp;
+    KVecDouble3 pelvis=Tip.getTranslation();
+    pelvis.scalar_mult(1./1000);
+	CoMm=pelvis;*/
+	int sup;
+	if(double_support)
+		sup=1;
+	else if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT)
+		sup=2;
+	else
+		sup=3;
+	//CoMm.prettyPrint();
+
+	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X],CoMm(0),copi(0),sup);
+
+	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y],CoMm(1),copi(1),sup);
 
 	//std::cout<<NaoLIPMx->Com<<" "<<NaoLIPMy->Com<<std::endl;
 
@@ -322,6 +344,8 @@ KVecFloat2 LowLevelPlanner::getCoP()
 		fsrl(i)=*sensorPtr[KDeviceLists::L_FSR+i];
 		fsrr(i)=*sensorPtr[KDeviceLists::R_FSR+i];
 	}
+	fsrl-=fsrlbias;
+	fsrr-=fsrrbias;
 	/*fsrl.prettyPrint();
 	fsrr.prettyPrint();*/
 	/*fsrposl.prettyPrint();
@@ -338,17 +362,23 @@ KVecFloat2 LowLevelPlanner::getCoP()
 	copl.scalar_mult(1./(weightl));
 	copr.scalar_mult(1./(weightr));
 
-	if(weightl<0.05)
+	if(weightl<0.5)
 	{
 		copl.zero();
 		weightl=0;
+		if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
+			fsrlbias+=fsrl*0.5;
 	}
 
-	if(weightr<0.05)
+	if(weightr<0.5)
 	{
 		copr.zero();
 		weightr=0;
+		if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+			fsrrbias+=fsrr*0.5;
 	}
+	/*fsrlbias.prettyPrint();
+	fsrrbias.prettyPrint();*/
 #define Margin 0.002
 
 	if(weightl==0 || weightr==0)
@@ -763,7 +793,7 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 
-
+	/*
 	if(dcm_counter>0)
 	{
 
@@ -799,16 +829,16 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		t.p=Tilerror.getTranslation();
 		t.a=Tilerror.getEulerAngles();
 
-		t.p.scalar_mult(corr/100);
-		t.a.scalar_mult(corr/100);
+		t.p.scalar_mult(corr/10);
+		t.a.scalar_mult(corr/10);
 
 		Tilerror=NAOKinematics::getTransformation(t);
 
 		t.p=Tirerror.getTranslation();
 		t.a=Tirerror.getEulerAngles();
 
-		t.p.scalar_mult(corr/100);
-		t.a.scalar_mult(corr/100);
+		t.p.scalar_mult(corr/10);
+		t.a.scalar_mult(corr/10);
 
 		Tirerror=NAOKinematics::getTransformation(t);
 
@@ -818,7 +848,7 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 	}
-
+	*/
 
 
 	/*std::cout<<"Tip:"<<std::endl;
@@ -858,7 +888,7 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	Tipprime=Tip;
 
 
-	for(unsigned iter=0;iter<2;iter++)
+	for(unsigned iter=0;iter<1;iter++)
 	{
 
 		KVecDouble3 measured = nkin->calculateCenterOfMass();
@@ -868,6 +898,10 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 		com_error(2)*=corr;
+		if((com_error(2))>10)
+			com_error(2)=10;
+		else if((com_error(2))<-0)
+			com_error(2)=-0;
 
 
 		//if(double_support==false)
