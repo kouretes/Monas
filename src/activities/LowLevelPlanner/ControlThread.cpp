@@ -131,7 +131,7 @@ OurRobot=robot;
     //Bkalman(1)=0.000;
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=5e-4;
+	ProcessNoise(0,0)=4e-5;
 	P.zero();
 	P(0,0)=1e-20;
 	MeasurementNoise.identity();
@@ -257,7 +257,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     float ZMPestim=State(2);
 	KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
 	error-=KVecFloat2(State(0),State(2)+State(3));
-	error.scalar_mult(0.8);
+	error.scalar_mult(0.6);
 
     State=Ad*State;
 
