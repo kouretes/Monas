@@ -38,11 +38,21 @@ class KWalkMat
 
 		void trigInterpolation(float *buffer, int &counter, float Ts, float Tss)
 		{
-			float Hover2 = 0.006;
+			float Hover2 = 0.007;
 			for (float t = 0; t <= Tss; t = t + Ts , counter++)
 				buffer[counter]  =Hover2*(1-cos((t*M_PI*2)/Tss));
 
 		}
+
+		void trigIntegInterpolation(float *buffer, int &counter, float start, float end, float Ts, float Tss)
+		{
+			float delta = (end-start)/Tss;
+
+			for (float t = 0; t <= Tss; t = t + Ts , counter++)
+				buffer[counter]  = start+delta*t-delta*sin((t*M_PI*2)/Tss)/((M_PI*2)/Tss);
+
+		}
+
 
 		void FifthOrderPolynomialInterpolation(float *buffer, int &counter, float Ts, float T)
 		{

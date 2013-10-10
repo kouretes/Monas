@@ -125,7 +125,6 @@ class LIPMPreviewController{
 	KMath::KMat::GenMatrix<float,1,1>P, ProcessNoise;
 	KMath::KMat::GenMatrix<float,2,1> ykalman;
 	KMath::KMat::GenMatrix<float,1,1>StateKalman,StatePredict,Bkalman;
-	KMath::KMat::GenMatrix<float,3,1>ybias;
 
     KMath::KMat::GenMatrix<float,1,3> Gx;
     KMath::KMat::GenMatrix<float, PreviewWindow-1, 1> Gd;

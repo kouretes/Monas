@@ -102,19 +102,22 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     //L(0)=0.0360;;
     //L(1)=-0.3445;
     //L(2)=-0.5056;
-    L(0,0)=0.2517;
-    L(0,1)=0.1042;
-    L(1,0)=0.4141;
-    L(1,1)=0.1788;
-    L(2,0)=0.2366;
-    L(2,1)=0.0966;
+    L(0,0)= 0.1061;
+    L(0,1)=0.0531;
+    L(1,0)=-0.3630;
+    L(1,1)=-0.3406;
+    L(2,0)= -42.2434;
+    L(2,1)= -10.8218;
     L(3,0)=-0.1389;
     L(3,1)=0.2384;
 
-    State(0)=0;
-    State(1)=0;
-    State(2)=0;
-    State(4)=0;
+
+// 0.1061 0.0531 -0.3630 -0.3406 -42.2434 -10.8218
+
+
+
+
+	State.zero();
     //Initializing Variables
     Integrationfb=0;
     Statefb=0;
@@ -128,11 +131,11 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     //Bkalman(1)=0.000;
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=1e-10;
+	ProcessNoise(0,0)=1e-5;
 	P.zero();
-	P(0,0)=1e-8;
+	P(0,0)=1e-20;
 	MeasurementNoise.identity();
-	MeasurementNoise(0,0)=0.0001;
+	MeasurementNoise(0,0)=0.001;
 	MeasurementNoise(1,1)=0.5;
 	Ckalman.zero();
 	Ckalman(0,0)=1.000;
@@ -140,7 +143,6 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
 
 	//MeasurementNoise.scalar_mult(0.1);
 	uBuffer.push(0);
-	ybias.zero();
 
 
 
@@ -198,9 +200,6 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 			ykalman=KVecFloat2(ZMPMeasured,zmpfromcom);
 			ykalman.prettyPrint();
 			ykalman+=(Ckalman*(StateKalman)).scalar_mult(-1.0);//innovation value
-			float b=ybias(supportleg);
-			ybias(supportleg)=ybias(supportleg)*0.999+ykalman(0)*0.001;
-			ykalman(0)-=b;
 			s=Ckalman*P*Ckalman.transp()+MeasurementNoise;
 			s.fast_invert();
 			Kgain=(P*Ckalman.transp())*s;
@@ -208,7 +207,6 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 		}
 
         //StateKalman.prettyPrint();
-		ybias.prettyPrint();
 
 		Kgain.scalar_mult(-1);
 		P+=Kgain*Ckalman*P;
@@ -216,7 +214,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 			combuffer.pop();
 
 
-		if(uBuffer.size()>2)
+		if(uBuffer.size()>4)
 			uBuffer.pop();
 
 
@@ -260,13 +258,13 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     //Optimal Preview Control
     u=-Statefb-Integrationfb-Predictionfb;
 
-	uBuffer.push((ZMPReference(1)-ZMPReference(0)));
+
     //Updating the Dynamics
 
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
-
-	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)));//StatePredict(0));
-	//error.scalar_mult(0.7);
+	float zmpstate=(Cd(0)*State(0)+Cd(2)*State(2));
+	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
+	//error.scalar_mult(0.5);
 
     State=Ad*State;
 
@@ -275,6 +273,9 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     State+=temp;
 
     State+=L*error;
+    State.prettyPrint();
+
+    uBuffer.push((Cd(0)*State(0)+Cd(2)*State(2))-zmpstate);//(ZMPReference(1)-ZMPReference(0)));
 
 
     //Estimated COM position
