@@ -134,7 +134,7 @@ class LIPMPreviewController{
 
  	public:
 		LIPMPreviewController(RobotParameters robot);
-		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured,int supportleg);
+		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured);
 
 		float Com;
 		float d;

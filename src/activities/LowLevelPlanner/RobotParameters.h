@@ -30,8 +30,8 @@ class RobotParameters
 			WalkParameters[StepX] = 0.155;
 			WalkParameters[StepY] = 0.085;
 			WalkParameters[StepZ] = 0.0353;
-			WalkParameters[H0] = 0.052;
-			WalkParameters[ComZ] = 0.260;
+			WalkParameters[H0] = 0.05;
+			WalkParameters[ComZ] = 0.25;
 			WalkParameters[Tstep] = 0.35;
 			WalkParameters[Tds] = 0.35 * WalkParameters[Tstep];
 			WalkParameters[Tss] =  WalkParameters[Tstep]-WalkParameters[Tds];
