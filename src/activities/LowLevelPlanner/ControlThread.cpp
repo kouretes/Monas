@@ -21,19 +21,20 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     Ad(2,0)=0.0000;
     Ad(2,1)=0.0000;
     Ad(2,2)=1.0000;
-    /*Aobs(0,0)=1.0000;
-    Aobs(0,1)=OurRobot.getWalkParameter(Ts);
-    Aobs(0,2)=-0.0360;
-    Aobs(1,0)=0.3773;cd ..
-    Aobs(1,1)=1.0000;
-    Aobs(1,2)=-0.0328;
-    Aobs(2,0)=0;
-    Aobs(2,1)=0;
-    Aobs(2,2)=1.5056; */
+/*----------------------*/
+    Ad(0,3)=0.0000;
+    Ad(1,3)=0.0000;
+    Ad(2,3)=0.0000;
+    Ad(3,0)=0.0000;
+    Ad(3,1)=0.0000;
+    Ad(3,2)=0.0000;
+    Ad(3,3)=1.0000;
+
 
     Bd(0)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/6.0000;
     Bd(1)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
     Bd(2)=OurRobot.getWalkParameter(Ts);
+    Bd(3)=0;
     Cd(0)=1.0000;
     Cd(1)=0.0000;
     Cd(2)=-OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g);
@@ -101,16 +102,19 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     //L(0)=0.0360;;
     //L(1)=-0.3445;
     //L(2)=-0.5056;
-    L(0,0)=0.0257;
-    L(0,1)=0.0431;
-    L(1,0)=-0.1277;
-    L(1,1)=-0.2691;
-    L(2,0)=-4.4608;
-    L(2,1)=-8.7208;
+    L(0,0)=0.2517;
+    L(0,1)=0.1042;
+    L(1,0)=0.4141;
+    L(1,1)=0.1788;
+    L(2,0)=0.2366;
+    L(2,1)=0.0966;
+    L(3,0)=-0.1389;
+    L(3,1)=0.2384;
 
     State(0)=0;
     State(1)=0;
     State(2)=0;
+    State(4)=0;
     //Initializing Variables
     Integrationfb=0;
     Statefb=0;
@@ -240,7 +244,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
     //State Feedback Computation
     Statefb=0;
-    Statefb=Gx*State;
+    Statefb=Gx(0,0)*State(0)+Gx(0,1)*State(1)+Gx(0,2)*State(2);
 
     //Updating the Integral Feedback
     Integrationfb+=Gi*((Cd(0)*State(0)+Cd(2)*State(2))-ZMPReference(0));
