@@ -112,9 +112,10 @@ class CircularBuffer
 };
 class LIPMPreviewController{
     private:
-    KMath::KMat::GenMatrix<float, 3, 3> Aobs,Ad;
-    KMath::KMat::GenMatrix<float, 3, 1> Bd,State,Cd,temp;
-    KMath::KMat::GenMatrix<float, 3, 2>  L;
+    KMath::KMat::GenMatrix<float, 4, 4> Ad;
+    KMath::KMat::GenMatrix<float,4,1>Bd,State,temp;
+    KMath::KMat::GenMatrix<float, 3, 1> Cd;
+    KMath::KMat::GenMatrix<float, 4, 2>  L;
 
     std::queue<float> uBuffer,combuffer;
 	KMath::KMat::GenMatrix<float,2,1> Ckalman;
