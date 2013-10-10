@@ -362,7 +362,7 @@ KVecFloat2 LowLevelPlanner::getCoP()
 	copl.scalar_mult(1./(weightl));
 	copr.scalar_mult(1./(weightr));
 
-	if(weightl<0.5)
+	if(weightl<0.05)
 	{
 		copl.zero();
 		weightl=0;
@@ -370,7 +370,7 @@ KVecFloat2 LowLevelPlanner::getCoP()
 			fsrlbias+=fsrl*0.5;
 	}
 
-	if(weightr<0.5)
+	if(weightr<0.05)
 	{
 		copr.zero();
 		weightr=0;
@@ -900,8 +900,8 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		com_error(2)*=corr;
 		if((com_error(2))>10)
 			com_error(2)=10;
-		else if((com_error(2))<-0)
-			com_error(2)=-0;
+		else if((com_error(2))<-2)
+			com_error(2)=-2;
 
 
 		//if(double_support==false)
