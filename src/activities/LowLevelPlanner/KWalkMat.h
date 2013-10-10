@@ -36,11 +36,11 @@ class KWalkMat
 
 		}
 
-		void trigInterpolation(float *buffer, int &counter, float Ts, float Tss)
+		void trigInterpolation2(float *buffer, int &counter, float Ts, float Tss)
 		{
-			float Hover2 = 0.007;
+			float s = 0.015/1.414;
 			for (float t = 0; t <= Tss; t = t + Ts , counter++)
-				buffer[counter]  =Hover2*(1-cos((t*M_PI*2)/Tss));
+				buffer[counter]  =s*sqrt(1-cos((t*M_PI*2)/Tss));
 
 		}
 
