@@ -131,7 +131,7 @@ OurRobot=robot;
     //Bkalman(1)=0.000;
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=5e-4;
+	ProcessNoise(0,0)=4e-5;
 	P.zero();
 	P(0,0)=1e-20;
 	MeasurementNoise.identity();
@@ -210,7 +210,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 			combuffer.pop();
 
 
-		if(uBuffer.size()>3)
+		if(uBuffer.size()>5)
 			uBuffer.pop();
 
 
@@ -276,7 +276,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
 
    	//Estimated COM position
-	Com = State(0);//+State(1)*uBuffer.size()*OurRobot.getWalkParameter(Ts)/2;
+	Com = State(0)+State(1)*uBuffer.size()*OurRobot.getWalkParameter(Ts)/4;
 }
 
 

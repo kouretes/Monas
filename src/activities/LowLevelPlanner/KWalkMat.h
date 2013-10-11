@@ -38,7 +38,7 @@ class KWalkMat
 
 		void trigInterpolation2(float *buffer, int &counter, float Ts, float Tss)
 		{
-			float s = 0.015/1.414;
+			float s = 0.008/1.414;
 			for (float t = 0; t <= Tss; t = t + Ts , counter++)
 				buffer[counter]  =s*sqrt(1-cos((t*M_PI*2)/Tss));
 
