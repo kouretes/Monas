@@ -44,6 +44,15 @@ class KWalkMat
 
 		}
 
+		void trigInterpolation3(float *buffer, int &counter, float Ts, float Tss)
+		{
+			float s = 0.02/2;
+			for (float t = 0; t <= Tss; t = t + Ts , counter++)
+				buffer[counter]  =s*(1-cos((t*M_PI*2)/Tss));//,1.0/(4.0-(3*t)/Tss));
+
+		}
+
+
 		void trigIntegInterpolation(float *buffer, int &counter, float start, float end, float Ts, float Tss)
 		{
 			float delta = (end-start)/Tss;

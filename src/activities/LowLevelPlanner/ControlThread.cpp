@@ -8,111 +8,121 @@
 
 #include "ControlThread.h"
 #include <iostream>
-#include  <math.h>
-
 LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
 {
-
-OurRobot=robot;
+    OurRobot=robot;
     //Defining the System Dynamics Augmented with the Observer Structure
     Ad(0,0)=1.0000;
     Ad(0,1)=OurRobot.getWalkParameter(Ts);
-    Ad(0,2)=0.000;
-    Ad(1,0)=(OurRobot.getWalkParameter(g)/OurRobot.getWalkParameter(ComZ))*OurRobot.getWalkParameter(Ts);
+    Ad(0,2)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2;
+    Ad(1,0)=0.0000;
     Ad(1,1)=1.0000;
-    Ad(1,2)=-Ad(1,0);
+    Ad(1,2)=Ad(0,1);
     Ad(2,0)=0.0000;
     Ad(2,1)=0.0000;
     Ad(2,2)=1.0000;
-    Ad(0,3)=0.000;
-    Ad(1,3)=0.000;
-    Ad(2,3)=0.000;
-    Ad(3,0)=0.000;
-    Ad(3,1)=0.000;
-    Ad(3,2)=0.000;
-    Ad(3,3)=1.000;
+/*----------------------*/
+    Ad(0,3)=0.0000;
+    Ad(1,3)=0.0000;
+    Ad(2,3)=0.0000;
+    Ad(3,0)=0.0000;
+    Ad(3,1)=0.0000;
+    Ad(3,2)=0.0000;
+    Ad(3,3)=1.0000;
 
 
-    Bd(0)=0;
-    Bd(1)=0;
+    Bd(0)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/6.0000;
+    Bd(1)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
     Bd(2)=OurRobot.getWalkParameter(Ts);
     Bd(3)=0;
-    Cd(0)=0;
-    Cd(1)=0;
-    Cd(2)=1;
+    Cd(0)=1.0000;
+    Cd(1)=0.0000;
+    Cd(2)=-OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g);
 
-
-     //Defining the Optimal Gains for the Preview Controller for Preview Horizon 50 and ComZ=0.268
+  //Defining the Optimal Gains for the Preview Controller
     //Integral Feedback Gain
-    Gi=-56.7626;
+    Gi=858.9552;
     //State Feedback Gain
-    Gx(0,0)=1.0e3*(-2.2852);
-    Gx(0,1)=1.0e3*(-0.3821);
-    Gx(0,2)=1.0e3*(0.2320);
+    Gx(0,0)=1.0e+04 * 3.0043 ;
+    Gx(0,1)=1.0e+04 * 0.5404;
+    Gx(0,2)=1.0e+04 * 0.0090;
     //Predicted Reference Gain
-    Gd(0)= 56.7626;
-    Gd(1)= 88.9825;
-    Gd(2)=  96.9711;
-    Gd(3)=  96.4123;
-    Gd(4)=  92.9489;
-    Gd(5)=  88.6059;
-    Gd(6)=  84.1047;
-    Gd(7)=  79.6976;
-    Gd(8)=  75.4681;
-    Gd(9)=  71.4391;
-    Gd(10)=  67.6120 ;
-    Gd(11)= 63.9811 ;
-    Gd(12)= 60.5380 ;
-    Gd(13)= 57.2738 ;
-    Gd(14)= 54.1799 ;
-    Gd(15)= 51.2477 ;
-    Gd(16)= 48.4692 ;
-    Gd(17)= 45.8366 ;
-    Gd(18)= 43.3424 ;
-    Gd(19)= 40.9798 ;
-    Gd(20)= 38.7420 ;
-    Gd(21)= 36.6227 ;
-    Gd(22)= 34.6158 ;
-    Gd(23)= 32.7155;
-    Gd(24)=  30.9165 ;
-    Gd(25)= 29.2134 ;
-    Gd(26)= 27.6014;
-    Gd(27)=  26.0757;
-    Gd(28)=  24.6318;
-    Gd(29)=  23.2656;
-    Gd(30)=  21.9729;
-    Gd(31)=  20.7501;
-    Gd(32)=  19.5933;
-    Gd(33)=  18.4991;
-    Gd(34)=  17.4644;
-    Gd(35)=  16.4858 ;
-    Gd(36)= 15.5606 ;
-    Gd(37)= 14.6858 ;
-    Gd(38)= 13.8588;
-    Gd(39)=  13.0771;
-    Gd(40)=  12.3382;
-    Gd(41)=  11.6399;
-    Gd(42)=  10.9801;
-    Gd(43)=  10.3566;
-    Gd(44)=  9.7676 ;
-    Gd(45)= 9.2111;
-    Gd(46)=  8.6855;
-    Gd(47)=  8.1890;
-    Gd(48)=  7.7201;
-    Gd(49)=  7.2774;
-
+    Gd(0)=-0.8590;
+    Gd(1)=-1.0544;
+    Gd(2)=-1.2600;
+    Gd(3)=-1.3975;
+    Gd(4)=-1.4522;
+    Gd(5)=-1.4390;
+    Gd(6)=-1.3819;
+    Gd(7)=-1.3027;
+    Gd(8)=-1.2168;
+    Gd(9)=-1.1332;
+    Gd(10)=-1.0562;
+    Gd(11)=-0.9867;
+    Gd(12)=-0.9241;
+    Gd(13)=-0.8674;
+    Gd(14)=-0.8153;
+    Gd(15)=-0.7670;
+    Gd(16)=-0.7217;
+    Gd(17)=-0.6791;
+    Gd(18)=-0.6390;
+    Gd(19)=-0.6011;
+    Gd(20)=-0.5654;
+    Gd(21)=-0.5317;
+    Gd(22)=-0.5000;
+    Gd(23)=-0.4702;
+    Gd(24)=-0.4422;
+    Gd(25)=-0.4158;
+    Gd(26)=-0.3910;
+    Gd(27)=-0.3677;
+    Gd(28)=-0.3458;
+    Gd(29)=-0.3252;
+    Gd(30)=-0.3059;
+    Gd(31)=-0.2876;
+    Gd(32)=-0.2705;
+    Gd(33)=-0.2544;
+    Gd(34)=-0.2392;
+    Gd(35)=-0.2250;
+    Gd(36)=-0.2116;
+    Gd(37)=-0.1990;
+    Gd(38)=-0.1871;
+    Gd(39)=-0.1760;
+    Gd(40)=-0.1655;
+    Gd(41)=-0.1556;
+    Gd(42)=-0.1463;
+    Gd(43)=-0.1376;
+    Gd(44)=-0.1294;
+    Gd(45)=-0.1217;
+    Gd(46)=-0.1145;
+    Gd(47)=-0.1076;
+    Gd(48)=-0.1012;
+    Gd(49)=-0.0952;
+    Gd.scalar_mult(1.0e+03);
     //Defining the Optimal Observer Gain L
-    /*L(0)=0.0359;
-    L(1)=-0.3438;
-    L(2)=-0.5050;*/
-    L(0,0)=0.1161;
-    L(0,1)=0.0301;
-    L(1,0)=-0.1401;
-    L(1,1)=-0.3260 ;
-    L(2,0)=2.3890;
-    L(2,1)=-0.5792;
-    L(3,0)=-0.0185;
-    L(3,1)=0.0241;
+    //L(0)=0.0360;;
+    //L(1)=-0.3445;
+    //L(2)=-0.5056;
+    L(0,0)=0.1128;
+    L(0,1)=0.0606;
+    L(1,0)=-0.5004;
+    L(1,1)=-0.2043;
+    L(2,0)=-12.8674;
+    L(2,1)=-22.9822;
+    L(3,0)=-0.1403;
+    L(3,1)=0.0821;
+
+/*
+    L(0,0)=0.1644;
+    L(0,1)=0.0209;
+    L(1,0)=-0.9022;
+    L(1,1)=-0.1728;
+    L(2,0)=-68.2951;
+    L(2,1)=18.3944;
+    L(3,0)= -0.1947;
+    L(3,1)=0.0334;*/
+
+
+// 0.1061 0.0531 -0.3630 -0.3406 -42.2434 -10.8218
 
 
 
@@ -131,28 +141,31 @@ OurRobot=robot;
     //Bkalman(1)=0.000;
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=4e-5;
+	ProcessNoise(0,0)=1e-6;
 	P.zero();
 	P(0,0)=1e-20;
 	MeasurementNoise.identity();
-	MeasurementNoise(0,0)=0.0005;
+	MeasurementNoise(0,0)=0.001;
 	MeasurementNoise(1,1)=0.5;
 	Ckalman.zero();
 	Ckalman(0,0)=1.000;
-	Ckalman(1,0)=1.000;
+	Ckalman(1,0)=1;
 
 	//MeasurementNoise.scalar_mult(0.1);
 	uBuffer.push(0);
+
+
+
+
 }
+
+
 
 void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMMeasured,float ZMPMeasured)
 {
-
-	//Update
-	//if(fabs(ZMPMeasured)>1e-10)
-
+    //Update
 		/*Kalman filter for the ZMP in the corresponding axis taking into account the bias of the FSRs */
-	//Predict
+        //Predict
 
 		StateKalman=StateKalman+Bkalman*uBuffer.front();
 
@@ -194,7 +207,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 		if(doup)
 		{
 			ykalman=KVecFloat2(ZMPMeasured,zmpfromcom);
-			ykalman.prettyPrint();
+			//ykalman.prettyPrint();
 			ykalman+=(Ckalman*(StateKalman)).scalar_mult(-1.0);//innovation value
 			s=Ckalman*P*Ckalman.transp()+MeasurementNoise;
 			s.fast_invert();
@@ -210,7 +223,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 			combuffer.pop();
 
 
-		if(uBuffer.size()>5)
+		if(uBuffer.size()>4)
 			uBuffer.pop();
 
 
@@ -223,8 +236,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 		uBuffer.push(uBuffer.front());
 		uBuffer.pop();
 	}
-
-	//Setting the Reference Signal
+	    //Setting the Reference Signal
 	unsigned int l = 0;
 
 	for (unsigned int i = 0; i < PreviewWindow; i++, l++)
@@ -236,13 +248,15 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 	}
 
 
+
     //State Feedback Computation
     Statefb=0;
     Statefb=Gx(0,0)*State(0)+Gx(0,1)*State(1)+Gx(0,2)*State(2);
 
     //Updating the Integral Feedback
-    Integrationfb+=Gi*(State(2)-ZMPReference(0));
+    Integrationfb+=Gi*((Cd(0)*State(0)+Cd(2)*State(2))-ZMPReference(0));
     //Predicted Feedback Computation
+   //Predicted Feedback Computation
     Predictionfb=0;
     unsigned  int z=0;
     for (unsigned  int i=0;i<PreviewWindow-1;i++)
@@ -252,31 +266,27 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     }
     //Optimal Preview Control
     u=-Statefb-Integrationfb-Predictionfb;
-
+	//u*=1.5;
     //Updating the Dynamics
-    float ZMPestim=State(2);
-	KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
-	error-=KVecFloat2(State(0),State(2)+State(3));
-	error.scalar_mult(0.8);
+
+    KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
+	float zmpstate=(Cd(0)*State(0)+Cd(2)*State(2));
+	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
+	//error(0)*=0.8;
+	//error.scalar_mult(1.0);
 
     State=Ad*State;
 
     temp=Bd;
     temp.scalar_mult(u);
-
     State+=temp;
+
     State+=L*error;
-
-
-   uBuffer.push(State(2)-ZMPestim);
-    //std::cout<<"State:"<<std::endl;
     //State.prettyPrint();
-    //temp=L;
-    //temp.scalar_mult(ZMPMeasured);
+
+    uBuffer.push((Cd(0)*State(0)+Cd(2)*State(2))-zmpstate);//(ZMPReference(1)-ZMPReference(0)));
 
 
-   	//Estimated COM position
-	Com = State(0)+State(1)*uBuffer.size()*OurRobot.getWalkParameter(Ts)/4;
+    //Estimated COM position
+    Com=State(0)+(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
 }
-
-

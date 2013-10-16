@@ -80,7 +80,7 @@ int LowLevelPlanner::Execute()
 	{
 		Tis.identity();
 		supportleg=KDeviceLists::SUPPORT_LEG_NONE;
-		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
+		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
 		firstrun = false;
 	}
 
@@ -97,8 +97,8 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x =1.5000;
-		y = 0.0001;
+		x = 2.0000;
+		y = 0.000;
 		z = 0.0;
 		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
@@ -181,7 +181,15 @@ int LowLevelPlanner::Execute()
 			state = DO_STEPS;
 			dcm_counter = 0;
 
+			KMath::KMat::transformations::makeTransformation(Tis,
+									(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
+									(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
+									(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000,
+									0.0,
+									0.0,
+									(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]);
 
+			supportleg=KDeviceLists::SUPPORT_LEG_LEFT;
 			std::cout << "Walk Engine is Executed Walk should start" << std::endl;
 
 			break;
@@ -461,13 +469,6 @@ int LowLevelPlanner::DCMcallback()
 			current_buffer = next_buffer;
 			dcm_counter = 0;
 
-			KMath::KMat::transformations::makeTransformation(Tis,
-									(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
-									(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
-									(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000,
-									0.0,
-									0.0,
-									(double)FeetTrajectory[current_buffer][Theta][LEFT][dcm_counter]);
 		} else
 		{
 			//provlima i telos mallon telos
@@ -491,11 +492,10 @@ int LowLevelPlanner::DCMcallback()
 	float pe=(NaoRobot.getWalkParameter(Tds)/2)/NaoRobot.getWalkParameter(Tstep);
 	bool rightsupport=dcm_counter>(dcm_length[current_buffer]/2)*pe &&
 					   dcm_counter<(dcm_length[current_buffer]/2)*(1+pe);
-
-    double_support=(dcm_counter<(dcm_length[current_buffer]/2)*pe*2) ||
+	double_support=(dcm_counter<(dcm_length[current_buffer]/2)*pe*2) ||
 					(dcm_counter>dcm_length[current_buffer]/2 &&
 					 dcm_counter<(dcm_length[current_buffer]/2)*(1+pe*2));
-	//rightsupport=true;
+	//rightsupport=false;
 	//progress of double support
 	if(dcm_counter<dcm_length[current_buffer]/2.0)
 	{
@@ -532,41 +532,42 @@ int LowLevelPlanner::DCMcallback()
 	NAOKinematics::FKvars t;
 	t.p=merger.getTranslation();
 	t.a=merger.getEulerAngles();
+	/*float sm=double_support_progress;
+	if(sm>0.5)sm=1-sm;
+	sm*=2;
 
-	t.p(2)/=10000.0;
-	t.a(0)/=10000.0;
-	t.a(1)/=10000.0;
-
+	t.p(2)*=1-sm;
+	t.a(0)*=1-sm;
+	t.a(1)*=1-sm;*/
 	Tssprime=NAOKinematics::getTransformation(t);
 
 
 
-	if(oldsupportleg==KDeviceLists::SUPPORT_LEG_NONE) //Initialize to support leg
-	{
-		std::cout<<"RESET ODOMETRY----"<<std::endl;
-		Tis=nkin->getForwardEffector((NAOKinematics::Effectors)chainsupport);
-
-		NAOKinematics::FKvars t;
-		t.p=Tis.getTranslation();
-		t.a=Tis.getEulerAngles();
-		t.p(2)=0;
-		t.a(0)=0;
-		t.a(1)=0;
 
 
 
 
-		Tis=NAOKinematics::getTransformation(t);
-		//Tis.fast_invert();
-	}
-
-	else if(oldsupportleg!=supportleg )
+	if(oldsupportleg!=supportleg )
 	{
 		NAOKinematics::kmatTable t=Tssprime;
 		t.fast_invert();
 		//std::cout<<"SWITCH LEG----"<<std::endl;
 		Tis*=t;
 	}
+	t.p=Tis.getTranslation();
+	t.a=Tis.getEulerAngles();
+	if(double_support==false)
+	{
+
+		t.p(2)*=0.9;
+		t.a(0)*=0.9;
+		t.a(1)*=0.9;
+	}
+
+	Tis=NAOKinematics::getTransformation(t);
+
+
+	//Tis.getTranslation().prettyPrint();
 
 
 
@@ -788,12 +789,13 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		//corr=1;
 	if(corr>0.5) corr=corr-0.5;
 	corr*=2;
-	if(corr<0.7) corr=0.7;
+	if(corr<0.9)corr=0.9;
+	corr-=0.1;
 
 
 
 
-	/*
+
 	if(dcm_counter>0)
 	{
 
@@ -822,39 +824,38 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		l.fast_invert();
 		r=Tip*r;
 		r.fast_invert();
-		Tilerror=l*Tilold;
-		Tirerror=r*Tirold;
+		if(supportleg!=KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+			Tilerror=l*Tilold;
+		if(supportleg!=KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
+			Tirerror=r*Tirold;
 
+		/*
+		Tilerror.identity();
+		Tirerror.identity();
+		*/
 		NAOKinematics::FKvars t;
 		t.p=Tilerror.getTranslation();
 		t.a=Tilerror.getEulerAngles();
 
-		t.p.scalar_mult(corr/10);
-		t.a.scalar_mult(corr/10);
-
-		Tilerror=NAOKinematics::getTransformation(t);
+		t.p.scalar_mult(0.001);
+		t.a.scalar_mult(0.002);
+		if(supportleg!=KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+			Tilerror=NAOKinematics::getTransformation(t);
 
 		t.p=Tirerror.getTranslation();
 		t.a=Tirerror.getEulerAngles();
 
-		t.p.scalar_mult(corr/10);
-		t.a.scalar_mult(corr/10);
-
-		Tirerror=NAOKinematics::getTransformation(t);
-
-
-
-
-
+		t.p.scalar_mult(0.001);
+		t.a.scalar_mult(0.002);
+		if(supportleg!=KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
+			Tirerror=NAOKinematics::getTransformation(t);
 
 	}
-	*/
 
 
 	/*std::cout<<"Tip:"<<std::endl;
 	Tip.prettyPrint();
 	Tpi.prettyPrint();*/
-
 	//Construct Ti{l,r}
 	KMath::KMat::transformations::makeTransformation(Til,
 				(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
@@ -872,9 +873,22 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 				0.0,
 				(double)FeetTrajectory[current_buffer][Theta][RIGHT][dcm_counter]
 				);
+	//Fix current support leg....
+	if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT)//||double_support==true)
+	{
+		Til=Tis;
+		//Tilerror.identity();
+	}
+	if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT)//||double_support==true)
+	{
+		Tir=Tis;
+	}
+
+
 	NAOKinematics::kmatTable Tpprimei,Tipprime; //Transformation of next pelvis p' pprime :)
 
-
+	/*Til.getTranslation().prettyPrint();
+	Tir.getTranslation().prettyPrint();*/
 	KVecDouble3 com_error,desired;//All in inertial frame;
 	//std::cout<<NaoRobot.getWalkParameter(ComZ)<<std::endl;
 	desired=KVecDouble3( NaoLIPMx->Com,NaoLIPMy->Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
@@ -898,10 +912,10 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 
 
 		com_error(2)*=corr;
-		if((com_error(2))>10)
-			com_error(2)=10;
-		else if((com_error(2))<-2)
-			com_error(2)=-2;
+		if((com_error(2))>5)
+			com_error(2)=5;
+		else if((com_error(2))<-1)
+			com_error(2)=-1;
 
 
 		//if(double_support==false)
@@ -929,6 +943,7 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 													);
 
 		//Tpprimei.identity();
+		//(com_error+Tipprime.getTranslation()).prettyPrint();
 		Tpprimei.setTranslation(com_error+Tipprime.getTranslation());
 		//Tpprimei(2,3)=270;
 		Tipprime=Tpprimei;
@@ -943,46 +958,11 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		Tpprimel=Tpprimei*Til*Tilerror;
 		Tpprimer=Tpprimei*Tir*Tirerror;
 
-		/*Tpprimel.prettyPrint();
-		Tpprimer.prettyPrint();*/
-
-
-		/*Tpprimel(0,3)-=30;
-		Tpprimer(0,3)-=30;*/
-
-
-
-
-
-		//(com_error).prettyPrint();
-
-
-		std::vector<std::vector<float> > resultR, resultL;
 		/*
-
-		KVecDouble3 l=KVecDouble3(
-				(double)FeetTrajectory[current_buffer][X][LEFT][dcm_counter]*1000,
-				(double)FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]*1000,
-				(double)FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]*1000
-				);
-		KVecDouble3 r=KVecDouble3(
-				(double)FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]*1000,
-				(double)FeetTrajectory[current_buffer][Y][RIGHT][dcm_counter]*1000,
-				(double)FeetTrajectory[current_buffer][Z][RIGHT][dcm_counter]*1000
-				);
-		KVecDouble3 temptemp;
-		temptemp=desired;
-		temptemp-=measured;
-		temptemp.scalar_mult(-1);
-		l=l+temptemp;
-		r=r+temptemp;
-
-		Tpprimel.identity();
-		Tpprimer.identity();
-		Tpprimel.setTranslation(l);
-		Tpprimer.setTranslation(r);
+		Tpprimel.prettyPrint();
+		Tpprimer.prettyPrint();
 		*/
-
+		std::vector<std::vector<float> > resultR, resultL;
 		resultL = nkin->inverseLeftLeg(Tpprimel);
 		resultR = nkin->inverseRightLeg(Tpprimer);
 

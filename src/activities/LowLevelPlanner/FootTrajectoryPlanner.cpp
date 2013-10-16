@@ -58,7 +58,7 @@ int FootTrajectoryPlanner::FootTrajectoryInterpolate(float Buffer[3][2][MAX_TRAJ
 
 	    KWalkMath.trigIntegInterpolation(Buffer[X][LEFT], --fillcounter[X][LEFT], startL.x, targetL.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	    KWalkMath.trigIntegInterpolation(Buffer[Y][LEFT], --fillcounter[Y][LEFT], startL.y, targetL.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.trigInterpolation2(Buffer[Z][LEFT], --fillcounter[Z][LEFT] ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.trigInterpolation3(Buffer[Z][LEFT], --fillcounter[Z][LEFT] ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	    KWalkMath.trigIntegInterpolation(Buffer[Theta][LEFT],--fillcounter[Theta][LEFT],startL.theta, targetL.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
 	    KWalkMath.trigIntegInterpolation(Buffer[X][RIGHT], --fillcounter[X][RIGHT], startR.x, startR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
@@ -87,7 +87,7 @@ int FootTrajectoryPlanner::FootTrajectoryInterpolate(float Buffer[3][2][MAX_TRAJ
 
 	    KWalkMath.trigIntegInterpolation(Buffer[X][RIGHT], --fillcounter[X][RIGHT], startR.x, targetR.x ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	    KWalkMath.trigIntegInterpolation(Buffer[Y][RIGHT], --fillcounter[Y][RIGHT], startR.y, targetR.y ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
-	    KWalkMath.trigInterpolation2(Buffer[Z][RIGHT], --fillcounter[Z][RIGHT],Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
+	    KWalkMath.trigInterpolation3(Buffer[Z][RIGHT], --fillcounter[Z][RIGHT],Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 	    KWalkMath.trigIntegInterpolation(Buffer[Theta][RIGHT], --fillcounter[Theta][RIGHT], startR.theta, targetR.theta ,Robot.getWalkParameter(Ts),Robot.getWalkParameter(Tss));
 
 	}
@@ -108,6 +108,7 @@ int FootTrajectoryPlanner::FootTrajectoryInitStep(float Buffer[3][2][MAX_TRAJECT
 
 	targetR=startR;
 	Planner->FootQ.pop();
+	std::cout<<startL.x<<" "<<startL.y<<std::endl;
 
 	memset(fillcounter,0,4*2*sizeof(int));
 

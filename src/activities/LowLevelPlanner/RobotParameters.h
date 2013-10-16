@@ -9,6 +9,7 @@
 #define ROBOTPARAMETERS_H_
 #include <string>
 #include <iostream>
+#include <cmath>
 
 #define MAX_TRAJECTORY_LENGTH 250
 
@@ -30,10 +31,11 @@ class RobotParameters
 			WalkParameters[StepX] = 0.155;
 			WalkParameters[StepY] = 0.085;
 			WalkParameters[StepZ] = 0.0353;
-			WalkParameters[H0] = 0.05;
+			WalkParameters[H0] = 0.06;
 			WalkParameters[ComZ] = 0.26;
-			WalkParameters[Tstep] = 0.30;
-			WalkParameters[Tds] = 0.35 * WalkParameters[Tstep];
+			WalkParameters[Tstep] = 0.35;
+
+			WalkParameters[Tds] = ceil(0.35 * WalkParameters[Tstep]/WalkParameters[Ts])*WalkParameters[Ts];
 			WalkParameters[Tss] =  WalkParameters[Tstep]-WalkParameters[Tds];
 			WalkParameters[MaxStepX] = 0.0400;
 			WalkParameters[MaxStepY] = 0.0400;
