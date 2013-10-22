@@ -9,63 +9,31 @@
 #define STEPPLANNER_H_
 #include "RobotParameters.h"
 #include <core/elements/math/KMat.hpp>
+#include "WalkEngine.hpp"
 #include <queue>
 
 
 
-enum
-{
-	X = 0, Y, Z, Theta, SIZE_OF_TRAJECTORY_ELEMENTS
-};
-enum
-{
-	LEFT = 0, RIGHT
-};
-
-struct GroundPoint{
-		float x,y;
-};
-
-struct PlanePoint{
-		float x,y,theta;
-};
 
 
 class Stepplanner
 {
 	private:
-		PlanePoint PrevAnkle,Ankle,Step,Pelvis;
 		RobotParameters Robot;
-        GroundPoint ZMP;
-		int stepcounter,LEG;
-        bool firstRun,RIGHTSUPPORT;
+		bool  rightsupport;
         KMath::KMat::GenMatrix<float,2,1> tempVec;
         KMath::KMat::GenMatrix<float,2,2> RotFootZ,RotPelvisZ,RotStepZ;
+        KVecFloat3 Pelvis,anklel,ankler;
+        KDeviceLists::SupportLeg support;
         KMath::KMat::GenMatrix<float,2,5> Foot;
         float dx,dy,dtheta,Time;
 	public:
-		std::queue<GroundPoint> ZmpQ;
-		std::queue<PlanePoint> FootQ;
+		std::queue<WalkInstruction> inst;
 		Stepplanner();
 		int getStepcounter();
+		void oneStep(std::vector<float> v);
 		void initialize(RobotParameters );
-		PlanePoint getPelvis();
-		void oneStep(std::vector<float> );
-        void afterStep();
-        void finalStep();
-        void clear();
-        bool IfFirstRightSupportleg();
-        const std::queue<PlanePoint>& getFootQ() const
-        {
-            return FootQ;
-        }
 
-
-
-        const std::queue<GroundPoint>& getZmpQ() const
-        {
-            return ZmpQ;
-        }
 
   	};
 #endif

@@ -62,6 +62,17 @@ class KWalkMat
 
 		}
 
+		float trigIntegInterpolation(float t,float start, float end, float Tss)
+		{
+			float delta = (end-start)/Tss;
+
+			return  start+delta*t-delta*sin((t*M_PI*2)/Tss)/((M_PI*2)/Tss);
+
+		}
+
+
+
+
 
 		void FifthOrderPolynomialInterpolation(float *buffer, int &counter, float Ts, float T)
 		{

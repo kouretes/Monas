@@ -42,10 +42,12 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
   //Defining the Optimal Gains for the Preview Controller
     //Integral Feedback Gain
     Gi=858.9552;
+    Gi*=2;
     //State Feedback Gain
     Gx(0,0)=1.0e+04 * 3.0043 ;
     Gx(0,1)=1.0e+04 * 0.5404;
     Gx(0,2)=1.0e+04 * 0.0090;
+    Gx.scalar_mult(2);
     //Predicted Reference Gain
     Gd(0)=-0.8590;
     Gd(1)=-1.0544;
@@ -97,7 +99,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     Gd(47)=-0.1076;
     Gd(48)=-0.1012;
     Gd(49)=-0.0952;
-    Gd.scalar_mult(1.0e+03);
+    Gd.scalar_mult(2.0e+03);
     //Defining the Optimal Observer Gain L
     //L(0)=0.0360;;
     //L(1)=-0.3445;
@@ -141,7 +143,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     //Bkalman(1)=0.000;
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=1e-6;
+	ProcessNoise(0,0)=1e-7;
 	P.zero();
 	P(0,0)=1e-20;
 	MeasurementNoise.identity();
@@ -223,7 +225,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 			combuffer.pop();
 
 
-		if(uBuffer.size()>4)
+		if(uBuffer.size()>3)
 			uBuffer.pop();
 
 
@@ -272,8 +274,8 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
 	float zmpstate=(Cd(0)*State(0)+Cd(2)*State(2));
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-	//error(0)*=0.8;
-	//error.scalar_mult(1.0);
+	//error(0)*=2;
+	//error.scalar_mult(0.2);
 
     State=Ad*State;
 
@@ -288,5 +290,5 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
 
     //Estimated COM position
-    Com=State(0)+(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+    Com=State(0);//+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
 }
