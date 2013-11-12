@@ -125,7 +125,7 @@ int PathPlanning::Execute() {
 
 	if(pprm != 0){
 		aStarUseSmallGrid = pprm->forceuseofsmallmap();
-		if(pprm->targetx() <= smallPathMap.getRealMetters() && pprm->targety() <= smallPathMap.getRealMetters()){
+		if(fabs(pprm->targetx()) <= smallPathMap.getRealMetters() && fabs(pprm->targety()) <= smallPathMap.getRealMetters()){
 			aStarUseSmallGrid = true;
 		}else{
 			aStarUseSmallGrid = false;
