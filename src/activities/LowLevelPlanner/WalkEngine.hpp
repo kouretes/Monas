@@ -71,9 +71,9 @@ private:
 
 
 	KDeviceLists::SupportLeg supportleg;
-	KDeviceLists::ChainsNames chainsupport; //Corresponds to this supportleg
+	KDeviceLists::ChainsNames chainsupport; /// Corresponds to this supportleg
     bool double_support;
-    float double_support_progress;//Progress of double support, zero in single supports
+    float double_support_progress;  ///Progress of double support, zero in single supports
 	std::queue<WalkInstruction> qbuffer;
 	WalkInstruction ci;
 

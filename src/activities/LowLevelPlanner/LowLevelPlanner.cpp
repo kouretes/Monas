@@ -74,7 +74,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.000;
+		x = 3.000;
 		y = 0.0000;
 		z = 0.0;
 		s = 1;
@@ -159,7 +159,7 @@ int LowLevelPlanner::Execute()
 			break;
 		case DO_STEPS:
 
-			if(engine->walkbuffer.size()<2)
+	if(engine->walkbuffer.size()<2)
 			{
 				NaoPlanner.oneStep(speed);
 				while(NaoPlanner.inst.size()>0)
@@ -230,7 +230,6 @@ int LowLevelPlanner::DCMcallback()
 	if(dcm_state==INIT_WALK)
 	{
 		engine->Reset();
-		//engine->addInit();
 		dcm_state=DCM_RUN;
 	}
 	if (dcm_state == DCM_STOP) //Nothing to execute
