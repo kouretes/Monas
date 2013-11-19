@@ -31,7 +31,7 @@ public:
 	RobotParameters NaoRobot;
 	KWalkMat interp;
 	NAOKinematics nkin;
-	WalkBuffer walkbuffer;
+		WalkBuffer walkbuffer;
 	void setFSR(KMath::KMat::GenMatrix<double,4,1> l,KMath::KMat::GenMatrix<double,4,1> r);
 	void initFSR(KMath::KMat::GenMatrix<double,3,4> l,KMath::KMat::GenMatrix<double,3,4> r)
 	{
@@ -55,7 +55,6 @@ private:
 
 	KVecFloat2 getCoP();
 
-	unsigned currentstep;
 
 	/** Real odometry **/
 
@@ -74,9 +73,9 @@ private:
 	KDeviceLists::ChainsNames chainsupport; /// Corresponds to this supportleg
     bool double_support;
     float double_support_progress;  ///Progress of double support, zero in single supports
-	std::queue<WalkInstruction> qbuffer;
 	WalkInstruction ci;
-
+	unsigned currentstep;
+	std::queue<WalkInstruction> qbuffer;
 
 	/** Leg Controllers **/
 	LIPMPreviewController NaoLIPMx ,NaoLIPMy;

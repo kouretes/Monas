@@ -99,8 +99,10 @@ void Stepplanner::oneStep(std::vector<float> v)
 	velocity(0)= a(0) * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepX);
 	velocity(1)= a(1) * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepY);
     velocity(2) = v[2] * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepTheta);
-    h=RotPelvisZ*h;
+
     Pelvis+=velocity;
+    KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
+    h=RotPelvisZ*h;
 	i.target=Pelvis;
 	i.target(0)+=h(0);
 	i.target(1)+=h(1);

@@ -271,7 +271,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
 	float zmpstate=(Cd(0)*State(0)+Cd(2)*State(2));
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-    error.scalar_mult(0.8);
+    error(0)*=0.6;
     State=Ad*State;
 
     temp=Bd;
