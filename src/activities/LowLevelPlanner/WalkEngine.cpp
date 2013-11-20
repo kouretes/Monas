@@ -45,6 +45,7 @@ void WalkEngine::Reset()
 
 	planned.targetZMP=KDeviceLists::SUPPORT_LEG_NONE;
 	planned.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
+	predicterror.zero();
 
 };
 void WalkEngine::addInit()
@@ -118,11 +119,16 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 	KVecFloat3 dl=startL,dr=startR;
 	if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-		dr=ci.target;
+		dr=ci.target+predicterror;
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-		dl=ci.target;
+		dl=ci.target+predicterror;
 
-	float vel=(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
+
+
+	float h=NaoRobot.getWalkParameter(StepZ);
+
+    //float vel=NaoRobot.getWalkParameter(StepZ)*(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
+	float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4,0.0  ,ci.steps);
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
     dl(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
@@ -135,9 +141,9 @@ std::vector<float> WalkEngine::Calculate_IK()
 
     float zl=0,zr=0;
     if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-		zr=NaoRobot.getWalkParameter(StepZ)*vel;
+		zr=vel;
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-		 zl=NaoRobot.getWalkParameter(StepZ)*vel;
+		 zl=vel;
 
 	Til=getTransformation(dl,zl);
 	Tir=getTransformation(dr,zr);
@@ -236,9 +242,26 @@ void WalkEngine::Calculate_Desired_COM()
 	/** Get current Com in Inertial Frame **/
 	KVecDouble3 CoMm =(Tis*Tsp).transform(nkin.calculateCenterOfMass());
 	CoMm.scalar_mult(1.0/1000.0);
+	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
 	NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
+	KVecFloat3 e(NaoLIPMx.predictedError,NaoLIPMy.predictedError,0);
+	//e.prettyPrint();
+	if(sqrt(e.norm2())<NaoRobot.getWalkParameter(AdaptiveStepTol))
+	{
+        predicterror.scalar_mult(0.9);
+        e.scalar_mult(0.1);
+	}
+    else
+    {
+       predicterror.scalar_mult(0.5);
+       e.scalar_mult(0.5);
+    }
+
+    predicterror+=e;
+    //predicterror.prettyPrint();
+
 	/** Pop the used Point **/
 	ZbufferX.pop();
 	ZbufferY.pop();
@@ -255,7 +278,7 @@ KVecFloat2 WalkEngine::getCoP()
 	KVecFloat2 res;
 	KVecDouble3 copl,copr,copi,cops,copsprime;
 	float weightl,weightr,weights, weightsprime;
-
+    fsrl.prettyPrint();
 	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
 	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
 
@@ -304,7 +327,7 @@ KVecFloat2 WalkEngine::getCoP()
 	copl.scalar_mult(1000);
 	copr.scalar_mult(1000);
 
-	if(chainsupport==KDeviceLists::CHAIN_R_LEG)
+	if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT)
 	{
 		cops=copr;
 		copsprime=copl;
@@ -331,6 +354,7 @@ KVecFloat2 WalkEngine::getCoP()
 
 	res(0)=copi(0);
 	res(1)=copi(1);
+	res.prettyPrint();
 
 	return res;
 }

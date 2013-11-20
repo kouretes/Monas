@@ -271,7 +271,8 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
     KVecFloat2 error=KVecFloat2(CoMMeasured,StatePredict(0));
 	float zmpstate=(Cd(0)*State(0)+Cd(2)*State(2));
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-    error(0)*=0.6;
+    error.scalar_mult(1.5);
+
     State=Ad*State;
 
     temp=Bd;
@@ -280,8 +281,13 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,f
 
     State+=L*error;
     //State.prettyPrint();
+    std::cout<<"ZMPREF"<<std::endl;
+    std::cout<<ZMPReference(1)<<std::endl;
+     std::cout<<"predicted"<<std::endl;
+    std::cout<<Cd(0)*State(0)+Cd(2)*State(2)<<std::endl;
+    predictedError=Cd(0)*State(0)+Cd(2)*State(2)-ZMPReference(1);
 
-    uBuffer.push((Cd(0)*State(0)+Cd(2)*State(2))-zmpstate);//(ZMPReference(1)-ZMPReference(0)));
+     uBuffer.push((Cd(0)*State(0)+Cd(2)*State(2))-zmpstate);//(ZMPReference(1)-ZMPReference(0)));
 
 
     //Estimated COM position

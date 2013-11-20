@@ -74,9 +74,9 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.000;
+		x = 0.00;
 		y = 0.0000;
-		z = 0.25;
+		z = 0.000;
 		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->add_parameter(x);
@@ -159,7 +159,7 @@ int LowLevelPlanner::Execute()
 			break;
 		case DO_STEPS:
 
-	if(engine->walkbuffer.size()<2)
+            if(engine->walkbuffer.size()<2)
 			{
 				NaoPlanner.oneStep(speed);
 				while(NaoPlanner.inst.size()>0)

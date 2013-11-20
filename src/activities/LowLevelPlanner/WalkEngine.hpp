@@ -74,6 +74,7 @@ private:
     bool double_support;
     float double_support_progress;  ///Progress of double support, zero in single supports
 	WalkInstruction ci;
+	KVecFloat3 predicterror;
 	unsigned currentstep;
 	std::queue<WalkInstruction> qbuffer;
 

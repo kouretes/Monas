@@ -44,6 +44,7 @@ class LIPMPreviewController{
 		void LIPMComPredictor(CircularBuffer<float> & ZmpBuffer,float CoMmeasured,float ZMPMeasured);
 
 		float Com;
+		float predictedError;
 		float d;
 };
 

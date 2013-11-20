@@ -69,9 +69,168 @@ class KWalkMat
 			return  start+delta*t-delta*sin((t*M_PI*2)/Tss)/((M_PI*2)/Tss);
 
 		}
+float CubicSplineInterpolation(float tdot,float p0,float p1,float p2, float p3,float p4,float T)
+        {
+            float h=T/4;
+            float res;
+            float t;
+            KMath::KMat::GenMatrix<float,1,7> C;
+            KMath::KMat::GenMatrix<float,7,1> D;
+            KMath::KMat::GenMatrix<float,5,1> B;
+            KMath::KMat::GenMatrix<float,5,5> A;
+            B(0)=p0;
+            B(1)=6*p1;
+            B(2)=6*p2;
+            B(3)=6*p3;
+            B(4)=p4;
+
+            B.scalar_mult((1/h)*(1/h)*(1/h));
+
+            A.zero();
+            A(0,0)=1;
+            A(1,0)=1;
+            A(1,1)=4;
+            A(1,2)=1;
+            A(2,1)=1;
+            A(2,2)=4;
+            A(2,3)=1;
+            A(3,2)=1;
+            A(3,3)=4;
+            A(3,4)=1;
+            A(4,4)=1;
+
+            A.fast_invert();
+            B=A*B;
+
+            C.zero();
+            C(0,0)=2*B(0)-B(1) ;
+            C(0,1)=B(0);
+            C(0,2)=B(1);
+            C(0,3)=B(2);
+            C(0,4)=B(3);
+            C(0,5)=B(4);
+            C(0,6)=2*B(4)-B(3);
 
 
+                int i=0;
+                for(int j=-1;j<=6;j++)
+                {
 
+                    t=tdot-j*h;
+
+                    if (t<=-2*h)
+                    {
+                        D(i)=0;
+                    }
+                    else if ((t>-2*h) &&(t<=-h))
+                    {
+                        D(i)=(1.0/6.0)*(2*h+t)*(2*h+t)*(2*h+t);
+                    }
+                    else if((t>-h) && (t<=0))
+                    {
+                        D(i)=(2.0/3.0)*h*h*h-(1.0/2.0)*t*t*(2*h+t);
+                    }
+                    else if((t>0)&&(t<=h))
+                    {
+                        D(i)=(2.0/3.0)*h*h*h-(1.0/2.0)*t*t*(2*h-t);
+
+                    }
+                    else  if((t>h)&&(t<=2*h))
+                    {
+                        D(i)=(1.0/6.0)*(2*h-t)*(2*h-t)*(2*h-t);
+                    }
+                    else
+                    {
+                        D(i)=0;
+                    }
+
+                   i++;
+                }
+
+                return res=C*D;
+        }
+
+void CubicSplineInterpolation(float *buffer,int &counter,float p0,float p1,float p2, float p3,float p4,float Ts,float T)
+        {
+            float h=T/4;
+            float t;
+            KMath::KMat::GenMatrix<float,1,7> C;
+            KMath::KMat::GenMatrix<float,7,1> D;
+            KMath::KMat::GenMatrix<float,5,1> B;
+            KMath::KMat::GenMatrix<float,5,5> A;
+            B(0)=p0;
+            B(1)=6*p1;
+            B(2)=6*p2;
+            B(3)=6*p3;
+            B(4)=p4;
+
+            B.scalar_mult((1/h)*(1/h)*(1/h));
+
+            A.zero();
+            A(0,0)=1;
+            A(1,0)=1;
+            A(1,1)=4;
+            A(1,2)=1;
+            A(2,1)=1;
+            A(2,2)=4;
+            A(2,3)=1;
+            A(3,2)=1;
+            A(3,3)=4;
+            A(3,4)=1;
+            A(4,4)=1;
+
+            A.fast_invert();
+            B=A*B;
+
+            C.zero();
+            C(0,0)=2*B(0)-B(1) ;
+            C(0,1)=B(0);
+            C(0,2)=B(1);
+            C(0,3)=B(2);
+            C(0,4)=B(3);
+            C(0,5)=B(4);
+            C(0,6)=2*B(4)-B(3);
+
+            for(float tdot=0;tdot<=T;tdot=tdot+Ts,counter++)
+            {
+                int i=0;
+                for(int j=-1;j<=6;j++)
+                {
+
+                    t=tdot-j*h;
+
+                    if (t<=-2*h)
+                    {
+                        D(i)=0;
+                    }
+                    else if ((t>-2*h) &&(t<=-h))
+                    {
+                        D(i)=(1.0/6.0)*(2*h+t)*(2*h+t)*(2*h+t);
+                    }
+                    else if((t>-h) && (t<=0))
+                    {
+                        D(i)=(2.0/3.0)*h*h*h-(1.0/2.0)*t*t*(2*h+t);
+                    }
+                    else if((t>0)&&(t<=h))
+                    {
+                        D(i)=(2.0/3.0)*h*h*h-(1.0/2.0)*t*t*(2*h-t);
+
+                    }
+                    else  if((t>h)&&(t<=2*h))
+                    {
+                        D(i)=(1.0/6.0)*(2*h-t)*(2*h-t)*(2*h-t);
+                    }
+                    else
+                    {
+                        D(i)=0;
+                    }
+
+                   i++;
+                }
+
+                buffer[counter]=C*D;
+            }
+        }
 
 
 		void FifthOrderPolynomialInterpolation(float *buffer, int &counter, float Ts, float T)

@@ -15,7 +15,7 @@
 
 enum
 {
-	StepX=0, StepY, StepZ, H0,HX,ComZ, Tstep, Tds, Tss, Ts, MaxStepX, MaxStepY, MaxStepTheta,g, ParametersSize
+	StepX=0, StepY, StepZ, H0,HX,ComZ, Tstep, Tds, Tss, Ts, MaxStepX, MaxStepY, MaxStepTheta,g,AdaptiveStepTol, ParametersSize
 };
 
 class RobotParameters
@@ -34,7 +34,7 @@ class RobotParameters
 			WalkParameters[H0] = 0.05;
 			WalkParameters[HX] = -0.0225;
 			WalkParameters[ComZ] = 0.250;
-			WalkParameters[Tstep] = 0.70;
+			WalkParameters[Tstep] = 0.38;
 
 			WalkParameters[Tds] = ceil(0.35 * WalkParameters[Tstep]/WalkParameters[Ts])*WalkParameters[Ts];
 			WalkParameters[Tss] =  WalkParameters[Tstep]-WalkParameters[Tds];
@@ -42,6 +42,7 @@ class RobotParameters
 			WalkParameters[MaxStepY] = 0.0400;
 			WalkParameters[MaxStepTheta] = 0.6980;
 			WalkParameters[g] = 9.81;
+			WalkParameters[AdaptiveStepTol]=0.01;
 
 
 		}
