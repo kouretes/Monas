@@ -53,7 +53,7 @@ void WalkEngine::addInit()
 	WalkInstruction i;
 	i.targetSupport=KDeviceLists::SUPPORT_LEG_LEFT;
 	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
-	i.steps=5*NaoRobot.getWalkParameter(Tstep)/NaoRobot.getWalkParameter(Ts);
+	i.steps=NaoRobot.getWalkParameter(Tinit)/NaoRobot.getWalkParameter(Ts);
 	walkbuffer.add(i);
 }
 
@@ -249,8 +249,8 @@ void WalkEngine::Calculate_Desired_COM()
 	KVecFloat3 e(NaoLIPMx.predictedError,NaoLIPMy.predictedError,0);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.5);
-        e.scalar_mult(0.5);
+        predicterror.scalar_mult(0.35);
+        e.scalar_mult(0.65);
 	}
     else
     {
