@@ -247,20 +247,19 @@ void WalkEngine::Calculate_Desired_COM()
 	NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 	KVecFloat3 e(NaoLIPMx.predictedError,NaoLIPMy.predictedError,0);
-	//e.prettyPrint();
-	if(sqrt(e.norm2())<NaoRobot.getWalkParameter(AdaptiveStepTol))
+	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.9);
-        e.scalar_mult(0.1);
+        predicterror.scalar_mult(0.5);
+        e.scalar_mult(0.5);
 	}
     else
     {
-       predicterror.scalar_mult(0.5);
-       e.scalar_mult(0.5);
+       predicterror.scalar_mult(0.9);
+       e.scalar_mult(0.1);
     }
 
     predicterror+=e;
-    //predicterror.prettyPrint();
+    predicterror.prettyPrint();
 
 	/** Pop the used Point **/
 	ZbufferX.pop();

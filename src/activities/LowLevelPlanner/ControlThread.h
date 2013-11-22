@@ -15,7 +15,7 @@
 #include <iostream>
 #include "CircularBuffer.hpp"
 
-#define PreviewWindow 51
+#define PreviewWindow 101
 
 class LIPMPreviewController{
     private:
