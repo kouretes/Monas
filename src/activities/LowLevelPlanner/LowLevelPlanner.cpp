@@ -10,6 +10,20 @@
 
 #include "core/include/Logger.hpp"
 #include "tools/toString.h"
+#include "hal/robot/generic_nao/KinematicsDefines.h"
+
+#define LHipRange (LHipPitchHigh - LHipPitchLow)
+#define RHipRange (RHipPitchHigh - RHipPitchLow)
+
+#define W_LShoulderPitchLow  0.7
+#define W_RShoulderPitchLow  0.7
+
+#define LShoulderPitchRange (LShoulderPitchHigh - W_LShoulderPitchLow)
+#define RShoulderPitchRange (LShoulderPitchHigh - W_RShoulderPitchLow)
+
+#define CalcLShoulderPitch(RHiPitch_v)  ((RHiPitch_v -  RHipPitchLow)/RHipRange)*1.2*LShoulderPitchRange + W_LShoulderPitchLow + 0.1
+#define CalcRShoulderPitch(LHiPitch_v)  ((LHiPitch_v -  LHipPitchLow)/LHipRange)*1.2*RShoulderPitchRange + W_RShoulderPitchLow + 0.1
+
 
 //using boost::posix_time::milliseconds;
 ACTIVITY_REGISTER(LowLevelPlanner)
@@ -74,7 +88,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.00;
+		x = 2.00;
 		y = 0.0000;
 		z = 0.000;
 		s = 1;
@@ -247,9 +261,14 @@ int LowLevelPlanner::DCMcallback()
 			*test=5;
 		return 0;
 	}
-
-	for (int p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
+	int p;
+	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
 		commands[5][(p)][0] = (float) joints_action[p];
+	//Left Shoulder use right hip value
+	std::cout << p;
+	commands[5][(p++)][0] = CalcLShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH+KDeviceLists::LEG_SIZE]);
+	//Right Shoulder use left hip value
+	commands[5][(p)][0] = CalcRShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH]);;
 
 	//Send command
 	try
@@ -364,9 +383,9 @@ void LowLevelPlanner::prepareJointsPositionActuatorCommand()
 //commands[4][0]  Will be the new time
 // to control
 
-	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2); // For joints
+	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2 + 2); // For joints //2legs + 2 hip_pitch
 
-	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2; i++)
+	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2 + 2; i++)
 		commands[5][i].arraySetSize(1);
 //commands[5][i][0] will be the new angle
 
@@ -381,7 +400,7 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 	jointAliasses.arraySetSize(2);
 	jointAliasses[0] = std::string("jointActuator"); // Alias for all joint actuators
 
-	jointAliasses[1].arraySetSize(KDeviceLists::LEG_SIZE * 2); //
+	jointAliasses[1].arraySetSize(KDeviceLists::LEG_SIZE * 2 + 2); //
 
 	//int idx = 0;
 	// Joints actuator list
@@ -400,6 +419,20 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 		jointAliasses[1][l] = actuatorname;
 		std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
+
+	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
+	{
+			actuatorname = jointActuatorKeys[KDeviceLists::L_ARM + j];
+			jointAliasses[1][l] = actuatorname;
+			std::cout << " Joint Name " << actuatorname << " " << std::endl;
+		}
+
+	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
+	{
+			actuatorname = jointActuatorKeys[KDeviceLists::R_ARM + j];
+			jointAliasses[1][l] = actuatorname;
+			std::cout << " Joint Name " << actuatorname << " " << std::endl;
+		}
 
 ///*Create Joint Alias*
 	try
