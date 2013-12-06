@@ -1124,7 +1124,7 @@ void Behavior::goalie() {
 			_blk.publishState(hcontrol, "behavior");
 		}
 
-		if(ballDist < 1.0f) { // check if ball is to close to the goal post
+		/*if(ballDist < 1.0f) { // check if ball is to close to the goal post
 			velocityWalk(ballX - config.posX, ballY - side * config.posY, ballBearing, 1);
 			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - side*config.posY ) < config.epsY)) {
 				if (ballY > 0.0)
@@ -1137,7 +1137,7 @@ void Behavior::goalie() {
 		}
 		else {
 			littleWalk(0.0, 0.0, ballBearing);
-		}
+		}*/
 
 	}
 	/*else if(sharedBallFound == 1) {
@@ -1171,7 +1171,7 @@ int Behavior::toFallOrNotToFall() {
 	uBallY = wim->balls(0).relativeyspeed();
 
 	if(uBallX < 0.0) {
-		ballProjection = (uBallX * y - uBallX * x) / uBallX ; // dk is the projection of the ball's route towards the robot/goalpost
+		ballProjection = (uBallX * y - uBallY * x) / uBallX ; // dk is the projection of the ball's route towards the robot/goalpost
 
 		if(fabs(ballProjection) <= 0.3) { // if ball projection is shorter than the robot's foot can extend
 
