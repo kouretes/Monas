@@ -12,17 +12,7 @@
 #include "tools/toString.h"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 
-#define LHipRange (LHipPitchHigh - LHipPitchLow)
-#define RHipRange (RHipPitchHigh - RHipPitchLow)
-
-#define W_LShoulderPitchLow  0.7
-#define W_RShoulderPitchLow  0.7
-
-#define LShoulderPitchRange (LShoulderPitchHigh - W_LShoulderPitchLow)
-#define RShoulderPitchRange (LShoulderPitchHigh - W_RShoulderPitchLow)
-
-#define CalcLShoulderPitch(RHiPitch_v)  ((RHiPitch_v -  RHipPitchLow)/RHipRange)*1.2*LShoulderPitchRange + W_LShoulderPitchLow + 0.1
-#define CalcRShoulderPitch(LHiPitch_v)  ((LHiPitch_v -  LHipPitchLow)/LHipRange)*1.2*RShoulderPitchRange + W_RShoulderPitchLow + 0.1
+#define ANALYTICAL
 
 
 //using boost::posix_time::milliseconds;
@@ -45,7 +35,7 @@ void KinematicsDemo::UserInit()
 	/**
 	 Set Body Stiffness
 	 **/
-	setStiffness(0.5f);
+	setStiffness(0.5);
 
 
 
@@ -55,7 +45,7 @@ void KinematicsDemo::UserInit()
 void KinematicsDemo::Reset()
 {
 
-	setStiffness(0.75f);
+	setStiffness(0.5);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -69,6 +59,7 @@ int KinematicsDemo::Execute()
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&KinematicsDemo::DCMcallback, this));
 		firstrun = false;
 	}
+
 	return 0;
 }
 
@@ -77,6 +68,8 @@ int KinematicsDemo::Execute()
 int KinematicsDemo::DCMcallback()
 {
 
+	std::vector<float> oldall;
+	oldall=alljoints;
 	/** Read Values of joints **/
 	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
 		alljoints[j] = *jointPtr[i];
@@ -85,34 +78,41 @@ int KinematicsDemo::DCMcallback()
 
 	nkin.setJoints(alljoints); //Feed to kinematics
 	NAOKinematics::kmatTable Tl,Tr;
-	float dz=-alljoints[KDeviceLists::HEAD+KDeviceLists::PITCH]/HeadPitchHigh;
-	float dy=alljoints[KDeviceLists::HEAD+KDeviceLists::YAW]/HeadYawHigh;
-	dz*=30;
-	dy*=20;
-
+	float dz=0.5*alljoints[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_PITCH]+0.5*oldall[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_PITCH];
+	float dx=0.5*alljoints[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_ROLL]+0.5*oldall[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_ROLL];
+	dz*=50;
+	dx*=150;
+	float rem=-sqrt(320*320-dx*dx)+dz;
 #ifdef ANALYTICAL
-	std::vector<float> joints_action,l,r;
+	std::vector<float> joints_action;
+	NAOKinematics::AngleContainer l,r;
 	Tl.identity();
 	Tr.identity();
-	Tl(1,4)=dy+25;
-	Tl(2,4)=dz-260;
-	Tr(1,4)=dy-25;
-	Tr(2,4)=dz-260;
+	Tl(0,3)=dx;
+	Tl(1,3)=50;
+	Tl(2,3)=rem;
+	Tr(0,3)=dx;
+	Tr(1,3)=-50;
+	Tr(2,3)=rem;
+	//Tl.prettyPrint();
+	//Tr.prettyPrint();
 	l=nkin.inverseLeftLeg(Tl);
-	r=nkin.inverseLeftLeg(Tr);
-	joints_action.push_back(l);
-	joints_action.push_back(r);
+	r=nkin.inverseRightLeg(Tr);
+	std::cout<<l.size()<<"\t"<<r.size()<<std::endl;
+
+	if(l.size()>0 && r.size()>0)
+	{
+		joints_action.insert(joints_action.end(),l[0].begin(),l[0].end());
+		joints_action.insert(joints_action.end(),r[0].begin(),r[0].end());
+	}
 	if (joints_action.size() != 12)
 	{
 		//std::cerr << "Not enough joint values" << std::endl;
 
-			int *test;
-			test=0;
-			*test=5;
 		return 0;
 	}
 	int p;
-	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
+	for (p = 0; p < KDeviceLists::LEG_SIZE*2 ; p++)
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
 
@@ -231,7 +231,7 @@ void KinematicsDemo::prepareJointsPositionActuatorCommand()
 //commands[4][0]  Will be the new time
 // to control
 
-	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2 + 2); // For joints //2legs + 2 hip_pitch
+	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2); // For joints //2legs + 2 hip_pitch
 
 	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2 ; i++)
 		commands[5][i].arraySetSize(1);
@@ -254,14 +254,14 @@ void KinematicsDemo::createJointsPositionActuatorAlias()
 	// Joints actuator list
 	std::string actuatorname;
 	int l = 0;
-	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+	for (int j =0; j < KDeviceLists::LEG_SIZE; j++, l++)
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::L_LEG + j];
 		jointAliasses[1][l] = actuatorname;
 		std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
 
-	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+	for (int j = 0; j < KDeviceLists::LEG_SIZE; j++, l++)
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::R_LEG + j];
 		jointAliasses[1][l] = actuatorname;
@@ -282,6 +282,8 @@ void KinematicsDemo::createJointsPositionActuatorAlias()
 
 void KinematicsDemo::setStiffness(const float& stiffnessValue)
 {
-	motion->setStiffnesses("Body", stiffnessValue);
+	motion->setStiffnesses("Body", 0.0);
+		motion->setStiffnesses("LLeg", stiffnessValue);
+				motion->setStiffnesses("RLeg", stiffnessValue);
 }
 

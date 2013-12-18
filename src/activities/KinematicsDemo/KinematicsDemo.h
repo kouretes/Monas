@@ -13,8 +13,6 @@
 
 #include <iostream>
 #include <string>
-#include "WalkEngine.hpp"
-
 #include "core/elements/math/KMat.hpp"
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 #include "hal/robot/generic_nao/NAOKinematics.h"
