@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef LOWLEVELPLANNER_H
-#define LOWLEVELPLANNER_H
+#ifndef KINEMATICSDEMO_H
+#define KINEMATICSDEMO_H
 #include "core/include/IActivity.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -13,37 +13,29 @@
 
 #include <iostream>
 #include <string>
-#include "Stepplanner.h"
 #include "WalkEngine.hpp"
 
 #include "core/elements/math/KMat.hpp"
 #include "hal/robot/generic_nao/aldebaran-motion.h"
+#include "hal/robot/generic_nao/NAOKinematics.h"
 
-
-/**
- Useful NameSpace
- **/
-
-enum {
-	DO_NOTHING =0, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH, DCM_RUN, DCM_STOP
-};
 
 
 /**
- * \class LowLevelPlanner
+ * \class KinematicsDemo
  *
- * \file LowLevelPlanner.h
+ * \file KinematicsDemo.h
  **/
 
 ACTIVITY_START
-class LowLevelPlanner: public IActivity
+class KinematicsDemo: public IActivity
 {
 	public:
 		/**
 		 * @brief Does nothing
 		 */
 
-		ACTIVITY_CONSTRUCTOR(LowLevelPlanner);
+		ACTIVITY_CONSTRUCTOR(KinematicsDemo);
 		/**
 		 * @brief
 		 * @return 0
@@ -56,25 +48,13 @@ class LowLevelPlanner: public IActivity
 		void ACTIVITY_VISIBLE Reset();
 		std::string ACTIVITY_VISIBLE GetName()
 		{
-			return "LowLevelPlanner";
+			return "KinematicsDemo";
 		}
 		private:
-		/**
-		 Message providing Torso Velocity
-		 */
-		boost::shared_ptr<const MotionWalkMessage> wm;
 
-		/**
-		 From High LVL
-		 **/
-		std::vector<float> speed;
 
-		/**
-		 Main object instances used by KWalk
-		 **/
-		RobotParameters NaoRobot;
-		Stepplanner NaoPlanner;
-		WalkEngine* 	engine;
+
+		NAOKinematics nkin;
 		/**
 		 Used by DCM callbacks
 		 **/
@@ -84,10 +64,7 @@ class LowLevelPlanner: public IActivity
 		AL::DCMProxy *dcm;
 		std::vector<float> alljoints;
 		AL::ALValue commands;
-		/****/
-		float fsr_position[4][2][2];
 
-		unsigned int dcm_counter;
 
 		/** Initialise the DCM part **/
 		void initialise_devices();
@@ -104,8 +81,6 @@ class LowLevelPlanner: public IActivity
 		/** Set one hardness value to all Body joints **/
 		void setStiffness(const float &stiffnessValue);
 
-
-		int state, dcm_state;
 	};
 	ACTIVITY_END
 #endif

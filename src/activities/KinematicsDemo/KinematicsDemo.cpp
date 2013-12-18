@@ -1,4 +1,4 @@
-#include "LowLevelPlanner.h"
+#include "KinematicsDemo.h"
 #include "messages/SensorsMessage.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -26,39 +26,33 @@
 
 
 //using boost::posix_time::milliseconds;
-ACTIVITY_REGISTER(LowLevelPlanner)
+ACTIVITY_REGISTER(KinematicsDemo)
 ;
 
-void LowLevelPlanner::UserInit()
+void KinematicsDemo::UserInit()
 {
 	/**
 	 Initializing instances need by the Walk Engine
 	 **/
 
 
-	engine =new WalkEngine(NaoRobot);
 	/**
 	 Initializing DCM
 	 **/
 	initialise_devices();
 
 
-
-	std::cout << "Walk Engine Initialized" << std::endl;
-	dcm_counter = 0; //dcm_counter = -1;
 	/**
 	 Set Body Stiffness
 	 **/
 	setStiffness(0.5f);
-	state = DO_NOTHING;
-	dcm_state = DCM_STOP;
 
 
 
 	Reset();
 }
 
-void LowLevelPlanner::Reset()
+void KinematicsDemo::Reset()
 {
 
 	setStiffness(0.75f);
@@ -66,192 +60,48 @@ void LowLevelPlanner::Reset()
 	sleep(1);
 }
 
-int LowLevelPlanner::Execute()
+int KinematicsDemo::Execute()
 {
 	static bool firstrun = true;
 
 	if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
 	{
-		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
+		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&KinematicsDemo::DCMcallback, this));
 		firstrun = false;
 	}
-
-	static int counter = 0; //just for testing
-	if ((counter % 2 == 0))
-	{
-		MotionWalkMessage* wmot = new MotionWalkMessage();
-		float x = rand() / ((float) RAND_MAX);
-		x = (x - 0.5);
-		float y = rand() / ((float) RAND_MAX);
-		y = (y - 0.5);
-		float z = rand() / ((float) RAND_MAX);
-		z = (z - 0.5);
-		float s = rand() / ((float) RAND_MAX);
-
-		x = 0.00;
-		y = 0.0000;
-		z = 0.000;
-		s = 1;
-		wmot->set_command("setWalkTargetVelocity");
-		wmot->add_parameter(x);
-		wmot->add_parameter(y);
-		wmot->add_parameter(z);
-		wmot->add_parameter(s);
-
-		_blk.publishSignal(*wmot, "motion");
-		delete wmot;
-	}
-	counter++;
-
-	/**
-	 Message GetSpeed from high level
-
-	 **/
-
-	/**
-	 Check if after Stepping the Target is reached
-	 **/
-	wm = _blk.readSignal<MotionWalkMessage>("motion");
-	if (wm != NULL)
-	{
-		if (wm->command() == "setWalkTargetVelocity")
-		{
-			if (state == DO_NOTHING)
-			{
-				dcm_counter = 0;
-				state = INIT_WALK;
-				std::cout << "Message arrived should initialize walk" << std::endl;
-			}
-		} else
-		{
-			return 0;
-		}
-	} else
-		return 0;
-
-	speed.push_back(wm->parameter(0));
-	speed.push_back(wm->parameter(1));
-	speed.push_back(wm->parameter(2));
-
-	/*if (dcm_length[next_2B_inserted] != 0)
-	{
-		std::cout << "Buffers are full" << std::endl;
-		return 0;
-	}*/
-
-	if (speed.size() < 3)
-		std::cerr << "Not Enought Speed Values" << std::endl;
-
-	/*if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
-		state = FINAL_STEP;*/
-
-	//std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
-
-	switch (state)
-	{
-		case DO_NOTHING:
-			dcm_state = DCM_STOP;
-			return 0;
-			break;
-
-
-		case INIT_WALK:
-			dcm_state = INIT_WALK;
-			//engine->Reset();
-			engine->addInit();
-			NaoPlanner.initialize(NaoRobot);
-			//NaoPlanner.initialize(NaoRobot);
-			//NaoPlanner.initialize(NaoRobot);
-			while(NaoPlanner.inst.size()>0)
-			{
-					engine->walkbuffer.add(NaoPlanner.inst.front());
-					NaoPlanner.inst.pop();
-			}
-
-
-			state=DO_STEPS;
-			break;
-		case DO_STEPS:
-
-            if(engine->walkbuffer.size()<2)
-			{
-				NaoPlanner.oneStep(speed);
-				while(NaoPlanner.inst.size()>0)
-				{
-						engine->walkbuffer.add(NaoPlanner.inst.front());
-						NaoPlanner.inst.pop();
-				}
-			}
-			/*Plan two consecutive Steps with the Predefined Speed
-			 **/
-			//NaoPlanner.oneStep(speed);
-			//NaoPlanner.oneStep(speed);
-
-
-			//Calculate_Tragectories();
-
-			//dcm_state = DCM_RUN;
-			break;
-
-		case FINAL_STEP:
-			/**
-			 Plan a step and make another FINAL so
-			 both Feet come parallel
-			 **/
-			//NaoPlanner.oneStep(speed);
-			//NaoPlanner.finalStep();
-			//Calculate_Tragectories();
-			state = WAIT_TO_FINISH;
-			break;
-		case WAIT_TO_FINISH:
-			return 0;
-			break; // nothing to do
-
-		default:
-			break;
-	}
-
-
-
 	return 0;
 }
 
 
 
-int LowLevelPlanner::DCMcallback()
+int KinematicsDemo::DCMcallback()
 {
-
-
-
 
 	/** Read Values of joints **/
 	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
 		alljoints[j] = *jointPtr[i];
 
 	alljoints[KDeviceLists::R_LEG+KDeviceLists::HIP_YAW_PITCH]=alljoints[KDeviceLists::L_LEG+KDeviceLists::HIP_YAW_PITCH];
-	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
-	fsrl.zero();
-	fsrr.zero();
-	for(int i=0;i<4;i++)
-	{
-		fsrl(i)=*sensorPtr[KDeviceLists::L_FSR+i];
-		fsrr(i)=*sensorPtr[KDeviceLists::R_FSR+i];
-	}
 
-	engine->setFSR(fsrl,fsrr);
+	nkin.setJoints(alljoints); //Feed to kinematics
+	NAOKinematics::kmatTable Tl,Tr;
+	float dz=-alljoints[KDeviceLists::HEAD+KDeviceLists::PITCH]/HeadPitchHigh;
+	float dy=alljoints[KDeviceLists::HEAD+KDeviceLists::YAW]/HeadYawHigh;
+	dz*=30;
+	dy*=20;
 
-	engine->nkin.setJoints(alljoints); //Feed to kinematics
-	if(dcm_state==INIT_WALK)
-	{
-		engine->Reset();
-		dcm_state=DCM_RUN;
-	}
-	if (dcm_state == DCM_STOP) //Nothing to execute
-		return 0;
-	std::vector<float> joints_action=engine->runStep();
-
-
-
+#ifdef ANALYTICAL
+	std::vector<float> joints_action,l,r;
+	Tl.identity();
+	Tr.identity();
+	Tl(1,4)=dy+25;
+	Tl(2,4)=dz-260;
+	Tr(1,4)=dy-25;
+	Tr(2,4)=dz-260;
+	l=nkin.inverseLeftLeg(Tl);
+	r=nkin.inverseLeftLeg(Tr);
+	joints_action.push_back(l);
+	joints_action.push_back(r);
 	if (joints_action.size() != 12)
 	{
 		//std::cerr << "Not enough joint values" << std::endl;
@@ -265,10 +115,6 @@ int LowLevelPlanner::DCMcallback()
 	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
-	std::cout << p;
-	commands[5][(p++)][0] = CalcLShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH+KDeviceLists::LEG_SIZE]);
-	//Right Shoulder use left hip value
-	commands[5][(p)][0] = CalcRShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH]);;
 
 	//Send command
 	try
@@ -286,10 +132,12 @@ int LowLevelPlanner::DCMcallback()
 
 
 
+#endif // ANALYTICAL
+
 	return 0;
 }
 
-void LowLevelPlanner::initialise_devices()
+void KinematicsDemo::initialise_devices()
 {
 
 	try
@@ -340,7 +188,7 @@ void LowLevelPlanner::initialise_devices()
 	fsrposr(1,1)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontRight/Sensor/YPosition");
 	fsrposr(1,2)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearLeft/Sensor/YPosition");
 	fsrposr(1,3)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearRight/Sensor/YPosition");
-	engine->initFSR(fsrposl,fsrposr);
+
 
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
 	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++)
@@ -371,7 +219,7 @@ void LowLevelPlanner::initialise_devices()
 
 }
 
-void LowLevelPlanner::prepareJointsPositionActuatorCommand()
+void KinematicsDemo::prepareJointsPositionActuatorCommand()
 {
 	commands.arraySetSize(6);
 	commands[0] = std::string("jointActuator");
@@ -385,13 +233,13 @@ void LowLevelPlanner::prepareJointsPositionActuatorCommand()
 
 	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2 + 2); // For joints //2legs + 2 hip_pitch
 
-	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2 + 2; i++)
+	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2 ; i++)
 		commands[5][i].arraySetSize(1);
 //commands[5][i][0] will be the new angle
 
 }
 
-void LowLevelPlanner::createJointsPositionActuatorAlias()
+void KinematicsDemo::createJointsPositionActuatorAlias()
 {
 	AL::ALValue jointAliasses;
 
@@ -400,7 +248,7 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 	jointAliasses.arraySetSize(2);
 	jointAliasses[0] = std::string("jointActuator"); // Alias for all joint actuators
 
-	jointAliasses[1].arraySetSize(KDeviceLists::LEG_SIZE * 2 + 2); //
+	jointAliasses[1].arraySetSize(KDeviceLists::LEG_SIZE * 2 ); //
 
 	//int idx = 0;
 	// Joints actuator list
@@ -419,21 +267,6 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 		jointAliasses[1][l] = actuatorname;
 		std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
-
-	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
-	{
-			actuatorname = jointActuatorKeys[KDeviceLists::L_ARM + j];
-			jointAliasses[1][l] = actuatorname;
-			std::cout << " Joint Name " << actuatorname << " " << std::endl;
-		}
-
-	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
-	{
-			actuatorname = jointActuatorKeys[KDeviceLists::R_ARM + j];
-			jointAliasses[1][l] = actuatorname;
-			std::cout << " Joint Name " << actuatorname << " " << std::endl;
-		}
-
 ///*Create Joint Alias*
 	try
 	{
@@ -447,7 +280,7 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 	std::cout << " Ankles PositionActuatorAlias created " << std::endl;
 }
 
-void LowLevelPlanner::setStiffness(const float& stiffnessValue)
+void KinematicsDemo::setStiffness(const float& stiffnessValue)
 {
 	motion->setStiffnesses("Body", stiffnessValue);
 }
