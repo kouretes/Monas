@@ -259,7 +259,7 @@ void WalkEngine::Calculate_Desired_COM()
     }
 
     predicterror+=e;
-    predicterror.prettyPrint();
+//    predicterror.prettyPrint();
 
 	/** Pop the used Point **/
 	ZbufferX.pop();

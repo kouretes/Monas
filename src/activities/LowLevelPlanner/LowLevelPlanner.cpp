@@ -88,9 +88,9 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 0.00;
-		y = 0.0000;
-		z = 0.000;
+		x =0.000;
+		y =0.000;
+		z = 0.0000;
 		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->add_parameter(x);
