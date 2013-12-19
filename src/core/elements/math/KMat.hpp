@@ -1533,6 +1533,31 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 	{
 	public:
 		static const double PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811;
+
+		template<typename T> static GenMatrix<T,3,1> cross_product(GenMatrix<T,3,1> const&b, GenMatrix<T,3,1> const&c)
+		{
+			GenMatrix<T,3,1> a;
+			a.zero();
+			a(0)=b(1)*c(2)-b(2)*c(1);
+			a(1)=b(2)*c(0)-b(0)*c(2);
+			a(2)=b(0)*c(1)-b(1)*c(0);
+
+
+
+
+			return a;
+		};
+
+		template<typename T,unsigned M> static T inner_product(GenMatrix<T,M,1> const&b, GenMatrix<T,M,1> const&c)
+		{
+			T t;
+			t=0;
+			for(unsigned i=0;i<M;i++)
+				t+=b(i)*c(i);
+
+			return t;
+		};
+
 		template<typename T> static void makeRotation(ATMatrix<T, 3> & m, T theta)
 		{
 			m.identity();
