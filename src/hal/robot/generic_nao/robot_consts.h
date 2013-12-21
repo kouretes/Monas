@@ -24,7 +24,7 @@ namespace KDeviceLists
 
 	enum ChainArmNames
 	{
-	    SHOULDER_PITCH = 0, SHOULDER_ROLL, ELBOW_YAW, ELBOW_ROLL, /*WRIST_YAW, HAND,*/ARM_SIZE
+	    SHOULDER_PITCH = 0, SHOULDER_ROLL, ELBOW_YAW, ELBOW_ROLL, WRIST_YAW,/* HAND,*/ARM_SIZE
 	};
 
 	enum ChainLegNames

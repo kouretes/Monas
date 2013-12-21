@@ -22,10 +22,12 @@
 
 <agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">
 	<name>Head</name>
-		<activity Enable="1">KinematicsDemo</activity>
+		<activity Enable="0">KinematicsDemo</activity>
+		<activity Enable="1">KinematicsDemo2</activity>
+		<activity Enable="0">Times</activity>
 </agent>
 
-<provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="0">Sensors</provider>
+<provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="1">Sensors</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="0">Gateway</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="1000" Enable="0">ImageExtractor</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="1000" Enable="0">LedHandler</provider>

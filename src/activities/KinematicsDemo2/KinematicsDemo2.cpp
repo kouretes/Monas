@@ -1,4 +1,4 @@
-#include "KinematicsDemo.h"
+#include "KinematicsDemo2.h"
 #include "messages/SensorsMessage.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -16,10 +16,10 @@
 
 
 //using boost::posix_time::milliseconds;
-ACTIVITY_REGISTER(KinematicsDemo)
+ACTIVITY_REGISTER(KinematicsDemo2)
 ;
 
-void KinematicsDemo::UserInit()
+void KinematicsDemo2::UserInit()
 {
 	/**
 	 Initializing instances need by the Walk Engine
@@ -35,40 +35,52 @@ void KinematicsDemo::UserInit()
 	/**
 	 Set Body Stiffness
 	 **/
-	setStiffness(0.3);
 
-
-
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	angX=angY=-1000.0;
 	Reset();
 }
 
-void KinematicsDemo::Reset()
+void KinematicsDemo2::Reset()
 {
 
-	setStiffness(0.3);
+	setStiffness(0.5);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
 
-int KinematicsDemo::Execute()
+int KinematicsDemo2::Execute()
 {
 	static bool firstrun = true;
 
-	if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
-	{
-		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&KinematicsDemo::DCMcallback, this));
-		firstrun = false;
-	}
 
+		if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
+		{
+			KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&KinematicsDemo2::DCMcallback, this));
+			firstrun = false;
+		}
+	
 	return 0;
 }
 
 
 
-int KinematicsDemo::DCMcallback()
+int KinematicsDemo2::DCMcallback()
 {
-
+	
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	if(allsm != 0){
+		angX = allsm->computeddata(ANGLE + AXIS_X).sensorvalue();
+		angY = allsm->computeddata(ANGLE + AXIS_Y).sensorvalue();
+	}else{
+		return 0;
+	}
 	std::vector<float> oldall;
+	NAOKinematics::kmatTable Tl,Tr;
+	NAOKinematics::kmatTable rotSpace;
+	std::vector<float> joints_action;
+	NAOKinematics::AngleContainer l,r;
+	
 	oldall=alljoints;
 	/** Read Values of joints **/
 	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
@@ -77,33 +89,29 @@ int KinematicsDemo::DCMcallback()
 	alljoints[KDeviceLists::R_LEG+KDeviceLists::HIP_YAW_PITCH]=alljoints[KDeviceLists::L_LEG+KDeviceLists::HIP_YAW_PITCH];
 
 	nkin.setJoints(alljoints); //Feed to kinematics
-	NAOKinematics::kmatTable Tl,Tr;
-	float dz=0.5*alljoints[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_PITCH]+0.5*oldall[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_PITCH];
-	float dx=0.5*alljoints[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_ROLL]+0.5*oldall[KDeviceLists::L_ARM+KDeviceLists::SHOULDER_ROLL];
-	dz*=50;
-	dx*=150;
-	float rem=-sqrt(320*320-dx*dx)+dz;
-#ifdef ANALYTICAL
-	std::vector<float> joints_action;
-	NAOKinematics::AngleContainer l,r;
-	Tl.identity();
-	Tr.identity();
-	Tl(0,3)=dx;
-	Tl(1,3)=50;
-	Tl(2,3)=rem;
-	Tr(0,3)=dx;
-	Tr(1,3)=-50;
-	Tr(2,3)=rem;
-	//Tl.prettyPrint();
-	//Tr.prettyPrint();
-	l=nkin.inverseLeftLeg(Tl);
-	r=nkin.jacobianInverseRightLeg(Tr);
-	std::cout<<l.size()<<"\t"<<r.size()<<std::endl;
 
-	if(l.size()>0 && r.size()>0)
+	//attack here
+	
+	KVecDouble3 com = nkin.calculateCenterOfMass();
+	KMath::KMat::transformations::makeRotationZYX(rotSpace,0.0,angY,angX);
+	KVecDouble3 comPoint;
+
+	//comPoint = rotSpace.transform(com);
+	comPoint=com;
+	NAOKinematics::kmatTable rotTrans;
+	rotTrans = rotSpace;
+	rotTrans(0,3) = comPoint(0);
+	rotTrans(1,3) = comPoint(1);//+50;
+	rotTrans(2,3) = -300;//-260;
+	rotSpace.fast_invert();
+	rotSpace*=rotTrans;
+
+	l=nkin.inverseLeftLeg(rotSpace);
+	std::cout << l.size() << " " << angX << " " << angY << std::endl;
+	if(l.size()>0)
 	{
 		joints_action.insert(joints_action.end(),l[0].begin(),l[0].end());
-		joints_action.insert(joints_action.end(),r[0].begin(),r[0].end());
+		joints_action.insert(joints_action.end(),l[0].begin(),l[0].end());
 	}
 	if (joints_action.size() != 12)
 	{
@@ -128,16 +136,10 @@ int KinematicsDemo::DCMcallback()
 		throw ALERROR("KWalk", "execute_action", "Error when sending command to DCM : " + e.toString());
 	}
 
-
-
-
-
-#endif // ANALYTICAL
-
 	return 0;
 }
 
-void KinematicsDemo::initialise_devices()
+void KinematicsDemo2::initialise_devices()
 {
 
 	try
@@ -219,7 +221,7 @@ void KinematicsDemo::initialise_devices()
 
 }
 
-void KinematicsDemo::prepareJointsPositionActuatorCommand()
+void KinematicsDemo2::prepareJointsPositionActuatorCommand()
 {
 	commands.arraySetSize(6);
 	commands[0] = std::string("jointActuator");
@@ -239,7 +241,7 @@ void KinematicsDemo::prepareJointsPositionActuatorCommand()
 
 }
 
-void KinematicsDemo::createJointsPositionActuatorAlias()
+void KinematicsDemo2::createJointsPositionActuatorAlias()
 {
 	AL::ALValue jointAliasses;
 
@@ -280,11 +282,11 @@ void KinematicsDemo::createJointsPositionActuatorAlias()
 	std::cout << " Ankles PositionActuatorAlias created " << std::endl;
 }
 
-void KinematicsDemo::setStiffness(const float& stiffnessValue)
+void KinematicsDemo2::setStiffness(const float& stiffnessValue)
 {
 	motion->setFallManagerEnabled(false);
 	motion->setStiffnesses("Body", 0.0);
 		motion->setStiffnesses("LLeg", stiffnessValue);
-				motion->setStiffnesses("RLeg", stiffnessValue);
+
 }
 

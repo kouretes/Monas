@@ -22,6 +22,7 @@ add_library ( GenericNao  ${LibBuildType}
 			aldebaran-visiondefinitions.h
 			NAOKinematics.h
 			NAOKinematics.cpp
+			NAOKinematicsJacobian.cpp
 			KinematicsDefines.h
 			robot_consts.h
 			robot_consts.cpp

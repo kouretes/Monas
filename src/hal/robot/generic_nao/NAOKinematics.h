@@ -9,7 +9,7 @@
 #include <math.h>
 
 #include "core/elements/math/KMat.hpp"
-#include "robot_consts.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 /**
  * This is the code for the Forward and Inverse Kinematics for nao v3.3 robot.
 
@@ -37,20 +37,18 @@
 	 *			-# HeadYaw
 	 *			-# HeadPitch
 	 * .
-	 * Format of inputs for filter forward
-	 * "CameraTop" = forward for Top camera
-	 * "CameraBot" = forward for Bottom camera
-	 * "LeftLeg" = forward for left leg
-	 * "RightLeg" = forward for right leg
-	 * "LeftArm" = forward for left arm
-	 * "RightArm" = forward for right arm
  * \file NAOKinematics.h
+ 
+ This code uses a "fake" chain on the NAO robot but it equevelant to the real one.
+ There are several fixes to trasnform the "real" chain to the "fake" one and they are located at the NAOKinematics.cpp file and at the KinematicsDefines header.
+ The change is that we move the wristYaw angle immediately after the ElbowRoll but there is no difference! (see detailed report for the reason))
+ The results are THE SAME!
 */
-
+using namespace KDeviceLists;
 class NAOKinematics
 {
 public:
-	enum Effectors{ EFF_START=0, EFF_CAMERA_BOT=KDeviceLists::CHAINS_SIZE, EFF_CAMERA_TOP,EFFECTOR_SIZE };
+	enum Effectors{ EFF_START=0, EFF_CAMERA_BOT=KDeviceLists::CHAINS_SIZE, EFF_CAMERA_TOP, EFFECTOR_SIZE };
 	enum Frames {
 		FR_BASE=0,
 		FR_BASE_T=FR_BASE+KDeviceLists::NUMOFJOINTS,
@@ -68,11 +66,13 @@ public:
 		KVecDouble3 a;
 	};
 	typedef KMath::KMat::ATMatrix<double, 4> kmatTable;
+	typedef KMath::KMat::GenMatrix<double, 4, 4> kmatJacobianTable;
 	typedef float AngleType;
 	typedef std::vector<std::vector<AngleType> > AngleContainer ;
 private:
 
 	std::vector<kmatTable> T;
+	std::vector<kmatJacobianTable> Tjacobian;
 
 	std::vector<AngleType> joints;
 	std::vector<KVecDouble3> coms;
@@ -84,16 +84,18 @@ private:
 			   RotRLeg;
 
 	typedef KMath::KMat::transformations KMatTransf;
-
-
-
-
 	/**
 	 * @fn void prepareForward(KDeviceLists::ChainNames)
 	 * @param ef Which chain or effector
 	 * @brief prepare dh matrices
 	 * */
-	bool prepareForward(KDeviceLists::ChainsNames=KDeviceLists::CHAINS_SIZE);
+	void prepareForward(KDeviceLists::ChainsNames=KDeviceLists::CHAINS_SIZE);
+	/**
+	 * @fn void prepareDerivatives(KDeviceLists::ChainsNames)
+	 * @param ef Which chain or effector
+	 * @brief prepare dhderivative matrices
+	 * */
+	void prepareDerivatives(KDeviceLists::ChainsNames=KDeviceLists::CHAINS_SIZE);
 
 	KVecDouble3 calculateCoMChain(Frames start, Frames BaseFrame, int startdown,float &mass);
 
@@ -107,13 +109,12 @@ public:
 	bool setJoints(std::vector<AngleType> jointsset);
 	bool setChain(KDeviceLists::ChainsNames ch,std::vector<AngleType> jointsset);
 
-
-
 	/**
 	 * @fn kmatTable  getForwardEffector(Effector ef)
 	 * @brief Get Forward Kinematics Solution
 	 * */
 	kmatTable  getForwardEffector(Effectors ef);
+	
 	/**
 	 * @fn kmatTable  forwardFromTo(Effectors start, Effectors stop)
 	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the transformation table.
@@ -139,8 +140,10 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
-	AngleContainer  inverseHead(const FKvars s, bool withAngles, bool topCamera);
+	AngleContainer inverseHead(const FKvars s, bool withAngles, bool topCamera);
 	AngleContainer inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
+	AngleContainer jacobianInverseHead(const FKvars s, bool topCamera);
+	AngleContainer jacobianInverseHead(kmatTable targetPoint, bool topCamera);
 
 	/**
 	 * vector<vector<float> > inverseLeftHand(const FKvars s);
@@ -150,6 +153,8 @@ public:
 	 * */
 	AngleContainer inverseLeftHand(const FKvars s);
 	AngleContainer inverseLeftHand(kmatTable targetPoint);
+	AngleContainer jacobianInverseLeftHand(const FKvars s);
+	AngleContainer jacobianInverseLeftHand(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightHand(const FKvars s)
@@ -159,15 +164,20 @@ public:
 	 * */
 	AngleContainer inverseRightHand(const FKvars s);
 	AngleContainer inverseRightHand(kmatTable targetPoint);
+	AngleContainer jacobianInverseRightHand(const FKvars s);
+	AngleContainer jacobianInverseRightHand(kmatTable targetPoint);
+	
 	/**
 	 * vector<vector<float> > inverseLeftLeg(const FKvars s)
 	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
 	 * */
-	AngleContainer  inverseLeftLeg(const FKvars s);
+	AngleContainer inverseLeftLeg(const FKvars s);
 	AngleContainer inverseLeftLeg(kmatTable targetPoint);
-
+	AngleContainer jacobianInverseLeftLeg(const FKvars s);
+	AngleContainer jacobianInverseLeftLeg(kmatTable targetPoint);
+	
 	/**
 	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
 	 * @brief Inverse Kinematics for the right leg (DON'T try to understand the code, it's just maths)
@@ -176,14 +186,23 @@ public:
 	 * */
 	AngleContainer inverseRightLeg(const FKvars s);
 	AngleContainer inverseRightLeg(kmatTable targetPoint);
-
-
+	AngleContainer jacobianInverseRightLeg(const FKvars s);
+	AngleContainer jacobianInverseRightLeg(kmatTable targetPoint);
+	
+private:
+	//Jacobian Inverse Kinematics
+	AngleContainer jacobianInverseHead(kmatTable targetPoint, KDeviceLists::ChainsNames ch, bool topCamera);
+	AngleContainer jacobianInverseHands(kmatTable targetPoint, KDeviceLists::ChainsNames ch);
+	AngleContainer jacobianInverseLegs(kmatTable targetPoint, KDeviceLists::ChainsNames ch);
+	
+	
 	static kmatTable getTransformation(const FKvars s)
 	{
 		kmatTable T;
 		KMatTransf::makeTransformation(T, s.p(0), s.p(1), s.p(2), s.a(0), s.a(1), s.a(2));
 		return T;
 	}
+	
 	static void mirrorTransformation(kmatTable & targetPoint)
 	{
 		//This can be proved by the analytical construction of a rotation matrix from axis-angle rotation
@@ -196,6 +215,7 @@ public:
 		//Mirror Y translation
 		targetPoint(1,3)=-targetPoint(1,3);
 	}
+		
 };
 
 #endif
