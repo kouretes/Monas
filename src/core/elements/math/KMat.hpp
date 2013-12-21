@@ -1154,14 +1154,13 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<T>::epsilon()<<std::endl;
-		if (determ > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
+		if (fabs(determ) > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
 		{
 			A temp1 = athis.read(0, 0);
 			athis.get(0, 0) = athis.read(1, 1) / determ;
 			athis.get(1, 1) = temp1 / determ;
-			A temp2 = athis.read(0, 1);
-			athis.get(0, 1) = -athis.read(1, 0) / determ;
-			athis.get(1, 0) = -temp2 / determ;
+			athis.get(0, 1) = -athis.read(0, 1) / determ;
+			athis.get(1, 0) = -athis.read(1, 0) / determ;
 			return athis;
 		}
 
@@ -1183,7 +1182,7 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<A>::epsilon()<<std::endl;
-		if (determ > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
+		if (fabs(determ) > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
 		{
 			GenMatrix<A, 3, 3> t = athis.clone();
 			athis.get(0, 0) = (t.read(1, 1) * t.read(2, 2) - t.read(1, 2) * t.read(2, 1)) / determ;

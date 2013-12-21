@@ -15,6 +15,7 @@ message ( STATUS "" )
 #target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
 
 add_executable(KMat-testing KMat-testing.cpp )
+add_executable(KMat-inversionTesting KMat-inversionTesting.cpp )
 add_executable(Kalman-testing kalmantest.cpp )
 add_executable(Quaternion-testing Quaternion-testing.cpp )
 add_subdirectory (Kinematics)

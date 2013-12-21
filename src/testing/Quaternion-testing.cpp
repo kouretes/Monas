@@ -25,7 +25,7 @@ int main ()
 	KMath::KMat::GenMatrix<double,3,3> r;
 	r.identity();
 	QuaternionDouble q;
-	q.fromAxisAngle(0,0,0,0);
+	q.fromAxisAngle(1,0,0,0);
 	q.prettyPrint();
 	r*=q.castToMatrix();
 	r.prettyPrint();

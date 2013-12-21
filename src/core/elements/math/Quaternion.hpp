@@ -108,7 +108,10 @@ namespace KMath{
 		}
 		void fromAxisAngle(T x,T y,T z,T the)
 		{
-			T sth=sin(the/2.0);
+			T n=sqrt(x*x+y*y+z*z);
+			if( !(n>0))
+				return;
+			T sth=sin(the/2.0)/n;
 
 			this->get(0,0)=x*sth;
 			this->get(1,0)=y*sth;
