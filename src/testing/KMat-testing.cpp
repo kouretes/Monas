@@ -1,3 +1,4 @@
+#include <math.h>
 #include "core/elements/math/KMat.hpp"
 #include <iostream>
 
@@ -41,8 +42,8 @@ public:
 
 		if(dy == 0) sy = 0;
 
-		idx = abs(dx);
-		idy = abs(dy);
+		idx = fabs(dx);
+		idy = fabs(dy);
 		l = -(-2 * idy + idx); //=-2*L as in analysis
 		k = -(2 * idx - idy); //=-2*K as in analysis
 		e = 0;
@@ -159,7 +160,7 @@ int main ()
 			large.prettyPrint();
 			tlarge.prettyPrint();
 			reslarge.prettyPrint();
-			printf("%f",tlarge.norm2()-20);
+			std::cout<<(tlarge.norm2()-20);
 
 			assert(1==0);
 		}
