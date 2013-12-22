@@ -37,9 +37,17 @@ public:
 	~LockedBuffer();
 	void add( std::vector<T> const & tuples);
 	bool tryadd( std::vector<T> const & tuples);
+	std::size_t size()
+	{
+		KSystem::Mutex::scoped_lock data_lock(mutex);
+		return msg_buf.size();
+
+	}
 
 	void add(const T & t);
 	std::vector<T> remove();
+	T removeOne();
+	T readOne();
 	std::vector<T> tryremove();
 	//bool operator==( MessageBuffer& other) ;
 	std::size_t getOwnerID() const
@@ -106,11 +114,6 @@ bool LockedBuffer<T>::tryadd( std::vector<T> const & tuples)
 	if(!mutex.try_lock())
 		return false;
 
-	//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
-	/*google::protobuf::Message * newptr=(*it).msg->New();
-	newptr->CopyFrom(*((*it).msg));
-	msgentry newm= *it;
-	newm.msg.reset(newptr);*/
 	msg_buf.reserve(msg_buf.size() + tuples.size());
 	msg_buf.insert(msg_buf.end(), tuples.begin(), tuples.end());
 	mutex.unlock();
@@ -145,5 +148,26 @@ std::vector<T> LockedBuffer<T>::remove()
 	msg_buf.clear();
 	return oldtupples;
 }
+
+template<typename T>
+T LockedBuffer<T>::readOne()
+{
+	Mutex::scoped_lock data_lock(mutex);
+	T t= msg_buf.front();
+	return t;
+}
+
+template<typename T>
+T LockedBuffer<T>::removeOne()
+{
+	Mutex::scoped_lock data_lock(mutex);
+	T t= msg_buf.front();
+	std::vector<T> oldtupples = msg_buf;
+	msg_buf.clear();
+	msg_buf.insert(msg_buf.begin(), ++(oldtupples.begin()), oldtupples.end());
+	return t;
+}
+
+
 
 #endif // BUFFER_H

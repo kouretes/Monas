@@ -1154,14 +1154,13 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<T>::epsilon()<<std::endl;
-		if (determ > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
+		if (fabs(determ) > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
 		{
 			A temp1 = athis.read(0, 0);
 			athis.get(0, 0) = athis.read(1, 1) / determ;
 			athis.get(1, 1) = temp1 / determ;
-			A temp2 = athis.read(0, 1);
-			athis.get(0, 1) = -athis.read(1, 0) / determ;
-			athis.get(1, 0) = -temp2 / determ;
+			athis.get(0, 1) = -athis.read(0, 1) / determ;
+			athis.get(1, 0) = -athis.read(1, 0) / determ;
 			return athis;
 		}
 
@@ -1183,7 +1182,7 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<A>::epsilon()<<std::endl;
-		if (determ > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
+		if (fabs(determ) > std::numeric_limits<A>::epsilon() && determ != (A)0) //can invert
 		{
 			GenMatrix<A, 3, 3> t = athis.clone();
 			athis.get(0, 0) = (t.read(1, 1) * t.read(2, 2) - t.read(1, 2) * t.read(2, 1)) / determ;
@@ -1327,10 +1326,20 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 		{
 			return B;
 		}
+
+
 		GenMatrix < T, S - 1, S - 1 > getRotation() const
 		{
 			return A;
 		}
+
+		ATMatrix<T, S> & setTranslation ( GenMatrix < T, S - 1, 1 > const& rop)
+		{
+
+			B=rop;
+			BisZero=false;
+			return *this;
+		};
 		GenMatrix < T, S - 1, 1 > getEulerAngles() const
 		{
 			GenMatrix < T, S - 1, 1 > r;
@@ -1340,9 +1349,10 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return r;
 		}
 		//Project a point !
-		GenMatrix < T, S - 1, 1 > transform(GenMatrix < T, S - 1, 1 > const & c, T hom = 1) const
+		template<unsigned M>
+		GenMatrix < T, S - 1, 1 > transform(GenMatrix < T, S - 1, M > const & c, T hom = 1) const
 		{
-			GenMatrix < T, S - 1, 1 > nc;
+			GenMatrix < T, S - 1, M > nc;
 
 			if (AisZero == true) //A matrix zero, dont try to do the math:p
 			{
@@ -1359,9 +1369,10 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 			if (BisZero == false) //do some more math for the translatonal part
 			{
-				GenMatrix < T, S - 1, 1 > t = B;
+
+				GenMatrix < T, S - 1, M > t = B;
 				t.scalar_mult(hom);
-				nc += t;
+				nc.column_add(t);
 			}
 
 			return nc;
@@ -1521,6 +1532,31 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 	{
 	public:
 		static const double PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811;
+
+		template<typename T> static GenMatrix<T,3,1> cross_product(GenMatrix<T,3,1> const&b, GenMatrix<T,3,1> const&c)
+		{
+			GenMatrix<T,3,1> a;
+			a.zero();
+			a(0)=b(1)*c(2)-b(2)*c(1);
+			a(1)=b(2)*c(0)-b(0)*c(2);
+			a(2)=b(0)*c(1)-b(1)*c(0);
+
+
+
+
+			return a;
+		};
+
+		template<typename T,unsigned M> static T inner_product(GenMatrix<T,M,1> const&b, GenMatrix<T,M,1> const&c)
+		{
+			T t;
+			t=0;
+			for(unsigned i=0;i<M;i++)
+				t+=b(i)*c(i);
+
+			return t;
+		};
+
 		template<typename T> static void makeRotation(ATMatrix<T, 3> & m, T theta)
 		{
 			m.identity();

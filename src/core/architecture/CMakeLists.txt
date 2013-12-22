@@ -3,7 +3,7 @@ message ( STATUS " _..::: Configuring Architecture :::.._ " )
 message ( STATUS "" )
 
 add_subdirectory ( ./messaging/ )
-add_subdirectory ( ./statechartEngine/ )
+#add_subdirectory ( ./statechartEngine/ )
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
@@ -31,7 +31,7 @@ add_library ( MonasCore ${LibBuildType}
 			statechartWrapper.h
 )
 
-target_link_libraries ( MonasCore M_tinyxml )
+target_link_libraries ( MonasCore M_tinyxml z )
 
 install ( TARGETS MonasCore
         RUNTIME DESTINATION   bin
