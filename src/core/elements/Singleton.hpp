@@ -1,5 +1,5 @@
-#ifndef _singleton_h_
-#define _singleton_h_ 1
+#ifndef SINGLETON_HPP
+#define SINGLETON_HPP
 
 template< class T>
 class Singleton : public T

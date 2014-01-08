@@ -1,5 +1,5 @@
-#ifndef LOCALIZATIONSTRUCTS_H_
-#define LOCALIZATIONSTRUCTS_H_
+#ifndef LOCALIZATIONSTRUCTS_H
+#define LOCALIZATIONSTRUCTS_H
 
 #include <string>
 #include <map>
@@ -119,7 +119,7 @@ namespace Localization{
         boost::posix_time::ptime observationTime;
     } KObservationModel;
 
-    
+
 
     /**
      * @struct blf
@@ -145,7 +145,7 @@ namespace Localization{
         float spreadParticlesDeviationAfterFall;
         float rotationDeviationAfterFallInDeg;
         float numberOfParticlesSpreadAfterFall;
-  
+
         // Field parameters
         float carpetMaxX;
 	    float carpetMinX;

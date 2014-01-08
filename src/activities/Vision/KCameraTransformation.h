@@ -1,5 +1,5 @@
-#ifndef KCAMERA_TRANSFORMATION_H
-#define KCAMERA_TRANSFORMATION_H
+#ifndef KCAMERATRANSFORMATION_H
+#define KCAMERATRANSFORMATION_H
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"

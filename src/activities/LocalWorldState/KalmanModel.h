@@ -1,5 +1,5 @@
-#ifndef KALMANMODEL_H_
-#define KALMANMODEL_H_
+#ifndef KALMANMODEL_H
+#define KALMANMODEL_H
 
 #include "core/elements/math/Common.hpp"
 #include "core/elements/math/KMat.hpp"
@@ -11,7 +11,7 @@ using namespace KMath;
 class KalmanModel{
 
 private:
-    
+
     typedef KMath::KMat::GenMatrix<float,6,1> matrix6_1;
     typedef KMath::KMat::GenMatrix<float,6,6> matrix6_6;
     typedef KMath::KMat::GenMatrix<float,2,2> matrix2_2;
@@ -40,4 +40,4 @@ public :
     }
 };
 
-#endif 
+#endif

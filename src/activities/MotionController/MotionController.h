@@ -1,5 +1,5 @@
-#ifndef MOTION_CONTROLLER_H
-#define MOTION_CONTROLLER_H
+#ifndef MOTIONCONTROLLER_H
+#define MOTIONCONTROLLER_H
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

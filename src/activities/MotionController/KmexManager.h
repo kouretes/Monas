@@ -1,5 +1,5 @@
-#ifndef _KMEXMANAGER_H_H
-#define _KMEXMANAGER_H_H 1
+#ifndef KMEXMANAGER_H
+#define KMEXMANAGER_H
 
 #include <vector>
 #include <map>

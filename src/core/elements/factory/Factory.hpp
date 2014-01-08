@@ -1,5 +1,5 @@
-#ifndef _GenFactory_h_
-#define _GenFactory_h_ 1
+#ifndef FACTORY_HPP
+#define FACTORY_HPP
 
 #include <string>
 #include <map>

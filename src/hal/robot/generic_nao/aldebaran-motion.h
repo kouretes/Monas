@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef ALDEBARAN_MOTION_H_
-#define ALDEBARAN_MOTION_H_
+#ifndef ALDEBARAN_MOTION_H
+#define ALDEBARAN_MOTION_H
 
 #ifdef NAOQI_1_12_5
 #include <boost/shared_ptr.hpp>

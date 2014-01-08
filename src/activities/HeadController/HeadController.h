@@ -1,5 +1,5 @@
-#ifndef HeadController_H
-#define HeadController_H
+#ifndef HEADCONTROLLER_H
+#define HEADCONTROLLER_H
 
 #include <math.h>
 
@@ -88,16 +88,16 @@ private:
 
 	/* Outgoing Messages */
 	MotionHeadMessage hmot;
-	
+
 	/* Current joint values */
 	float currentHeadYaw, currentHeadPitch;
-	
+
 	/* Target joint values */
 	float targetYaw, targetPitch, targetSpeed;
 	/* Find out if an action take a lot of time to complete */
 	boost::posix_time::ptime actionStarted;
 	static const int millisecondsToWait = 1500;
-	
+
 	/* Sleep time just to stay to a location */
 	boost::posix_time::ptime sleepTime;
 	bool stay;
@@ -105,10 +105,10 @@ private:
 	bool forceStopMotion;
 	/* Value to describe where to look with smart scan (or something like that) */
 	float ysign;
-	
+
 	/* Ball values from world info */
 	float bd, bb, bx, by;
-	
+
 	/* Robot values from world info */
 	float robotX, robotY, robotPhi, robot_confidence;
 
@@ -145,7 +145,7 @@ private:
 	float lookAtPointPitch(float x, float y);
 	float lookAtPointRelativeYaw(float x, float y);
 	float lookAtPointRelativePitch(float x, float y);
-	
+
 	/*Target head possition reached*/
 	bool reachedTargetHead();
 };

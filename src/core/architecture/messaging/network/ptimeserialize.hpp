@@ -1,5 +1,5 @@
-#ifndef PTIMESERIALIZE_H
-#define PTIMESERIALIZE_H
+#ifndef PTIMESERIALIZE_HPP
+#define PTIMESERIALIZE_HPP
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <endian.h>

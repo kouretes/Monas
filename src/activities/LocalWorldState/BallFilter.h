@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef BALLFILTER_H_
-#define BALLFILTER_H_
+#ifndef BALLFILTER_H
+#define BALLFILTER_H
 #include "messages/WorldInfo.pb.h"
 #include "core/elements/math/KMat.hpp"
 #include "KLocalization.h"
@@ -29,7 +29,7 @@ class BallFilter
 
         // x,y,x',y'
         matrix4_1 state;
-        matrix4_4 var; 
+        matrix4_4 var;
 
 		BallFilter();
 		virtual ~BallFilter();

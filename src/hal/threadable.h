@@ -1,5 +1,5 @@
-#ifndef _threadable_h_
-#define _threadable_h_ 1
+#ifndef THREADABLE_H
+#define THREADABLE_H
 
 class Threadable
 {
@@ -15,4 +15,4 @@ public:
 
 };
 
-#endif // _threadable_h_ 
+#endif // _threadable_h_

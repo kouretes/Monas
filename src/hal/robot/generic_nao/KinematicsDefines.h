@@ -1,5 +1,5 @@
-#ifndef __DKIN_H__
-#define __DKIN_H__
+#ifndef KINEMATICDEFINES_H
+#define KINEMATICDEFINES_H
 
 //Define for the lengths of the arms foots etc
 #define ShoulderOffsetY 	98.0

@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef ALDEBARAN_KME_H_
-#define ALDEBARAN_KME_H_
+#ifndef ALDEBARAN_KME_H
+#define ALDEBARAN_KME_H
 
 #ifdef NAOQI_1_12_5
 #include <boost/shared_ptr.hpp>

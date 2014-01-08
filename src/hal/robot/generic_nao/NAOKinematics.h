@@ -1,5 +1,5 @@
-#ifndef __NAOKIN_H__
-#define __NAOKIN_H__
+#ifndef NAOKINEMATICS_HPP
+#define NAOKINEMATICS_HPP
 #include <iostream>
 #include <stdexcept>
 #include <string.h>
@@ -112,7 +112,7 @@ public:
 	 * @brief Get Forward Kinematics Solution
 	 * */
 	kmatTable  getForwardEffector(Effectors ef);
-	
+
 	/**
 	 * @fn kmatTable  forwardFromTo(Effectors start, Effectors stop)
 	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the transformation table.
@@ -182,7 +182,7 @@ public:
 		KMatTransf::makeTransformation(T, s.p(0), s.p(1), s.p(2), s.a(0), s.a(1), s.a(2));
 		return T;
 	}
-	
+
 	static void mirrorTransformation(kmatTable & targetPoint)
 	{
 		//This can be proved by the analytical construction of a rotation matrix from axis-angle rotation

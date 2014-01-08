@@ -1,5 +1,5 @@
-#ifndef _KMEMANAGER_H_H
-#define _KMEMANAGER_H_H 1
+#ifndef KMEMANAGER_H
+#define KMEMANAGER_H
 
 #include <vector>
 #include "ISpecialAction.h"

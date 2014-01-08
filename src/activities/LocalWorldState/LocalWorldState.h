@@ -1,5 +1,5 @@
-#ifndef LocalWorldState_H
-#define LocalWorldState_H
+#ifndef LOCALWORLDSTATE_H
+#define LOCALWORLDSTATE_H
 
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>

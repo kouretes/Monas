@@ -1,5 +1,5 @@
-#ifndef IEXECUTABLE_H_
-#define IEXECUTABLE_H_ 1
+#ifndef IEXECUTABLE_HPP
+#define IEXECUTABLE_HPP
 
 #ifdef __GNUC__
 #define IEX_DIRECTIVE_HOT   __attribute__ ((hot))

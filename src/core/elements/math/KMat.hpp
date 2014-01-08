@@ -1,5 +1,5 @@
-#ifndef __KMAT_H__
-#define __KMAT_H__
+#ifndef KMAT_HPP
+#define KMAT_HPP
 #include <iostream>
 #include <stdexcept>
 #include <string.h>

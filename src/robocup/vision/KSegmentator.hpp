@@ -1,5 +1,5 @@
-#ifndef KSegmentator_H__
-#define KSegmentator_H__
+#ifndef KSEGMENTATOR_HPP
+#define KSEGMENTATOR_HPP
 
 // basic file operations
 #include <iostream>

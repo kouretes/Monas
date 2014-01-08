@@ -14,8 +14,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef StringRegistry_H
-#define StringRegistry_H
+#ifndef STRINGREGISTRY_HPP
+#define STRINGREGISTRY_HPP
 
 
 #include <string>

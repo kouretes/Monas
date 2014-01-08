@@ -1,5 +1,5 @@
-#ifndef THREADPOOL_H_
-#define THREADPOOL_H_ 1
+#ifndef THREADPOOL_H
+#define THREADPOOL_H
 
 #include "core/architecture/executable/IExecutable.hpp"
 

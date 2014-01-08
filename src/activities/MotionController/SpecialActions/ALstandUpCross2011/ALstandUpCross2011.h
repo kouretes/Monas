@@ -1,5 +1,5 @@
-#ifndef _ALstandUpCross2011_h_
-#define _ALstandUpCross2011_h_ 1
+#ifndef ALSTANDUPALCROSS2011_H
+#define ALSTANDUPALCROSS2011_H
 
 #include "../../ISpecialAction.h"
 
@@ -30,4 +30,4 @@ private:
 
 };
 
-#endif // _ALstandUpCross2011_h_ 
+#endif // _ALstandUpCross2011_h_

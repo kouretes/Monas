@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef ALDEBARAN_VISION_H_
-#define ALDEBARAN_VISION_H_
+#ifndef ALDEBARAN_VISION_H
+#define ALDEBARAN_VISION_H
 
 #ifdef NAOQI_1_12_5
 #include <alproxies/alvideodeviceproxy.h>

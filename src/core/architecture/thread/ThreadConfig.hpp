@@ -1,5 +1,5 @@
-#ifndef _THREADCONFIG_HPP_
-#define  _THREADCONFIG_HPP_ 1
+#ifndef THREADCONFIG_HPP
+#define THREADCONFIG_HPP
 namespace KSystem
 {
 

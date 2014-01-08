@@ -1,5 +1,5 @@
 #ifndef STATECHARTWRAPPER_H
-#define STATECHARTWRAPPER_H 1
+#define STATECHARTWRAPPER_H
 
 #include "core/architecture/statechartEngine/Statechart.h"
 #include "core/elements/factory/Factory.hpp"

@@ -1,5 +1,5 @@
-#ifndef _IPROVIDER_H_
-#define _IPROVIDER_H_ 1
+#ifndef IPROVIDER_HPP
+#define IPROVIDER_HPP
 
 #include "core/architecture/thread/IdlingThread.hpp"
 

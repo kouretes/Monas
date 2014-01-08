@@ -1,5 +1,5 @@
-#ifndef KSTANDARD_H
-#define KSTANDARD_H
+#ifndef KSTANDARD_HPP
+#define KSTANDARD_HPP
 
 #include "tools/toString.h"
 #include "Logger.hpp"

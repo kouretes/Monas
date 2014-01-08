@@ -1,5 +1,5 @@
-#ifndef _mutex_h_
-#define _mutex_h_ 1
+#ifndef MUTEX_HPP
+#define MUTEX_HPP
 
 #include <boost/thread/mutex.hpp>
 namespace KSystem

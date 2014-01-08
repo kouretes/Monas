@@ -1,5 +1,5 @@
-#ifndef IMAGEEXTR_H
-#define IMAGEEXTR_H
+#ifndef IMAGEEXTRACTOR_H
+#define IMAGEEXTRACTOR_H
 
 #include <vector>
 #include <map>
@@ -49,7 +49,7 @@ private:
 
 	KImageConst imstore;
 	KRawImage outmsg;
-	
+
 	boost::shared_ptr<const CalibrateCamMessage>  ccm;
 
 	boost::posix_time::ptime lastrefresh;

@@ -1,5 +1,5 @@
-#ifndef LED_HANDLER_H
-#define LED_HANDLER_H
+#ifndef LEDHANDLER_H
+#define LEDHANDLER_H
 
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include <string>

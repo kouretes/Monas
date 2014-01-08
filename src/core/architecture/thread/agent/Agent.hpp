@@ -1,5 +1,5 @@
-#ifndef _agent_h_
-#define _agent_h_ 1
+#ifndef AGENT_HPP
+#define AGENT_HPP
 
 #include <vector>
 #include <string>

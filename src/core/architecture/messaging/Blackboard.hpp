@@ -14,8 +14,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef BLACKBOARD_H
-#define BLACKBOARD_H
+#ifndef BLACKBOARD_HPP
+#define BLACKBOARD_HPP
 #include "msg.h"
 #include "EndPoint.hpp"
 #include "core/elements/StringRegistry.hpp"

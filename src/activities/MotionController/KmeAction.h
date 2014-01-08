@@ -1,5 +1,5 @@
-#ifndef _KMEACTION_H_
-#define _KMEACTION_H_ 1
+#ifndef KMEACTION_H
+#define KMEACTION_H
 
 #include "ISpecialAction.h"
 

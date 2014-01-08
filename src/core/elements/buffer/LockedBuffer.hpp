@@ -18,8 +18,8 @@
 
 */
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef LOCKEDBUFFER_HPP
+#define LOCKEDBUFFER_HPP
 #include "hal/Mutex.hpp"
 #include <boost/function.hpp>
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef _XARACTION_H_
-#define _XARACTION_H_ 1
+#ifndef XARACTION_H
+#define XARACTION_H
 
 #include "ISpecialAction.h"
 

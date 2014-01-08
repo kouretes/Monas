@@ -1,5 +1,5 @@
-#ifndef EKFLocalization_H_
-#define EKFLocalization_H_
+#ifndef EKFLOCALIZATION_H
+#define EKFLOCALIZATION_H
 
 #include <string>
 #include <vector>

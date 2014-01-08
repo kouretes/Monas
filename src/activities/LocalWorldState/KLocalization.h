@@ -5,8 +5,8 @@
  *		Patched: eldr4d
  */
 
-#ifndef KLOCALIZATION_H_
-#define KLOCALIZATION_H_
+#ifndef KLOCALIZATION_H
+#define KLOCALIZATION_H
 
 #include <boost/random.hpp>
 #include <vector>
@@ -51,8 +51,8 @@ public:
 
     //Agent's belief
     Localization::belief agentPosition;
-    
-    //Odomery error 
+
+    //Odomery error
     float actionOdError;
     randGen generator;
 
@@ -61,7 +61,7 @@ public:
 	// structs to store xml data
     Localization::LocConfig* locConfig;
 
-	
+
 
 	//Particle with the max weight
     int maxWeightParticleIndex;

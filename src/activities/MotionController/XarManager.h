@@ -1,5 +1,5 @@
-#ifndef _XARMANAGER_H_H
-#define _XARMANAGER_H_H 1
+#ifndef XARMANAGER_H
+#define XARMANAGER_H
 
 #include <vector>
 #include "ISpecialAction.h"
