@@ -9,6 +9,7 @@ set(ELEMENT_SRCS
       factory/Factory.hpp
       math/Common.hpp
       math/KMat.hpp
+      math/Quaternion.hpp
       math/Specific.hpp
       customTypes/K3DArray.hpp
       customTypes/ReservaplePrioryQueue.hpp
