@@ -248,9 +248,7 @@ int LowLevelPlanner::DCMcallback()
 	}
 	if (dcm_state == DCM_STOP) //Nothing to execute
 		return 0;
-	std::vector<float> joints_action=engine->runStep();
-
-
+      std::vector<float>joints_action=engine->runStep();
 
 	if (joints_action.size() != 12)
 	{
@@ -265,12 +263,13 @@ int LowLevelPlanner::DCMcallback()
 	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
-	std::cout << p;
+	//std::cout << p;
 	commands[5][(p++)][0] = CalcLShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH+KDeviceLists::LEG_SIZE]);
 	//Right Shoulder use left hip value
 	commands[5][(p)][0] = CalcRShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH]);;
 
 	//Send command
+
 	try
 	{
 		/// Get time in 0 ms
@@ -353,13 +352,13 @@ void LowLevelPlanner::initialise_devices()
 	{
 
 		jointPtr[i] = (float *) memory->getDataPtr(jointKeys[i]);
-		std::cout << jointKeys[i] << i << " " << jointPtr[i] << std::endl;
+		//std::cout << jointKeys[i] << i << " " << jointPtr[i] << std::endl;
 		//sleep(1);
 
 	}
 
-	std::cout << " Number of position joints " << jointPtr.size() << std::endl;
-	std::cout << " Number of sensor values " << sensorPtr.size() << std::endl;
+	//std::cout << " Number of position joints " << jointPtr.size() << std::endl;
+	//std::cout << " Number of sensor values " << sensorPtr.size() << std::endl;
 	createJointsPositionActuatorAlias();
 	prepareJointsPositionActuatorCommand();
 
@@ -410,28 +409,28 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::L_LEG + j];
 		jointAliasses[1][l] = actuatorname;
-		std::cout << " Joint Name " << actuatorname << " " << std::endl;
+		//std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
 
 	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::R_LEG + j];
 		jointAliasses[1][l] = actuatorname;
-		std::cout << " Joint Name " << actuatorname << " " << std::endl;
+		//std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
 
 	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
 	{
 			actuatorname = jointActuatorKeys[KDeviceLists::L_ARM + j];
 			jointAliasses[1][l] = actuatorname;
-			std::cout << " Joint Name " << actuatorname << " " << std::endl;
+		//	std::cout << " Joint Name " << actuatorname << " " << std::endl;
 		}
 
 	for (int j = KDeviceLists::SHOULDER_PITCH; j <= KDeviceLists::SHOULDER_PITCH; j++, l++)
 	{
 			actuatorname = jointActuatorKeys[KDeviceLists::R_ARM + j];
 			jointAliasses[1][l] = actuatorname;
-			std::cout << " Joint Name " << actuatorname << " " << std::endl;
+			//std::cout << " Joint Name " << actuatorname << " " << std::endl;
 		}
 
 ///*Create Joint Alias*

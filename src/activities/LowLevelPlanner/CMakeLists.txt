@@ -13,6 +13,10 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			CircularBuffer.hpp
 			WalkEngine.hpp
 			WalkEngine.cpp
+			Kalman.h
+			Kalman.cpp
+			Dynamics.h
+			Dynamics.cpp
 			)
 
 include ( ../activTemplate.cmake )

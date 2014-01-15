@@ -71,7 +71,7 @@ class KWalkMat
 		}
 float CubicSplineInterpolation(float tdot,float p0,float p1,float p2, float p3,float p4,float T)
         {
-            float h=T/4;
+            float h=T/4.0;
             float res;
             float t;
             KMath::KMat::GenMatrix<float,1,7> C;
@@ -111,9 +111,8 @@ float CubicSplineInterpolation(float tdot,float p0,float p1,float p2, float p3,f
             C(0,5)=B(4);
             C(0,6)=2*B(4)-B(3);
 
-
                 int i=0;
-                for(int j=-1;j<=6;j++)
+                for(int j=-1;j<6;j++)
                 {
 
                     t=tdot-j*h;
@@ -147,7 +146,10 @@ float CubicSplineInterpolation(float tdot,float p0,float p1,float p2, float p3,f
                    i++;
                 }
 
+
                 return res=C*D;
+
+
         }
 
 void CubicSplineInterpolation(float *buffer,int &counter,float p0,float p1,float p2, float p3,float p4,float Ts,float T)
@@ -194,7 +196,7 @@ void CubicSplineInterpolation(float *buffer,int &counter,float p0,float p1,float
             for(float tdot=0;tdot<=T;tdot=tdot+Ts,counter++)
             {
                 int i=0;
-                for(int j=-1;j<=6;j++)
+                for(int j=-1;j<6;j++)
                 {
 
                     t=tdot-j*h;

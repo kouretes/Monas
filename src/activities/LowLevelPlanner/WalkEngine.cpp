@@ -1,7 +1,7 @@
 #include "WalkEngine.hpp"
 
 
-WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPMx(rp),NaoLIPMy(rp),NaoRobot(rp),ZbufferX(PreviewWindow*50),ZbufferY(PreviewWindow*50),walkbuffer(0)
+WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPM(rp),NaoRobot(rp),ZbufferX(PreviewWindow*50),ZbufferY(PreviewWindow*50),walkbuffer(0)
 {
 
 	Tilerror.identity();
@@ -123,16 +123,17 @@ std::vector<float> WalkEngine::Calculate_IK()
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
 		dl=ci.target+predicterror;
 
-
-
 	float h=NaoRobot.getWalkParameter(StepZ);
 
     //float vel=NaoRobot.getWalkParameter(StepZ)*(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
-	float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4,0.0  ,ci.steps);
+	float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4.0,0.0  ,ci.steps);
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
+
     dl(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
+
     dl(1)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
+
     dl(2)=startL(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,ldiff,1.0);
 
     dr(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
@@ -160,10 +161,8 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 	KVecDouble3 com_error,desired;///All in inertial frame;
 
-
-	desired=KVecDouble3( NaoLIPMx.Com,NaoLIPMy.Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
-
-
+	desired=KVecDouble3( NaoLIPM.COM(0),NaoLIPM.COM(1),NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
+//desired=KVecDouble3( NaoLIPMx.Com,NaoLIPMy.Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
 	std::vector<float> ret;
 	Tipprime=Tip;
 
@@ -208,7 +207,6 @@ std::vector<float> WalkEngine::Calculate_IK()
 		std::vector<std::vector<float> > resultR, resultL;
 		resultL = nkin.inverseLeftLeg(Tpprimel);
 		resultR = nkin.inverseRightLeg(Tpprimer);
-
         /** Set Leg Kinematics Chains **/
 		if (!resultL.empty())
 		{
@@ -244,9 +242,12 @@ void WalkEngine::Calculate_Desired_COM()
 	CoMm.scalar_mult(1.0/1000.0);
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
-	NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
-	NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
-	KVecFloat3 e(NaoLIPMx.predictedError,NaoLIPMy.predictedError,0);
+
+	NaoLIPM.LIPMComPredictor(ZbufferX,ZbufferY,CoMm(0),CoMm(1),copi(0),copi(1));
+	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
+	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
+/*	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
+
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
         predicterror.scalar_mult(0.35);
@@ -260,9 +261,11 @@ void WalkEngine::Calculate_Desired_COM()
 
     predicterror+=e;
 //    predicterror.prettyPrint();
-
+*/
 	/** Pop the used Point **/
+
 	ZbufferX.pop();
+
 	ZbufferY.pop();
 
 }
@@ -277,7 +280,7 @@ KVecFloat2 WalkEngine::getCoP()
 	KVecFloat2 res;
 	KVecDouble3 copl,copr,copi,cops,copsprime;
 	float weightl,weightr,weights, weightsprime;
-    fsrl.prettyPrint();
+    //fsrl.prettyPrint();
 	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
 	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
 
@@ -353,7 +356,7 @@ KVecFloat2 WalkEngine::getCoP()
 
 	res(0)=copi(0);
 	res(1)=copi(1);
-	res.prettyPrint();
+	//res.prettyPrint();
 
 	return res;
 }
@@ -384,9 +387,7 @@ void WalkEngine::feed()
 		}
 		else
 		{
-			std::cout<<"read:"<<walkbuffer.size()<<std::endl;
 			walkbuffer.removeOne();
-			std::cout<<"read:"<<walkbuffer.size()<<std::endl;
 		}
 
 
@@ -421,9 +422,9 @@ void WalkEngine::feed()
 		destZMP(0)+=rr(0);
 		destZMP(1)+=rr(1);
 		std::cout<<"Plan"<<std::endl;
-		planL.prettyPrint();
-		planR.prettyPrint();
-		destZMP.prettyPrint();
+		//planL.prettyPrint();
+		//planR.prettyPrint();
+		//destZMP.prettyPrint();
 		KVecFloat2 startZMP;
         if(ZbufferX.size()>0)
         {
@@ -542,8 +543,8 @@ std::vector<float> WalkEngine::runStep()
 	}
 
 	Calculate_Desired_COM();
-	return  Calculate_IK();
 
+	return  Calculate_IK();
 
 }
 

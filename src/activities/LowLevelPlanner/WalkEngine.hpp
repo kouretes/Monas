@@ -79,7 +79,7 @@ private:
 	std::queue<WalkInstruction> qbuffer;
 
 	/** Leg Controllers **/
-	LIPMPreviewController NaoLIPMx ,NaoLIPMy;
+	LIPMPreviewController NaoLIPM;//NaoLIPMy;
 	CircularBuffer<float> 	ZbufferX,ZbufferY;
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
