@@ -34,7 +34,7 @@ class LIPMPreviewController{
  	    RobotParameters &OurRobot;
  	    Kalman KalmanX,KalmanY;
  	    Dynamics DynamicsX,DynamicsY;
-		LIPMPreviewController(RobotParameters);
+		LIPMPreviewController(RobotParameters&);
 		void LIPMComPredictor(CircularBuffer<float> & ZmpBufferX,CircularBuffer<float> & ZmpBufferY,float CoMmeasuredX,float CoMmeasuredY,float ZMPMeasuredX,float ZMPMeasuredY);
 		void DMPC();
         float DeltauX,DeltauY,uX,uY;

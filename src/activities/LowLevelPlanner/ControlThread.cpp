@@ -8,7 +8,7 @@
 
 #include "ControlThread.h"
 #include <iostream>
-LIPMPreviewController::LIPMPreviewController(RobotParameters rp ) : OurRobot(rp), DynamicsX(OurRobot), DynamicsY(OurRobot), KalmanX(OurRobot), KalmanY(OurRobot)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(OurRobot), DynamicsY(OurRobot), KalmanX(OurRobot), KalmanY(OurRobot)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -60,8 +60,8 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBufferX,
 
       KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
       KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
-      std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
-      std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
+      //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
+      //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
 
       uX=uX+DeltauX;
       uY=uY+DeltauY;

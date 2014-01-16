@@ -64,7 +64,7 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 		combuffer.push(CoMMeasured);
 
         /** Update **/
-
+		//StateKalman.prettyPrint();
 		if(doup)
 		{
 			ykalman=KVecFloat2(ZMPMeasured,zmpfromcom);
@@ -73,6 +73,7 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 			s.fast_invert();
 			Kgain=(P*Ckalman.transp())*s;
 			StateKalman+=Kgain*ykalman;
+			//StateKalman.prettyPrint();
 		}
 
         //StateKalman.prettyPrint();

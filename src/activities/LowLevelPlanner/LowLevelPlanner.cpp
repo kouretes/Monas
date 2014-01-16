@@ -21,8 +21,8 @@
 #define LShoulderPitchRange (LShoulderPitchHigh - W_LShoulderPitchLow)
 #define RShoulderPitchRange (LShoulderPitchHigh - W_RShoulderPitchLow)
 
-#define CalcLShoulderPitch(RHiPitch_v)  ((RHiPitch_v -  RHipPitchLow)/RHipRange)*1.2*LShoulderPitchRange + W_LShoulderPitchLow + 0.1
-#define CalcRShoulderPitch(LHiPitch_v)  ((LHiPitch_v -  LHipPitchLow)/LHipRange)*1.2*RShoulderPitchRange + W_RShoulderPitchLow + 0.1
+#define CalcLShoulderPitch(RHiPitch_v)  (((RHiPitch_v) -  RHipPitchLow)/RHipRange)*1.2*LShoulderPitchRange + W_LShoulderPitchLow + 0.1
+#define CalcRShoulderPitch(LHiPitch_v)  (((LHiPitch_v) -  LHipPitchLow)/LHipRange)*1.2*RShoulderPitchRange + W_RShoulderPitchLow + 0.1
 
 
 //using boost::posix_time::milliseconds;
@@ -264,7 +264,8 @@ int LowLevelPlanner::DCMcallback()
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
 	//std::cout << p;
-	commands[5][(p++)][0] = CalcLShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH+KDeviceLists::LEG_SIZE]);
+	commands[5][(p)][0] = CalcLShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH+KDeviceLists::LEG_SIZE]);
+	p++;
 	//Right Shoulder use left hip value
 	commands[5][(p)][0] = CalcRShoulderPitch((float) joints_action[KDeviceLists::HIP_PITCH]);;
 

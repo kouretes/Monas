@@ -4,38 +4,7 @@
 
 <agent IsRealTime="1" Priority="1" ThreadFrequency="50" StatsCycle="1000" Enable="1">
 	<name>KMC</name>
-	<activity Enable="1">MotionController</activity>
-	<activity Enable="1">RobotController</activity>
+	<activity Enable="1">LowLevelPlanner</activity>
 </agent>
 
-<agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">
-	<name>KVision</name>
-	<activity Enable="1">Vision</activity>
-	<activity Enable="1">LocalWorldState</activity>
-	<activity Enable="0">KalmanWorldState</activity>
-	<activity Enable="1">Behavior</activity>
-</agent>
-
-<agent IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="50" Enable="1">
-	<name>SWM</name>
-	<activity Enable="1">SharedWorldModel</activity>
-</agent>
-
-<agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">
-	<name>Head</name>
-		<activity Enable="1">HeadController</activity>
-</agent>
-
-<provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="1">Sensors</provider>
-<provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="1">Gateway</provider>
-<provider IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="1000" Enable="1">ImageExtractor</provider>
-<provider IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="1000" Enable="1">LedHandler</provider>
-
-<agent IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="50" Enable="1">
-	<name>PathPlanning</name>
-	<activity Enable="1">PathPlanning</activity>
-</agent>
-
-  
-<statechart Enable="0">GoalieRoboCup2012</statechart>
 
