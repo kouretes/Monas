@@ -18,6 +18,7 @@ add_executable(KMat-testing KMat-testing.cpp )
 add_executable(KMat-inversionTesting KMat-inversionTesting.cpp )
 add_executable(Kalman-testing kalmantest.cpp )
 add_executable(Quaternion-testing Quaternion-testing.cpp )
+add_executable(Optim-testing Optim-testing.cpp )
 add_subdirectory (Kinematics)
 
 install ( TARGETS  KMat-testing Kalman-testing #stateTest
