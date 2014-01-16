@@ -1,5 +1,5 @@
-#ifndef _thread_h_
-#define _thread_h_ 1
+#ifndef THREAD_HPP
+#define THREAD_HPP
 
 #include "core/architecture/executable/IExecutable.hpp"
 #include <boost/thread.hpp>

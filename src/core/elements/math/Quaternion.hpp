@@ -1,5 +1,5 @@
-#ifndef QUATERNION_HPP__
-#define QUATERNION_HPP__
+#ifndef QUATERNION_HPP
+#define QUATERNION_HPP
 #include <core/elements/math/KMat.hpp>
 
 

@@ -1,5 +1,5 @@
-#ifndef _kalbroker_h_
-#define _kalbroker_h_ 1
+#ifndef KALBROKER_H
+#define KALBROKER_H
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include "core/elements/Singleton.hpp"
 

@@ -14,8 +14,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef TOPICTREE_H
-#define TOPICTREE_H
+#ifndef TOPICTREE_HPP
+#define TOPICTREE_HPP
 
 #include "core/elements/StringRegistry.hpp"
 #include <map>

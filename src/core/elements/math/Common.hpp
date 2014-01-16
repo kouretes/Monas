@@ -1,5 +1,5 @@
-#ifndef MATHCOMMON_H
-#define MATHCOMMON_H
+#ifndef COMMON_HPP
+#define COMMON_HPP
 
 #include <math.h>
 #include <limits>
@@ -45,7 +45,7 @@ namespace KMath {
 			r *= i;
 		return r;
 	}
-	
+
 	/**
 	 * @fn inline static unsigned int decreasing_factorial(unsigned int x,unsigned int k)
 	 * @brief The product of all positive integers less than or equal to x. and greater than k.

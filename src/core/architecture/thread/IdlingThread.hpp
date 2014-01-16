@@ -1,5 +1,5 @@
-#ifndef _idlethread_h_
-#define _idlethread_h_ 1
+#ifndef IDLINGTHREAD_HPP
+#define IDLINGTHREAD_HPP
 
 #include "hal/CondVar.hpp"
 #include "hal/Mutex.hpp"

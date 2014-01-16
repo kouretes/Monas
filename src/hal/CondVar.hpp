@@ -1,6 +1,5 @@
-
-#ifndef _CONDVAR_H_
-#define _CONDVAR_H_ 1
+#ifndef CONDVAR_HPP
+#define CONDVAR_HPP
 
 #include <boost/thread/condition_variable.hpp>
 

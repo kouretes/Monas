@@ -1,5 +1,5 @@
-#ifndef  _agentTiming_h_
-#define  _agentTiming_h_ 1
+#ifndef  AGENTTIMING_H
+#define  AGENTTIMING_H
 
 
 #include "hal/syscall.h"

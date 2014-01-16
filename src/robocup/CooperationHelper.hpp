@@ -1,5 +1,5 @@
-#ifndef _COOPERATIONACTIVITY_HPP_
-#define _COOPERATIONACTIVITY_HPP_
+#ifndef COOPERATIONHELPER_HPP
+#define COOPERATIONHELPER_HPP
 
 #include "core/include/Blackboard.hpp"
 

@@ -17,8 +17,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-#ifndef MESSAGE_HUB_H
-#define MESSAGE_HUB_H
+#ifndef MESSAGEHUB_HPP
+#define MESSAGEHUB_HPP
 #include <string>
 #include "core/elements/StringRegistry.hpp"
 #include <boost/bind.hpp>

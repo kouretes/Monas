@@ -1,5 +1,5 @@
-#ifndef _IACTIVITY_H_
-#define _IACTIVITY_H_ 1
+#ifndef IACTIVITY_HPP
+#define IACTIVITY_HPP
 
 #include "../IExecutable.hpp"
 

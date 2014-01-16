@@ -1,5 +1,5 @@
-#ifndef _periodicthread_h_
-#define _periodicthread_h_ 1
+#ifndef PERIODICTHREAD_HPP
+#define PERIODICTHREAD_HPP
 
 #include "ThreadConfig.hpp"
 

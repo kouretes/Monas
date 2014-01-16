@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef ALDEBARAN_PROXY_H_
-#define ALDEBARAN_PROXY_H_
+#ifndef ALDEBARAN_PROXY_H
+#define ALDEBARAN_PROXY_H
 
 #ifdef NAOQI_1_12_5
 

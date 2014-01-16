@@ -1,5 +1,5 @@
-#ifndef MULTICASTPOINT_H
-#define MULTICASTPOINT_H
+#ifndef MULTICASTPOINT_HPP
+#define MULTICASTPOINT_HPP
 #include <string>
 
 #include "core/architecture/messaging/EndPoint.hpp"

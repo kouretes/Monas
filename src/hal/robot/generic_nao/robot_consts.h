@@ -5,12 +5,11 @@
  *      Author: trs
  */
 
-#ifndef ROBOT_CONSTS_H_
-#define ROBOT_CONSTS_H_
+#ifndef ROBOT_CONSTS_H
+#define ROBOT_CONSTS_H
 #include <vector>
 #include <map>
 #include <string>
-#include "core/elements/Singleton.hpp"
 
 /// Returns a map from joint ids (enum Joint names) to almemory string "path" names
 namespace KDeviceLists

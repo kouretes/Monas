@@ -1,5 +1,5 @@
-#ifndef MSGENTRYSERIALIZE_H
-#define MSGENTRYSERIALIZE_H
+#ifndef MSGENTRYSERIALIZE_HPP
+#define MSGENTRYSERIALIZE_HPP
 
 #include "ptimeserialize.hpp"
 #include "../msg.h"

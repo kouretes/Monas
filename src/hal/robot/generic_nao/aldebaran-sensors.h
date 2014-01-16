@@ -5,8 +5,8 @@
  *      Author: trs
  */
 
-#ifndef ALDEBARAN_SENSORS_H_
-#define ALDEBARAN_SENSORS_H_
+#ifndef ALDEBARAN_SENSORS_H
+#define ALDEBARAN_SENSORS_H
 
 
 #ifdef NAOQI_1_12_5

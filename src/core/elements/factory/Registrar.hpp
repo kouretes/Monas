@@ -1,5 +1,5 @@
-#ifndef _genRegistrar_h_
-#define _genRegistrar_h_ 1
+#ifndef REGISTRAR_HPP
+#define REGISTRAR_HPP
 
 //#include "tools/logger.h"
 #include <iostream>

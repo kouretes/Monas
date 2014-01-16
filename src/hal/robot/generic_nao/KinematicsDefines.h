@@ -1,5 +1,5 @@
-#ifndef __DKIN_H__
-#define __DKIN_H__
+#ifndef KINEMATICDEFINES_H
+#define KINEMATICDEFINES_H
 
 //Define for the lengths of the arms foots etc
 #define ShoulderOffsetY 	98.0
@@ -79,11 +79,12 @@
 #define TorsoY				0.07
 #define TorsoZ				42.58
 
+//Not provided by aldebaran
+#define BatteryMass			0.345
+#define BatteryX			-30.00
+#define BatteryY			0.00
+#define BatteryZ			39.00
 
-#define BatMass				0.345
-#define BatX				-30.00
-#define BatY				0.00
-#define BatZ				39.00
 //Head
 #define HeadYawMass			0.05930
 #define HeadYawX			-0.02

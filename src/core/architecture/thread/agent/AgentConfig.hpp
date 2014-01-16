@@ -1,5 +1,5 @@
-#ifndef _agentconfig_h_
-#define _agentconfig_h_ 1
+#ifndef AGENTCONFIG_HPP
+#define AGENTCONFIG_HPP
 
 class AgentConfig
 {

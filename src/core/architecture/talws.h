@@ -1,5 +1,5 @@
-#ifndef _talws_h_
-#define _talws_h_ 1
+#ifndef TALWS_H
+#define TALWS_H
 
 #include "core/architecture/thread/agent/Agent.hpp"
 #include "core/architecture/executable/provider/IProvider.hpp"
