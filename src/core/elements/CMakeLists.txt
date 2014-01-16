@@ -11,6 +11,17 @@ set(ELEMENT_SRCS
       math/KMat.hpp
       math/Quaternion.hpp
       math/Specific.hpp
+      math/optimization/IPenaltyFunction.hpp
+      math/optimization/ITwiceDiffFunction.hpp
+      math/optimization/IDiffFunction.hpp
+      math/optimization/NewtonSolver.hpp
+      math/optimization/ConjugateGradientSolver.hpp
+      math/optimization/PenaltySolver.hpp
+      math/optimization/PenaltyQuadraticSolver.hpp
+      math/optimization/FunctionQuadratic.hpp
+      math/optimization/FunctionQuadraticSymmetric.hpp
+      math/optimization/FunctionAffine.hpp
+      math/optimization/FunctionQuadraticPenalty.hpp
       customTypes/K3DArray.hpp
       customTypes/ReservaplePrioryQueue.hpp
       StringRegistry.hpp

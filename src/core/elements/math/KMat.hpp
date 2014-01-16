@@ -460,13 +460,15 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return static_cast< D<T, M, N> &> (*this);
 		};
 
-		D<T, M, N> operator+( BaseMatrix<D, T, M, N> const& rop)
+		D<T, M, N> operator+( BaseMatrix<D, T, M, N> const& rop) const
 		{
 			D<T, M, N> res;
 			res=(*this);
 			res+=rop;
 			return res;
 		}
+
+
 
 		/**
 		 *	In place add another matrix to this, column wise add
@@ -481,6 +483,23 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			for (unsigned i = 0; i < M; i++)
 				for (unsigned j = 0; j < N; j++)
 					h->data(i, j) += rop.h->data(i, 0);
+
+			return static_cast< D<T, M, N> &> (*this);
+		};
+
+		/**
+		 *	In place multiply element wise with another matrix to this,
+		 **/
+		D<T, M, N>& column_mult( BaseMatrix<D, T, M, 1> const& __RESTRICTED rop)
+		{
+			if(h == NULL || rop.h == NULL)
+				return static_cast< D<T, M, N> &> (*this);
+
+			RefHandle<DataContainer<T, M, N> >::getHandle();
+
+			for (unsigned i = 0; i < M; i++)
+				for (unsigned j = 0; j < N; j++)
+					h->data(i, j) *= rop.h->data(i, 0);
 
 			return static_cast< D<T, M, N> &> (*this);
 		};
@@ -566,6 +585,13 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return static_cast< D<T, M, N> &> (*this);
 		};
 
+		D<T, M, N> operator-( BaseMatrix<D, T, M, N> const& rop) const
+		{
+			D<T, M, N> res;
+			res=(*this);
+			res-=rop;
+			return res;
+		}
 
 		/** Generic Multiply with another matrix
 		 *	TODO: not faster than "slow" multiplication
@@ -720,7 +746,7 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 		/**
 		 * Multiply with	a scalar
 		 */
-		D<T, M, N> operator* (const	T scalar)
+		D<T, M, N> operator* (const	T scalar) const
 		{
 			D<T, M, N> res;
 			res=(*this);
@@ -955,6 +981,8 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 		return athis;
 	};
+
+
 	//invert function declaration, used below as friend
 	template <typename A, unsigned S>
 	GenMatrix<A, S, S> & invert_square_matrix(GenMatrix<A, S, S> & athis);
@@ -984,6 +1012,9 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return invert_square_matrix(*this) ;
 		};//Override for square
 	};
+
+
+
 
 	template <typename T, unsigned S> class GenMatrix<T, S, 1> : public BaseMatrix<GenMatrix, T, S, 1>
 	{
@@ -1077,7 +1108,68 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 		};
 	};
 
+    template <typename T, unsigned S>
+    void solveSystemGaussSeidel(GenMatrix<T, S, S> const& A,GenMatrix<T, S, 1> const& b,GenMatrix<T, S, 1> & x,T const tol )
+    {
+    	T maximprove=10*tol;
+    	T maxval=1;
+    	while(maximprove>tol*maxval)
+		{
+			maximprove=0;
+			maxval=0;
+            for(unsigned i=0;i<S;i++)
+			{
+				T oldx=x(i);
+				T prod=0;
+				for(unsigned j=0;j<S;j++)
+				{
+					if(i==j) continue;
+					prod+=A(i,j)*x(j);
+				}
+				x(i)=(b(i)-prod)/A(i,i);
+				if(abs(x(i))>maxval)
+					maxval=abs(x(i));
+				if(abs(x(i)-oldx)>maximprove)
+					maximprove=abs(x(i)-oldx);
+			}
+		}
+    }
+	//Symmetric Positive Definite Inversion
+	template <typename A, unsigned S>
+	GenMatrix<A, S, S> & invert_square_symmetric_positive_definite_matrix(GenMatrix<A, S, S> & athis)
+	{
+		for(unsigned k=0;k<S;k++)
+		{
+			for(unsigned i=k+1;i<S;i++)
+			{
 
+				if(athis(k,k)==0)
+				{
+					std::string d("KMat:invert_square_symmetric_positive_definite_matrix<T,S,S>() ");
+					throw SingularMatrixInvertionException(d);
+				}
+				A p=-athis(i,k)/athis(k,k);
+				for(unsigned j=0;j<S;j++)
+					athis(i,j)=athis(i,j)+athis(k,j)*p;
+
+				athis(i,k)=p;
+
+			}
+			//Zero out k row
+			for(unsigned j=k+1;j<S;j++)
+			{
+				athis(k,j)=0;
+			}
+		}
+		for(unsigned k=0;k<S;k++)
+			for(unsigned i=k+1;i<S;i++)
+				athis(i,k)/=sqrt(athis(i,i));
+		for(unsigned k=0;k<S;k++)
+			athis(k,k)=1./sqrt(athis(k,k));
+		athis=athis.transp()*athis;
+		return athis;
+
+	};
 
 
 	// Matrix inversion	function, in-place gauss-jordan elimination with partial pivoting
