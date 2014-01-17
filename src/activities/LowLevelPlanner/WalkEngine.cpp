@@ -1,5 +1,5 @@
 #include "WalkEngine.hpp"
-
+#include "hal/robot/generic_nao/KinematicsDefines.h"
 
 WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPM(rp),NaoRobot(rp),ZbufferX(PreviewWindow*50),ZbufferY(PreviewWindow*50),walkbuffer(0)
 {
@@ -223,8 +223,22 @@ std::vector<float> WalkEngine::Calculate_IK()
 		} else
 			std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
 
+		armangles.zero();
+		KVecDouble3 armt;
+		armt=Tpprimel.getTranslation();
+		//armt.prettyPrint();
+		armangles(2)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
+		armangles(1)=asin((armt(1)+70-ShoulderOffsetY)/(UpperArmLength*1.5));
+		armt=Tpprimer.getTranslation();
+		//armt.prettyPrint();
+		armangles(0)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
+		armangles(3)=asin((-armt(1)+70-ShoulderOffsetY)/(UpperArmLength*1.5) );
+		//armangles.prettyPrint();
+
 
 	}
+	//X axes
+
 	currentstep++;
 	return ret;
 }

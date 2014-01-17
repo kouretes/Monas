@@ -25,10 +25,12 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float,PreviewWindow-1,1> ZMPReferenceX,ZMPReferenceY;
     /** DMPC **/
     KMath::KMat::GenMatrix<float, LagN, LagN>  Omega;
-    KMath::KMat::GenMatrix<float, LagN, PreviewWindow-1>  Phi;
-    KMath::KMat::GenMatrix<float, LagN, 4>  Psi;
+    KMath::KMat::GenMatrix<float, PreviewWindow-1, LagN>  Phi;
+    KMath::KMat::GenMatrix<float, PreviewWindow-1, 4>  Tau;
     KMath::KMat::GenMatrix<float, LagN, LagN>  Al;
     KMath::KMat::GenMatrix<float, LagN, 1>  L0,httaX,httaY;
+
+    void generateLaguerre();
 
  	public:
  	    RobotParameters &OurRobot;

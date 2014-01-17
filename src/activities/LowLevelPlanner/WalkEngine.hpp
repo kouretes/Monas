@@ -43,6 +43,8 @@ public:
 	void Reset();
 	void addInit();
 
+	KMath::KMat::GenMatrix<double,4,1> armangles;
+
 private:
 	void feed();
 
@@ -66,6 +68,8 @@ private:
 	/** FSR Transform **/
 	KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
 	KMath::KMat::GenMatrix<double,4,1> fsrlbias,fsrrbias,fsrl,fsrr;
+
+
 
 
 

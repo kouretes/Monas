@@ -70,5 +70,5 @@ void Dynamics::AugmentState()
       State_e(1)=State(1)-Stateold(1);
       State_e(2)=State(2)-Stateold(2);
       State_e(3)=zmpstate;
-      State_e.scalar_mult(-1.000);
+      //State_e.scalar_mult(-1.000);
 }
