@@ -84,7 +84,7 @@ private:
 
 	/** Leg Controllers **/
 	LIPMPreviewController NaoLIPM;//NaoLIPMy;
-	CircularBuffer<float> 	ZbufferX,ZbufferY;
+	CircularBuffer<KVecFloat3> 	Zbuffer;
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
 

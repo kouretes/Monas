@@ -95,7 +95,7 @@ class CircularBuffer
 				return elems[(start + subscript) % buffer_size];
 			else
 				std::cerr << "Out of rangeeee" << std::endl;
-			return 0;
+			return T();
 		}
 
 		int size()

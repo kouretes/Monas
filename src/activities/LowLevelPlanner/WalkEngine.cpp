@@ -1,7 +1,7 @@
 #include "WalkEngine.hpp"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 
-WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPM(rp),NaoRobot(rp),ZbufferX(PreviewWindow*50),ZbufferY(PreviewWindow*50),walkbuffer(0)
+WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(PreviewWindow*50),walkbuffer(0)
 {
 
 	Tilerror.identity();
@@ -257,7 +257,7 @@ void WalkEngine::Calculate_Desired_COM()
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
 
-	NaoLIPM.LIPMComPredictor(ZbufferX,ZbufferY,CoMm(0),CoMm(1),copi(0),copi(1));
+	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
 	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 /*	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
@@ -278,10 +278,7 @@ void WalkEngine::Calculate_Desired_COM()
 */
 	/** Pop the used Point **/
 
-	ZbufferX.pop();
-
-	ZbufferY.pop();
-
+	Zbuffer.pop();
 }
 void WalkEngine::setFSR(KMath::KMat::GenMatrix<double,4,1> l,KMath::KMat::GenMatrix<double,4,1> r)
 {
@@ -386,7 +383,7 @@ void WalkEngine::feed()
 	}
 
 
-    if(ZbufferX.size()<PreviewWindow+1&&walkbuffer.size()>0)//ASSUME Y is the same
+    if(Zbuffer.size()<PreviewWindow+1&&walkbuffer.size()>0)//ASSUME Y is the same
 	{
 		WalkInstruction i=walkbuffer.readOne();
 				//Add double support
@@ -439,19 +436,29 @@ void WalkEngine::feed()
 		//planL.prettyPrint();
 		//planR.prettyPrint();
 		//destZMP.prettyPrint();
-		KVecFloat2 startZMP;
-        if(ZbufferX.size()>0)
+		KVecFloat3 startZMP;
+        if(Zbuffer.size()>0)
         {
-            startZMP(0)=ZbufferX[ZbufferX.size()-1];
-            startZMP(1)=ZbufferY[ZbufferY.size()-1];
+        	Zbuffer[Zbuffer.size()-1].prettyPrint();
+            startZMP(0)=Zbuffer[Zbuffer.size()-1](0);
+            startZMP(1)=Zbuffer[Zbuffer.size()-1](1);
+            startZMP(2)=Zbuffer[Zbuffer.size()-1](2);
+            startZMP.prettyPrint();
         }
         else
             startZMP.zero();
 
 		for(unsigned p=0;p<i.steps;p++)
 		{
-				ZbufferX.cbPush(interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(0),destZMP(0),1.0));//+0.02
-				ZbufferY.cbPush(interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(1),destZMP(1),1.0)  );
+				KVecFloat3 newpoint;
+				newpoint.zero();
+				float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
+
+				newpoint(0)=interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(0),destZMP(0),1.0);
+				newpoint(1)=interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(1),destZMP(1),1.0);
+				newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/i.steps,0,adiff,1.0);
+				Zbuffer.cbPush(newpoint);
+				//newpoint.prettyPrint();
 		}
 		planned=i;
 		qbuffer.push(i);

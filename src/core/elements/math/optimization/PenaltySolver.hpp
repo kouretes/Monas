@@ -10,7 +10,7 @@ namespace KMath
   class PenaltySolver : public K<T,S>
   {
   public:
-    PenaltySolver() : K<T,S>(), pthreshold(1e8), mu(100)
+    PenaltySolver() : K<T,S>(), pthreshold(1e2), mu(100)
     {
       pen.clear();
     }

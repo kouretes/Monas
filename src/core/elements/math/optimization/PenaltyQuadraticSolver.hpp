@@ -32,7 +32,7 @@ namespace KMath
       bool allsatisfied=false;
       H.zero();
       //Solve the unconstrained
-      {
+      /*{
 
         f.zero();
         H.zero();
@@ -63,7 +63,7 @@ namespace KMath
         x=H*f;
         //KMat::solveSystemGaussSeidel(H,f,x,(float)1e-4);
         x.scalar_mult(-1);
-      }
+      }*/
 
 
 
@@ -80,7 +80,7 @@ namespace KMath
           pen[i]->replaceConstraintsAt(x);
           allsatisfied=allsatisfied&pen[i]->allSatisfied();
         }
-        if(allsatisfied) { break;}
+        if(allsatisfied) {  break;}
         //Solve analytically
         f.zero();
         H.zero();
@@ -104,8 +104,8 @@ namespace KMath
 
         try
         {
-          //H.fast_invert();
-          KMat::invert_square_symmetric_positive_definite_matrix(H);
+          H.fast_invert();
+          //KMat::invert_square_symmetric_positive_definite_matrix(H);
         }
         catch(KMat::SingularMatrixInvertionException e)
         {
@@ -118,6 +118,7 @@ namespace KMath
         x.scalar_mult(-1);
         //x.prettyPrint();
       }
+
 
 
       return x;
