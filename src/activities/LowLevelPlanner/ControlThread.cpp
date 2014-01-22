@@ -8,7 +8,7 @@
 
 #include "ControlThread.h"
 #include <iostream>
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(OurRobot), DynamicsY(OurRobot), KalmanX(OurRobot), KalmanY(OurRobot)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -88,14 +88,27 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 void LIPMPreviewController::solveConstrainedMPC()
 {
 	KMath::FunctionQuadraticSymmetric<float,2*LagN> costfunct;
-	KMath::FunctionAffine<float,2*LagN,PreviewWindow-1> af1,af2,af3,af4;
-	KMath::FunctionQuadraticPenalty<float,2*LagN,PreviewWindow-1> c1(af1),c2(af2),c3(af3),c4(af4);
+	KMath::FunctionAffine<float,2*LagN,CONST_SIZE> af1,af2,af3,af4;
+	KMath::FunctionQuadraticPenalty<float,2*LagN,CONST_SIZE> c1(af1),c2(af2),c3(af3),c4(af4);
 
 
 	pX=ZMPReferenceX-Tau*DynamicsX.State_e;
 	pY=ZMPReferenceY-Tau*DynamicsY.State_e;
+
+
+
 	httaX=Ky*pX;
-    httaY=Ky*pY;
+	httaY=Ky*pY;
+	htta.zero();
+	for(unsigned i=0;i<LagN;i++)
+	{
+		htta(i)=httaX(i);
+		htta(i+LagN)=httaY(i);
+	}
+
+
+
+
 
 
     costfunct.setH(H);
@@ -113,6 +126,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 	costfunct.setf(f);
     //CONSTRAINT 1
     fillConstraints(Aineq1,bineq1,true,false);
+    //bineq1.prettyPrint();
+    //std::cout<<OurRobot.getWalkParameter(StepX)<<std::endl;
     bineq1.scalar_add(OurRobot.getWalkParameter(StepX)/2.0);
     af1.setA(Aineq1);
     af1.setb(bineq1);
@@ -153,17 +168,20 @@ void LIPMPreviewController::solveConstrainedMPC()
     //solver.addPenaltyFunction(&c4);
     //std::cout<<"WHAT?assign"<<std::endl;
 
-    for(unsigned i=0;i<LagN;i++)
-	{
-		htta(i)=httaX(i);
-		htta(i+LagN)=httaY(i);
-	}
+    //for(unsigned i=0;i<LagN;i++)
+	//{
+	//	htta(i)=httaX(i);
+	//	htta(i+LagN)=httaY(i);
+	//}
 	//htta.prettyPrint();
-	af1.setX(htta);
-    af1.evaluate().prettyPrint();
+	//af1.setX(htta);
+    //af1.evaluate().prettyPrint();
+
     htta=solver.solve(htta);
 
-    //htta.prettyPrint();
+  //  af1.setX(htta);
+  //  af1.evaluate().prettyPrint();
+  //  htta.prettyPrint();
     //std::cout<<"WHAT?assignback"<<std::endl;
 	for(unsigned i=0;i<LagN;i++)
 	{
@@ -176,31 +194,31 @@ void LIPMPreviewController::solveConstrainedMPC()
 }
 
 void LIPMPreviewController::fillConstraints(
-						KMath::KMat::GenMatrix<float,PreviewWindow-1,2*LagN> & A,
-						KMath::KMat::GenMatrix<float,PreviewWindow-1,1> &b,
+						KMath::KMat::GenMatrix<float,CONST_SIZE,2*LagN> & A,
+						KMath::KMat::GenMatrix<float,CONST_SIZE,1> &b,
 						bool ecos,bool fcos
 						)
 {
-	for(unsigned i=0;i<PreviewWindow-1;i++)
+	for(unsigned i=0;i<CONST_SIZE;i++)
 	{
 		float a,c;
 		if(ecos)
-			a= cos(ZMPtheta(i));
+			a= cos(-ZMPtheta(i*CONST_STEP));
 		else
-			a= -sin(ZMPtheta(i));
+			a= sin(-ZMPtheta(i*CONST_STEP));
 		if(fcos)
-			c= cos(ZMPtheta(i));
+			c= cos(-ZMPtheta(i*CONST_STEP));
 		else
-			c= sin(ZMPtheta(i));
-		std::cout<<c<<std::endl;
+			c= -sin(-ZMPtheta(i*CONST_STEP));
+		//std::cout<<c<<std::endl;
 
 		for(unsigned j=0;j<LagN;j++)
 		{
-			A(i,j)=(a)*Phi(i,j);
-			A(i,j+LagN)=(c)*Phi(i,j);
+			A(i,j)=(a)*Phi(i*CONST_STEP,j);
+			A(i,j+LagN)=(c)*Phi(i*CONST_STEP,j);
 		}
 
-		b(i)=(a)*pX(i)+(c)*pY(i);
+		b(i)=(a)*pX(i*CONST_STEP)+(c)*pY(i*CONST_STEP);
 	}
 
 }
@@ -355,6 +373,18 @@ void LIPMPreviewController::DMPC()
 	Kx=Meg*Tau;
 	Ky=Meg;
 
+	Aineq1.zero();
+	Aineq2.zero();
+	Aineq3.zero();
+	Aineq4.zero();
+
+	bineq1.zero();
+	bineq2.zero();
+	bineq3.zero();
+	bineq4.zero();
+
+
 
 }
+
 

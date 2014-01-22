@@ -27,8 +27,8 @@ class WalkEngine
 
 
 public:
-	WalkEngine(RobotParameters rp);
-	RobotParameters NaoRobot;
+	WalkEngine(RobotParameters &rp);
+	RobotParameters &NaoRobot;
 	KWalkMat interp;
 	NAOKinematics nkin;
 		WalkBuffer walkbuffer;

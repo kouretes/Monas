@@ -104,8 +104,8 @@ namespace KMath
 
         try
         {
-          H.fast_invert();
-          //KMat::invert_square_symmetric_positive_definite_matrix(H);
+          //H.fast_invert();
+          KMat::invert_square_symmetric_positive_definite_matrix(H);
         }
         catch(KMat::SingularMatrixInvertionException e)
         {

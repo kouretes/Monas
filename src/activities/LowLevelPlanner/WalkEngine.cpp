@@ -1,7 +1,7 @@
 #include "WalkEngine.hpp"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 
-WalkEngine::WalkEngine(RobotParameters rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(PreviewWindow*50),walkbuffer(0)
+WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(PreviewWindow*50),walkbuffer(0)
 {
 
 	Tilerror.identity();

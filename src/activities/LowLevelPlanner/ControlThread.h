@@ -28,6 +28,8 @@
 #include "Kalman.h"
 #include "Dynamics.h"
 #define PreviewWindow 101
+#define CONST_SIZE 2
+#define CONST_STEP 20
 #define LagN 15
 class LIPMPreviewController{
     private:
@@ -46,14 +48,14 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float, LagN*2, LagN*2> H;
     KMath::KMat::GenMatrix<float, LagN*2, 1> f;
     KMath::KMat::GenMatrix<float, LagN, 1> fx,fy;
-    KMath::KMat::GenMatrix<float,PreviewWindow-1,2*LagN> Aineq1,Aineq2,Aineq3,Aineq4;
-    KMath::KMat::GenMatrix<float,PreviewWindow-1,1> bineq1,bineq2,bineq3,bineq4;
-    KMath::PenaltyQuadraticSolver<float,2*LagN, (PreviewWindow-1)> solver;
+    KMath::KMat::GenMatrix<float,CONST_SIZE,2*LagN> Aineq1,Aineq2,Aineq3,Aineq4;
+    KMath::KMat::GenMatrix<float,CONST_SIZE,1> bineq1,bineq2,bineq3,bineq4;
+    KMath::PenaltyQuadraticSolver<float,2*LagN, CONST_SIZE> solver;
 	//KMath::PenaltySolver<float,2*LagN,KMath::NewtonSolver> solver;
 
 	void fillConstraints(
-						KMath::KMat::GenMatrix<float,PreviewWindow-1,2*LagN> & A,
-						KMath::KMat::GenMatrix<float,PreviewWindow-1,1> &b,
+						KMath::KMat::GenMatrix<float,CONST_SIZE,2*LagN> & A,
+						KMath::KMat::GenMatrix<float,CONST_SIZE,1> &b,
 						bool ecos,bool fcos
 						) ;
 

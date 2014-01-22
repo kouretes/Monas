@@ -51,7 +51,7 @@ void Dynamics::Update(float u,KVecFloat2 error)
 {
     /** Updating the Dynamics **/
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-    //error.scalar_mult(0.1);
+    //error.scalar_mult(0.0);
     Stateold=State;
     State=Ad*State;
     temp=Bd;
