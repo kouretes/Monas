@@ -8,7 +8,9 @@
 
 #include "ControlThread.h"
 #include <iostream>
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp)
+//#define SCALECONSTRAINT(i) (0.99-((float)(i))/(3.0*CONST_SIZE))
+#define SCALECONSTRAINT(i) 0.96
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -57,6 +59,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 
 
       solveConstrainedMPC();
+      walkprof.generate_report(1000);
       /** Optimal Preview Control **/
       DeltauX=L0.transp()*httaX;
       DeltauY=L0.transp()*httaY;
@@ -87,6 +90,8 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 
 void LIPMPreviewController::solveConstrainedMPC()
 {
+
+	KPROF_SCOPE(walkprof,"solveConstrainedMPC")
 	KMath::FunctionQuadraticSymmetric<float,2*LagN> costfunct;
 	KMath::FunctionAffine<float,2*LagN,CONST_SIZE> af1,af2,af3,af4;
 	KMath::FunctionQuadraticPenalty<float,2*LagN,CONST_SIZE> c1(af1),c2(af2),c3(af3),c4(af4);
@@ -99,6 +104,7 @@ void LIPMPreviewController::solveConstrainedMPC()
 
 	httaX=Ky*pX;
 	httaY=Ky*pY;
+	return ;
 	htta.zero();
 	for(unsigned i=0;i<LagN;i++)
 	{
@@ -128,14 +134,16 @@ void LIPMPreviewController::solveConstrainedMPC()
     fillConstraints(Aineq1,bineq1,true,false);
     //bineq1.prettyPrint();
     //std::cout<<OurRobot.getWalkParameter(StepX)<<std::endl;
-    bineq1.scalar_add(OurRobot.getWalkParameter(StepX)/2.0);
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq1(i)+=( SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/2.0);
     af1.setA(Aineq1);
     af1.setb(bineq1);
     c1.setFunction(af1);
     //std::cout<<"WHAT?2"<<std::endl;
     //CONSTRAINT 2
-    /*fillConstraints(Aineq2,bineq2,false,true);
-    bineq2.scalar_add(OurRobot.getWalkParameter(StepY)/3);
+    fillConstraints(Aineq2,bineq2,false,true);
+	for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq2(i)+=(SCALECONSTRAINT(i)* OurRobot.getWalkParameter(StepY)/2.0);
     af2.setA(Aineq2);
     af2.setb(bineq2);
     c2.setFunction(af2);
@@ -144,7 +152,8 @@ void LIPMPreviewController::solveConstrainedMPC()
     fillConstraints(Aineq3,bineq3,true,false);
     Aineq3.scalar_mult(-1);
     bineq3.scalar_mult(-1);
-    bineq3.scalar_add(OurRobot.getWalkParameter(StepX)/3);
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq3(i)+=(SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/2.0);
 
     af3.setA(Aineq3);
     af3.setb(bineq3);
@@ -153,19 +162,21 @@ void LIPMPreviewController::solveConstrainedMPC()
     fillConstraints(Aineq4,bineq4,false,true);
     Aineq4.scalar_mult(-1);
     bineq4.scalar_mult(-1);
-    bineq4.scalar_add(OurRobot.getWalkParameter(StepY)/3);
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq4(i)+=(SCALECONSTRAINT(i)* OurRobot.getWalkParameter(StepY)/2.0);
 
 	//std::cout<<"WHAT?set"<<std::endl;
 	af4.setA(Aineq4);
     af4.setb(bineq4);
-    c4.setFunction(af4);*/
+    c4.setFunction(af4);
 
 	//std::cout<<"WHAT?add"<<std::endl;
+
     solver.addCostFunction(&costfunct);
     solver.addPenaltyFunction(&c1);
-    //solver.addPenaltyFunction(&c2);
-    //solver.addPenaltyFunction(&c3);
-    //solver.addPenaltyFunction(&c4);
+    solver.addPenaltyFunction(&c2);
+    solver.addPenaltyFunction(&c3);
+	solver.addPenaltyFunction(&c4);
     //std::cout<<"WHAT?assign"<<std::endl;
 
     //for(unsigned i=0;i<LagN;i++)
@@ -176,8 +187,13 @@ void LIPMPreviewController::solveConstrainedMPC()
 	//htta.prettyPrint();
 	//af1.setX(htta);
     //af1.evaluate().prettyPrint();
+    /*
+	{
+		KPROF_SCOPE(walkprof,"solver.solve");
+		 htta=solver.solve(htta);
 
-    htta=solver.solve(htta);
+	}
+
 
   //  af1.setX(htta);
   //  af1.evaluate().prettyPrint();
@@ -188,7 +204,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 		httaX(i)=htta(i);
 		httaY(i)=htta(i+LagN);
 	}
-
+	*/
+	solver.clearCostFunctions();
 
 
 }
@@ -203,28 +220,28 @@ void LIPMPreviewController::fillConstraints(
 	{
 		float a,c;
 		if(ecos)
-			a= cos(-ZMPtheta(i*CONST_STEP));
+			a= cos(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
 		else
-			a= sin(-ZMPtheta(i*CONST_STEP));
+			a= sin(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
 		if(fcos)
-			c= cos(-ZMPtheta(i*CONST_STEP));
+			c= cos(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
 		else
-			c= -sin(-ZMPtheta(i*CONST_STEP));
+			c= -sin(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
 		//std::cout<<c<<std::endl;
 
 		for(unsigned j=0;j<LagN;j++)
 		{
-			A(i,j)=(a)*Phi(i*CONST_STEP,j);
-			A(i,j+LagN)=(c)*Phi(i*CONST_STEP,j);
+			A(i,j)=(a)*Phi(i*CONST_STEP+CONST_SKIP,j);
+			A(i,j+LagN)=(c)*Phi(i*CONST_STEP+CONST_SKIP,j);
 		}
 
-		b(i)=(a)*pX(i*CONST_STEP)+(c)*pY(i*CONST_STEP);
+		b(i)=(a)*pX(i*CONST_STEP+CONST_SKIP)+(c)*pY(i*CONST_STEP+CONST_SKIP);
 	}
 
 }
 void LIPMPreviewController::generateLaguerre()
 {
-	float alpha=0.5;
+	float alpha=0.59;
 
 	float beta=1-alpha*alpha;
 
@@ -263,7 +280,7 @@ void LIPMPreviewController::generateLaguerre()
 void LIPMPreviewController::DMPC()
 {
 	generateLaguerre();
-	float rl=1e-6;
+	float rl=5e-7;
 
 
 

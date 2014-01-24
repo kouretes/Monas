@@ -11,7 +11,7 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
     ProcessNoise.zero();
 	ProcessNoise(0,0)=1e-7;
 	P.zero();
-	P(0,0)=1e-20;
+	P(0,0)=1e-19;
 	MeasurementNoise.identity();
 	MeasurementNoise(0,0)=0.001;
 	MeasurementNoise(1,1)=0.5;

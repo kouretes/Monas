@@ -1,8 +1,7 @@
 #ifndef __Kouretes_Walk_Engine__Dynamics__
 #define __Kouretes_Walk_Engine__Dynamics__
 #include "core/elements/math/KMat.hpp"
-#define LagN 15
-#define PreviewWindow 101
+
 #include "RobotParameters.h"
 class Dynamics
 {

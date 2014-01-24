@@ -24,13 +24,19 @@
 #include "core/elements/math/optimization/FunctionQuadraticSymmetric.hpp"
 
 
+#define KPROFILING_ENABLED
+#include "tools/profiler.hpp"
+
+
 #include "RobotParameters.h"
+
 #include "Kalman.h"
 #include "Dynamics.h"
-#define PreviewWindow 101
-#define CONST_SIZE 2
-#define CONST_STEP 20
-#define LagN 15
+#define PreviewWindow 151
+#define CONST_SKIP 0
+#define CONST_SIZE 100
+#define CONST_STEP 1
+#define LagN 11
 class LIPMPreviewController{
     private:
     KMath::KMat::GenMatrix<float,LagN,4> Kx;
@@ -50,6 +56,7 @@ class LIPMPreviewController{
     KMath::KMat::GenMatrix<float, LagN, 1> fx,fy;
     KMath::KMat::GenMatrix<float,CONST_SIZE,2*LagN> Aineq1,Aineq2,Aineq3,Aineq4;
     KMath::KMat::GenMatrix<float,CONST_SIZE,1> bineq1,bineq2,bineq3,bineq4;
+
     KMath::PenaltyQuadraticSolver<float,2*LagN, CONST_SIZE> solver;
 	//KMath::PenaltySolver<float,2*LagN,KMath::NewtonSolver> solver;
 
@@ -62,6 +69,8 @@ class LIPMPreviewController{
 
     void generateLaguerre();
     void solveConstrainedMPC();
+
+	mutable KProfiling::profiler walkprof;
 
  	public:
  	    RobotParameters &OurRobot;

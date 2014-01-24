@@ -276,6 +276,7 @@ void WalkEngine::Calculate_Desired_COM()
     predicterror+=e;
 //    predicterror.prettyPrint();
 */
+	predicterror.zero();
 	/** Pop the used Point **/
 
 	Zbuffer.pop();
@@ -492,6 +493,7 @@ void WalkEngine::feed()
 
 
 };
+
 
 std::vector<float> WalkEngine::runStep()
 {

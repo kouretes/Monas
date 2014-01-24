@@ -12,7 +12,7 @@ namespace KMath
   class PenaltyQuadraticSolver
   {
   public:
-    PenaltyQuadraticSolver()  : pthreshold(1e40), mu(100)
+    PenaltyQuadraticSolver()  : pthreshold(1e30), mu(2)
     {
       pen.clear();
       cost.clear();
@@ -30,6 +30,7 @@ namespace KMath
       KMat::GenMatrix<T,S,1> f;
       KMat::GenMatrix<T,S,S>  H,temp;
       bool allsatisfied=false;
+      f.zero();
       H.zero();
       //Solve the unconstrained
       /*{
@@ -68,7 +69,7 @@ namespace KMath
 
 
 
-      for(T t=1; t<pthreshold; t=t*mu)
+      for(T t=1; t*(L*pen.size())<=pthreshold; t=t*mu)
       {
         //std::cout<<"---------------------------------"<<t<<std::endl;
         //x.prettyPrint();
@@ -104,7 +105,7 @@ namespace KMath
 
         try
         {
-          //H.fast_invert();
+           //H.fast_invert();
           KMat::invert_square_symmetric_positive_definite_matrix(H);
         }
         catch(KMat::SingularMatrixInvertionException e)
@@ -114,7 +115,7 @@ namespace KMath
 
         }
         x=H*f;
-        //KMat::solveSystemGaussSeidel(H,f,x,(float)1e-4);
+        //KMat::solveSystemGaussSeidel(H,f,x,(float)1e-3);
         x.scalar_mult(-1);
         //x.prettyPrint();
       }
