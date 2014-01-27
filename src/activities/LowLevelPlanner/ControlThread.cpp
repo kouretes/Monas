@@ -8,8 +8,11 @@
 
 #include "ControlThread.h"
 #include <iostream>
-//#define SCALECONSTRAINT(i) (0.99-((float)(i))/(3.0*CONST_SIZE))
-#define SCALECONSTRAINT(i) 0.96
+//#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
+#define SCALECONSTRAINT(i) 0.9
+#define BASISM 3.0
+#define BASISD 3.0
+
 LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp)
 {
     KalmanX.uBuffer.push(0.000);
@@ -35,19 +38,18 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
     KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
 
     //Setting the Reference Signal
-    int l = 0;
-	for (int i = 1; i < PreviewWindow; i++, l++)
+	for (int i = 1; i < PreviewWindow; i++)
 	{
 		if (i < ZmpBuffer.size()){
-			ZMPReferenceX(l) = ZmpBuffer[i](0);
-			ZMPReferenceY(l) = ZmpBuffer[i](1);
-			ZMPtheta(l) = ZmpBuffer[i](2);
+			ZMPReferenceX(i-1) = ZmpBuffer[i](0);
+			ZMPReferenceY(i-1) = ZmpBuffer[i](1);
+			ZMPtheta(i-1) = ZmpBuffer[i](2);
 		}
 		else{
 
-			ZMPReferenceX(l) = ZmpBuffer[ZmpBuffer.size() - 1](0);
-			ZMPReferenceY(l) = ZmpBuffer[ZmpBuffer.size() - 1](1);
-			ZMPtheta(l)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
+			ZMPReferenceX(i-1) = ZmpBuffer[ZmpBuffer.size() - 1](0);
+			ZMPReferenceY(i-1) = ZmpBuffer[ZmpBuffer.size() - 1](1);
+			ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
 
@@ -104,8 +106,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 
 	httaX=Ky*pX;
 	httaY=Ky*pY;
-	return ;
 	htta.zero();
+	return ;
 	for(unsigned i=0;i<LagN;i++)
 	{
 		htta(i)=httaX(i);
@@ -128,6 +130,9 @@ void LIPMPreviewController::solveConstrainedMPC()
 		f(i)=-fx(i);
 		f(i+LagN)=-fy(i);
 	}
+	float yconstr=OurRobot.getWalkParameter(StepY)/2.0;
+	if(isDoubleSupport)
+		yconstr+=OurRobot.getWalkParameter(StepY);
 	//std::cout<<"WHAT?"<<std::endl;
 	costfunct.setf(f);
     //CONSTRAINT 1
@@ -143,7 +148,7 @@ void LIPMPreviewController::solveConstrainedMPC()
     //CONSTRAINT 2
     fillConstraints(Aineq2,bineq2,false,true);
 	for(unsigned i=0;i<CONST_SIZE;i++)
-		bineq2(i)+=(SCALECONSTRAINT(i)* OurRobot.getWalkParameter(StepY)/2.0);
+		bineq2(i)+=(SCALECONSTRAINT(i)* yconstr);
     af2.setA(Aineq2);
     af2.setb(bineq2);
     c2.setFunction(af2);
@@ -163,7 +168,7 @@ void LIPMPreviewController::solveConstrainedMPC()
     Aineq4.scalar_mult(-1);
     bineq4.scalar_mult(-1);
     for(unsigned i=0;i<CONST_SIZE;i++)
-		bineq4(i)+=(SCALECONSTRAINT(i)* OurRobot.getWalkParameter(StepY)/2.0);
+		bineq4(i)+=(SCALECONSTRAINT(i)* yconstr);
 
 	//std::cout<<"WHAT?set"<<std::endl;
 	af4.setA(Aineq4);
@@ -186,14 +191,27 @@ void LIPMPreviewController::solveConstrainedMPC()
 	//}
 	//htta.prettyPrint();
 	//af1.setX(htta);
+	c1.setX(htta);
+	c2.setX(htta);
+	c3.setX(htta);
+	c4.setX(htta);
+	if(c1.allSatisfied()==false ||
+		//c2.allSatisfied()==false ||
+		c3.allSatisfied()==false)// ||
+		//c4.allSatisfied()==false)
+	std::cout<<"========================== VIOLATE BEFORE"<<std::endl;
     //af1.evaluate().prettyPrint();
-    /*
+
 	{
 		KPROF_SCOPE(walkprof,"solver.solve");
 		 htta=solver.solve(htta);
 
 	}
-
+	if(c1.allSatisfied()==false ||
+		//c2.allSatisfied()==false ||
+		c3.allSatisfied()==false )// ||
+		//c4.allSatisfied()==false)
+	std::cout<<"========================== VIOLATE AFTER"<<std::endl;
 
   //  af1.setX(htta);
   //  af1.evaluate().prettyPrint();
@@ -204,7 +222,7 @@ void LIPMPreviewController::solveConstrainedMPC()
 		httaX(i)=htta(i);
 		httaY(i)=htta(i+LagN);
 	}
-	*/
+
 	solver.clearCostFunctions();
 
 
@@ -241,7 +259,8 @@ void LIPMPreviewController::fillConstraints(
 }
 void LIPMPreviewController::generateLaguerre()
 {
-	float alpha=0.59;
+
+	float alpha=0.4;
 
 	float beta=1-alpha*alpha;
 
@@ -277,10 +296,11 @@ void LIPMPreviewController::generateLaguerre()
 	Al.prettyPrint();*/
 
 }
+/*
 void LIPMPreviewController::DMPC()
 {
 	generateLaguerre();
-	float rl=5e-7;
+	float rl=4e-6;
 
 
 
@@ -318,7 +338,7 @@ void LIPMPreviewController::DMPC()
 
 	c(0)=1.0000;
     c(1)=0.0000;
-    c(2)=-OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g);
+    c(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
 
     //-------------------Ae
     Ae.zero();
@@ -400,7 +420,178 @@ void LIPMPreviewController::DMPC()
 	bineq3.zero();
 	bineq4.zero();
 
+}
+*/
 
+void LIPMPreviewController::DMPC()
+{
+	float rl=4e-6;
+	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
+	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
+	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;
+
+
+
+
+    KMath::KMat::GenMatrix<float,3,3> A;
+    KMath::KMat::GenMatrix<float,3,1> b,c;
+    KMath::KMat::GenMatrix<float,4,4> Ae,Aepower;
+    KMath::KMat::GenMatrix<float,4,1> Be;
+    KMath::KMat::GenMatrix<float,1,4> Cetransp;
+    KMath::KMat::GenMatrix<float,1,3> temp;
+    KMath::KMat::GenMatrix<float,1,4> temp2;
+    KMath::KMat::GenMatrix<float,LagN,1> Li;
+    KMath::KMat::GenMatrix<float,4,LagN> tempSc;
+    KMath::KMat::GenMatrix<float,1,LagN> tempPhi;
+
+	KMath::KMat::GenMatrix<float, LagN, LagN> R_l,Tres;
+	KMath::KMat::GenMatrix<float, LagN, PreviewWindow-1> Meg;
+
+	R_l.identity();
+	R_l.scalar_mult(rl);
+
+    A(0,0)=1.0000;
+    A(0,1)=OurRobot.getWalkParameter(Ts);
+    A(0,2)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    A(1,0)=0.0000;
+    A(1,1)=1.0000;
+    A(1,2)=OurRobot.getWalkParameter(Ts);
+    A(2,0)=0.0000;
+    A(2,1)=0.0000;
+    A(2,2)=1.0000;
+
+    b(0)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/6.0000;
+    b(1)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    b(2)=OurRobot.getWalkParameter(Ts);
+
+	c(0)=1.0000;
+    c(1)=0.0000;
+    c(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
+
+    //-------------------Ae
+    Ae.zero();
+
+    for(unsigned i=0;i<3;i++)
+		for(unsigned j=0;j<3;j++)
+			Ae(i,j)=A(i,j);
+	temp=c.transp()*A;
+	for(unsigned j=0;j<3;j++)
+		Ae(3,j)=temp(0,j);
+	Ae(3,3)=1;
+
+
+	//----------------Be
+	for(unsigned j=0;j<3;j++)
+		Be(j)=b(j);
+    Be(3)=c.transp()*b;
+
+    //---------------CeTransp
+
+    Cetransp.zero();
+    Cetransp(0,3)=1;
+
+
+    //---------------CREATE PHI AND TAU
+    L0.zero();
+    L0(0)=1;
+	Tau.zero();
+	tempSc.zero();
+	Aepower.identity();
+
+    for(unsigned i=0;i<PreviewWindow-1;i++)
+	{
+
+		//COMPUTE Li
+		Li.zero();
+		unsigned base;
+		float denom=1;
+
+		if(i+1<=ttl)
+		{
+			unsigned w=0;
+			unsigned sum=0;
+			for(unsigned l=0;l<BASISM;l++)
+			{
+				for(unsigned j=0;j<BASISD;j++)
+				{
+					sum+=(l+1);
+					w=w+1;
+					if(sum>=i+1)
+					{
+						denom=(l+1);
+						break;
+					}
+
+				}
+				if(sum>=i+1)
+				{
+					denom=(l+1);
+					break;
+
+				}
+			}
+			base=w-1;
+
+		}
+		else
+		{
+			base=ceil((i+1-ttl)/s)+BASISD*BASISM-1;
+			denom=s;
+
+		}
+		if(base<LagN)
+		{
+			Li(base)=1.0/sqrt(denom);
+		}
+		std::cout<<i<<" "<<base<<" "<<1.0/sqrt(denom)<<std::endl;
+		tempSc=Ae*tempSc;
+		tempSc+=Be*Li.transp();
+		tempPhi=Cetransp*tempSc;
+
+		for(unsigned j=0;j<LagN;j++)
+			Phi(i,j)=tempPhi(0,j);
+
+		Aepower*=Ae;
+		//Tau row i
+		temp2=Cetransp*Aepower;
+
+		for(unsigned j=0;j<4;j++)
+			Tau(i,j)=temp2(0,j);
+		Li=Al*Li;
+	}
+
+	Tau.prettyPrint();
+	Phi.prettyPrint();
+
+	Tres=(Phi.transp()*Phi+R_l);
+	//FIX H for constrained
+	H.zero();
+    for(unsigned i=0;i<LagN;i++)
+		for(unsigned j=0;j<LagN;j++)
+		{
+			H(i,j)=Tres(i,j);
+			H(i+LagN,j+LagN)=Tres(i,j);
+
+		}
+	std::cout<<"EDW?"<<std::endl;
+
+
+
+	Tres.fast_invert();
+	Meg=Tres*Phi.transp();
+
+	Kx=Meg*Tau;
+	Ky=Meg;
+
+	Aineq1.zero();
+	Aineq2.zero();
+	Aineq3.zero();
+	Aineq4.zero();
+
+	bineq1.zero();
+	bineq2.zero();
+	bineq3.zero();
+	bineq4.zero();
 
 }
 

@@ -12,7 +12,7 @@ namespace KMath
   class PenaltyQuadraticSolver
   {
   public:
-    PenaltyQuadraticSolver()  : pthreshold(1e30), mu(2)
+    PenaltyQuadraticSolver()  : pthreshold(1e30), mu(100)
     {
       pen.clear();
       cost.clear();
@@ -69,7 +69,7 @@ namespace KMath
 
 
 
-      for(T t=1; t*(L*pen.size())<=pthreshold; t=t*mu)
+      for(T t=0.1; t*(L*pen.size())<=pthreshold; t=t*mu)
       {
         //std::cout<<"---------------------------------"<<t<<std::endl;
         //x.prettyPrint();

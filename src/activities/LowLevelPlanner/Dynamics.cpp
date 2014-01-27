@@ -28,9 +28,53 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
     Bd(3)=0.0000;
     Cd(0)=1.0000;
     Cd(1)=0.0000;
-    Cd(2)=-OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g);
+    Cd(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
 
     /** Defining the Optimal Gain for the Observer **/
+
+    //0.0009 0.0015 -0.0051 -0.0074 -0.0303 -0.3325 -0.0003 0.0099
+	//   0.0537    0.0101
+   //-0.2846   -0.0484
+   //-3.6499   -2.8105
+   //-0.0304    0.0281
+
+
+    // 0.2263    0.0074
+   //-1.0010   -0.0352
+  //-34.4651   -2.2820
+   //-0.0873    0.0288
+   L(0,0) =0.044452;
+   L(0,1) =0.037499;
+   L(1,0) =-0.22693;
+   L(1,1) =-0.14403;
+   L(2,0) =-3.0241;
+   L(2,1) =-13.5139;
+   L(3,0) =-0.048684;
+   L(3,1) =0.060181;
+/*
+    L(0,0)=0.0009;
+    L(0,1)=0.0015;
+    L(1,0)=-0.0051;
+    L(1,1)=-0.0074;
+    L(2,0)=-0.0303;
+    L(2,1)=-0.3325;
+    L(3,0)= -0.0003;
+	L(3,1)=0.0099;
+	L.scalar_mult(50);*/
+	//L.scalar_mult(0);
+	//0.7900 -0.0000 4.4120 -0.0003 3.6503 -0.0003 0.0886 0.0100
+
+	/*L(0,0)=0.7900;
+    L(0,1)=-0.0000;
+    L(1,0)=4.4120;
+    L(1,1)=-0.0003;
+    L(2,0)=3.6503;
+    L(2,1)=-0.0003;
+    L(3,0)= 0.0886;
+	L(3,1)=0.0100;
+	L.scalar_mult(0.09);*/
+
+/*
     L(0,0)=0.1307;
     L(0,1)=0.0392;
     L(1,0)=-0.6250;
@@ -39,6 +83,7 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
     L(2,1)=-11.9174;
     L(3,0)= -0.1623;
     L(3,1)=0.0557;
+    L.scalar_mult(0.0005);*/
 
     State.zero();
 	Stateold.zero();
@@ -51,7 +96,8 @@ void Dynamics::Update(float u,KVecFloat2 error)
 {
     /** Updating the Dynamics **/
 	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-    //error.scalar_mult(0.0);
+    //error(0)*=0.5;//.scalar_mult(0.99);
+    //error.scalar_mult(0.5);
     Stateold=State;
     State=Ad*State;
     temp=Bd;

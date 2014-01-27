@@ -1,4 +1,5 @@
 #include "Kalman.h"
+
 Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 {
     /*Akalman(0,0)=1.000;
@@ -9,12 +10,12 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
     Bkalman(0)=1.000;//OurRobot.getWalkParameter(Ts);
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=1e-7;
+	ProcessNoise(0,0)=5e-7;
 	P.zero();
-	P(0,0)=1e-19;
+	P(0,0)=1e-21;
 	MeasurementNoise.identity();
 	MeasurementNoise(0,0)=0.001;
-	MeasurementNoise(1,1)=0.5;
+	MeasurementNoise(1,1)=0.2;
 	Ckalman.zero();
 	Ckalman(0,0)=1.000;
 	Ckalman(1,0)=1.000;
@@ -84,7 +85,7 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 			combuffer.pop();
 
 
-		if(uBuffer.size()>3)
+		if(uBuffer.size()>ZMPKALMANDELAY)
 			uBuffer.pop();
 
 

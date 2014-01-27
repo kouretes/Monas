@@ -3,7 +3,7 @@
 #include "core/elements/math/KMat.hpp"
 #include "RobotParameters.h"
 #include <queue>
-
+#define ZMPKALMANDELAY 3
 class Kalman{
 
 private:

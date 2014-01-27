@@ -228,11 +228,11 @@ std::vector<float> WalkEngine::Calculate_IK()
 		armt=Tpprimel.getTranslation();
 		//armt.prettyPrint();
 		armangles(2)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
-		armangles(1)=asin((armt(1)+70-ShoulderOffsetY)/(UpperArmLength*1.5));
+		armangles(1)=asin((armt(1)+85-ShoulderOffsetY)/(UpperArmLength*1.5));
 		armt=Tpprimer.getTranslation();
 		//armt.prettyPrint();
 		armangles(0)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
-		armangles(3)=asin((-armt(1)+70-ShoulderOffsetY)/(UpperArmLength*1.5) );
+		armangles(3)=asin((-armt(1)+85-ShoulderOffsetY)/(UpperArmLength*1.5) );
 		//armangles.prettyPrint();
 
 
@@ -256,26 +256,26 @@ void WalkEngine::Calculate_Desired_COM()
 	CoMm.scalar_mult(1.0/1000.0);
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
-
+	NaoLIPM.isDoubleSupport=double_support;
 	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
 	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
-/*	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
+	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
 
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.35);
-        e.scalar_mult(0.65);
+        predicterror.scalar_mult(0.2);
+        e.scalar_mult(0.8);
 	}
     else
     {
-       predicterror.scalar_mult(0.9);
-       e.scalar_mult(0.1);
+       predicterror.scalar_mult(0.999);
+       e.scalar_mult(0.001);
     }
 
     predicterror+=e;
 //    predicterror.prettyPrint();
-*/
+
 	predicterror.zero();
 	/** Pop the used Point **/
 
@@ -293,6 +293,7 @@ KVecFloat2 WalkEngine::getCoP()
 	KVecDouble3 copl,copr,copi,cops,copsprime;
 	float weightl,weightr,weights, weightsprime;
     //fsrl.prettyPrint();
+    //fsrr.prettyPrint();
 	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
 	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
 

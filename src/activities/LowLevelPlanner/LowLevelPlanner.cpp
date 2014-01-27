@@ -169,7 +169,15 @@ int LowLevelPlanner::Execute()
 					engine->walkbuffer.add(NaoPlanner.inst.front());
 					NaoPlanner.inst.pop();
 			}
-
+			NaoPlanner.oneStep(std::vector<float>(3,0));
+			NaoPlanner.oneStep(std::vector<float>(3,0));
+			NaoPlanner.oneStep(std::vector<float>(3,0));
+			NaoPlanner.oneStep(std::vector<float>(3,0));
+			while(NaoPlanner.inst.size()>0)
+			{
+					engine->walkbuffer.add(NaoPlanner.inst.front());
+					NaoPlanner.inst.pop();
+			}
 
 			state=DO_STEPS;
 			break;
@@ -328,6 +336,7 @@ void LowLevelPlanner::initialise_devices()
 	try
 	{
 		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+		motion->setFallManagerEnabled(false);
 	} catch (AL::ALError& e)
 	{
 		LogEntry(LogLevel::FatalError, GetName()) << "Error in getting motion proxy" << e.getDescription();

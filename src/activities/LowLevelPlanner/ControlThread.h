@@ -34,9 +34,9 @@
 #include "Dynamics.h"
 #define PreviewWindow 151
 #define CONST_SKIP 0
-#define CONST_SIZE 100
+#define CONST_SIZE 50
 #define CONST_STEP 1
-#define LagN 11
+#define LagN 20
 class LIPMPreviewController{
     private:
     KMath::KMat::GenMatrix<float,LagN,4> Kx;
@@ -82,6 +82,7 @@ class LIPMPreviewController{
         float DeltauX,DeltauY,uX,uY;
 		float predictedErrorX,predictedErrorY;
 		float d;
+		bool isDoubleSupport;
 		KVecFloat2 COM;
 };
 

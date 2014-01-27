@@ -78,7 +78,7 @@ namespace KMath
       mask.zero();
       //P.zero();
       for(unsigned i=0; i<L; i++)
-        if(v(i)>1e-8) //THIS EQUAL SIGN IS EVIL DO NOT TOUCH
+        if(v(i)>1e-4) //THIS EQUAL SIGN IS EVIL DO NOT TOUCH
         {
           mask(i)=1;
           Pvec(i)=this->t;
