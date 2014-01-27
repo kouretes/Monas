@@ -377,6 +377,7 @@ void LowLevelPlanner::initialise_devices()
 
 	//std::cout << " Number of position joints " << jointPtr.size() << std::endl;
 	//std::cout << " Number of sensor values " << sensorPtr.size() << std::endl;
+	createHardnessActuatorAlias();
 	createJointsPositionActuatorAlias();
 	prepareJointsPositionActuatorCommand();
 
@@ -469,3 +470,63 @@ void LowLevelPlanner::setStiffness(const float& stiffnessValue)
 	motion->setStiffnesses("Body", stiffnessValue);
 }
 
+void LowLevelPlanner::createHardnessActuatorAlias()
+{
+	AL::ALValue jointAliasses;
+	// Alias for all joint stiffness
+	jointAliasses.clear();
+
+	jointAliasses.arraySetSize(2);
+	jointAliasses[0] = std::string("jointStiffness"); // Alias for all 25 actuators
+	jointAliasses[1].arraySetSize(KDeviceLists::NUMOFJOINTS);
+	std::cout <<"size " <<  KDeviceLists::NUMOFJOINTS << std::endl;
+	// stiffness list
+	std::vector<std::string> HardnessActuatorStrings = KDeviceLists::getPositionActuatorKeys();
+	// Joints actuator list
+	for (int i = 0; i < KDeviceLists::NUMOFJOINTS; i++)
+	{
+		jointAliasses[1][i] = HardnessActuatorStrings[i];
+	}
+	// Create alias
+	try
+	{
+		dcm->createAlias(jointAliasses);
+	} catch (const AL::ALError &e)
+	{
+		LogEntry(LogLevel::FatalError, GetName()) << "Error when creating Hardness Alias : " << e.getDescription();
+		//throw ALERROR(GetName(), "createHardnessActuatorAlias()", "Error when creating Alias : " + e.toString());
+	}
+}
+
+void LowLevelPlanner::setStiffnessDCM(const float &stiffnessValue)
+{
+	AL::ALValue stiffnessCommands;
+	int DCMtime;
+	// increase stiffness with the "jointStiffness" Alias created at initialisation
+	try
+	{
+		// Get time : return the time in 1 seconde
+		DCMtime = dcm->getTime(1000);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR(GetName(), "setStiffness()", "Error on DCM getTime : " + e.toString());
+	}
+
+	// Prepare one dcm command:
+	// it will linearly "Merge" all joint stiffness
+	// from last value to "stiffnessValue" in 1 seconde
+	stiffnessCommands.arraySetSize(3);
+	stiffnessCommands[0] = std::string("jointStiffness");
+	stiffnessCommands[1] = std::string("Merge");
+	stiffnessCommands[2].arraySetSize(1);
+	stiffnessCommands[2][0].arraySetSize(2);
+	stiffnessCommands[2][0][0] = stiffnessValue;
+	stiffnessCommands[2][0][1] = DCMtime;
+	try
+	{
+		dcm->set(stiffnessCommands);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR(GetName(), "setStiffness()", "Error when sending stiffness to DCM : " + e.toString());
+	}
+}
