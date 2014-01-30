@@ -346,6 +346,8 @@ void LowLevelPlanner::initialise_devices()
 	std::vector<std::string> sensorKeys = KDeviceLists::getSensorKeys();
 
 	KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
+	fsrposl.zero();
+	fsrposr.zero();
 	fsrposl(0,0)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontLeft/Sensor/XPosition");
 	fsrposl(0,1)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontRight/Sensor/XPosition");
 	fsrposl(0,2)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearLeft/Sensor/XPosition");
