@@ -17,6 +17,7 @@ WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(P
 void WalkEngine::Reset()
 {
 	comzmeasured=0;
+
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	currentstep=0;
 	supportleg = KDeviceLists::SUPPORT_LEG_LEFT;
@@ -172,11 +173,19 @@ std::vector<float> WalkEngine::Calculate_IK()
 	    ret.clear();
 
 		KVecDouble3 measured = nkin.calculateCenterOfMass();
+		//measured.prettyPrint();
 		if(double_support)
 			comzmeasured=comzmeasured*0.991+measured(2)*0.009;
 		measured(2)=comzmeasured;
+		//measured.prettyPrint();
 		com_error=desired;
 		com_error-=Tipprime.transform(measured);
+		//com_error.prettyPrint();
+		if(com_error(2)>4)
+			com_error(2)=4;
+		//com_error(0)*=softstand;
+		//com_error(1)*=softstand;
+//		com_error.prettyPrint();
 
     /** Fix rotation first, using yawpitchroll coupling **/
 
@@ -381,16 +390,48 @@ KVecFloat2 WalkEngine::getCoP()
 
 	return res;
 }
+void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
+{
+	KVecFloat3 startZMP;
+	if(Zbuffer.size()>0)
+	{
+		Zbuffer[Zbuffer.size()-1].prettyPrint();
+		startZMP(0)=Zbuffer[Zbuffer.size()-1](0);
+		startZMP(1)=Zbuffer[Zbuffer.size()-1](1);
+		startZMP(2)=Zbuffer[Zbuffer.size()-1](2);
+		startZMP.prettyPrint();
+	}
+	else
+	{
+		startZMP.zero();
+		//for(unsigned i=0;i<PreviewWindow-1;i++)
+		//	Zbuffer.cbPush(startZMP);
+	}
+
+
+	for(unsigned p=0;p<steps;p++)
+	{
+			KVecFloat3 newpoint;
+			newpoint.zero();
+			float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
+
+			newpoint(0)=interp.trigIntegInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
+			newpoint(1)=interp.trigIntegInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
+			newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/steps,0,adiff,1.0);
+			Zbuffer.cbPush(newpoint);
+			//newpoint.prettyPrint();
+	}
+}
 void WalkEngine::feed()
 {
 
-
-	//Prepare ZMP buffer
+	//Prepare  buffer
 	if(walkbuffer.size()==0)
 	{
 
 		addInit();
 	}
+
 
 
     if(Zbuffer.size()<PreviewWindow+1&&walkbuffer.size()>0)//ASSUME Y is the same
@@ -408,7 +449,8 @@ void WalkEngine::feed()
 		}
 		else
 		{
-			walkbuffer.removeOne();
+			if(Zbuffer.size()>0)
+				walkbuffer.removeOne();
 		}
 
 
@@ -437,6 +479,9 @@ void WalkEngine::feed()
 			destZMP(2)=anglemean(planL(2),planR(2));
 		}
 
+
+
+
 		KMath::KMat::GenMatrix<float,2,2> rot;
 		KMath::KMat::transformations::makeRotation(rot,(float)destZMP(2));
 		KVecFloat2 rr=rot*KVecFloat2(-NaoRobot.getWalkParameter(HX),0.0);
@@ -446,30 +491,12 @@ void WalkEngine::feed()
 		//planL.prettyPrint();
 		//planR.prettyPrint();
 		//destZMP.prettyPrint();
-		KVecFloat3 startZMP;
-        if(Zbuffer.size()>0)
-        {
-        	Zbuffer[Zbuffer.size()-1].prettyPrint();
-            startZMP(0)=Zbuffer[Zbuffer.size()-1](0);
-            startZMP(1)=Zbuffer[Zbuffer.size()-1](1);
-            startZMP(2)=Zbuffer[Zbuffer.size()-1](2);
-            startZMP.prettyPrint();
-        }
-        else
-            startZMP.zero();
-
-		for(unsigned p=0;p<i.steps;p++)
+		if(Zbuffer.size()==0)
 		{
-				KVecFloat3 newpoint;
-				newpoint.zero();
-				float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
-
-				newpoint(0)=interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(0),destZMP(0),1.0);
-				newpoint(1)=interp.trigIntegInterpolation(((float)p)/i.steps,startZMP(1),destZMP(1),1.0);
-				newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/i.steps,0,adiff,1.0);
-				Zbuffer.cbPush(newpoint);
-				//newpoint.prettyPrint();
+			destZMP.zero();
+			i.steps=(PreviewWindow-1)/4;
 		}
+		planInstruction(destZMP,i.steps);
 		planned=i;
 		qbuffer.push(i);
 	}

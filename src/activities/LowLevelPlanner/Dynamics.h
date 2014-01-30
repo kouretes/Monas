@@ -11,6 +11,7 @@ class Dynamics
     KMath::KMat::GenMatrix<float, 3, 1> Cd;
     KMath::KMat::GenMatrix<float, 4, 2>  L;
     RobotParameters &OurRobot;
+    int startup;
     public:
     KMath::KMat::GenMatrix<float,4,1> State,State_e;
     float predictedError,zmpstate,zmpstateNew;

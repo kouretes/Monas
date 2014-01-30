@@ -53,7 +53,7 @@ private:
 	std::vector<float> Calculate_IK();
 	void Calculate_Tragectories();
 
-
+	void planInstruction(KVecFloat3 destZMP, unsigned steps);
 
 	KVecFloat2 getCoP();
 

@@ -66,7 +66,7 @@ namespace KMath
 		for(unsigned i=0; i<L; i++)
 			if(v(i)>tol)
 			{
-				std::cout<<"v(i):"<<v(i)<<std::endl;
+				//std::cout<<"v(i):"<<v(i)<<std::endl;
 				return i;
 			}
 

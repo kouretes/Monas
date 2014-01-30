@@ -90,14 +90,25 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
 	State_e.zero();
 	zmpstate=0.000;
 	zmpstateNew=0.000;
+	startup=0;
 
 }
 void Dynamics::Update(float u,KVecFloat2 error)
 {
     /** Updating the Dynamics **/
-	error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-    //error(0)*=0.5;//.scalar_mult(0.99);
+
+    error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
+
+	if(startup<100)
+	{
+		error.scalar_mult(0.001*startup);
+		startup++;
+	}
+
+	//error(0)*=0.5;//.scalar_mult(0.99);
     //error.scalar_mult(0.2);
+    //std::cout<<"ERROR:"<<std::endl;
+    //error.prettyPrint();
     Stateold=State;
     State=Ad*State;
     temp=Bd;

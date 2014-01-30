@@ -9,7 +9,7 @@
 #include "ControlThread.h"
 #include <iostream>
 //#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
-#define SCALECONSTRAINT(i) 2
+#define SCALECONSTRAINT(i) 0.85
 #define BASISM 3.0
 #define BASISD 3.0
 
@@ -59,18 +59,22 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 
       /**define Laguerre Coefficients **/
 
-
+	 //std::cout<<"==============="<<std::endl;
       solveConstrainedMPC();
       walkprof.generate_report(1000);
       /** Optimal Preview Control **/
       DeltauX=L0.transp()*httaX;
       DeltauY=L0.transp()*httaY;
+      //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
+     //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
 
       //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
 
 
       KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
       KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
+      //errorX.prettyPrint();
+     // errorY.prettyPrint();
       //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
       //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
 
@@ -107,6 +111,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 	pY=ZMPReferenceY-Tau*DynamicsY.State_e;
 	//DynamicsX.State_e.prettyPrint();
 	//DynamicsY.State_e.prettyPrint();
+	//ZMPReferenceX.prettyPrint();
+	//(Tau*DynamicsX.State_e).prettyPrint();
 	//std::cout<<"Ref:"<<(ZMPReferenceX)(100)<<" " <<(ZMPReferenceY)(100)<<std::endl;
 	//std::cout<<"Proj:"<<(Tau*DynamicsX.State_e)(100)<<" " <<(Tau*DynamicsY.State_e)(100)<<std::endl;
 
@@ -216,8 +222,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 			std::cout<<"========================== VIOLATE BEFORE"<<std::endl;
 			print=true;
 			//af1.setX(htta);
-			af3.setX(htta);
-			af3.evaluate().prettyPrint();
+			//af3.setX(htta);
+			//af3.evaluate().prettyPrint();
 
 
 			//af1.evaluate().prettyPrint();
@@ -239,8 +245,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 		if(print)
 	{
 			std::cout<<"========================== VIOLATE After"<<std::endl;
-			af3.setX(htta);
-			af3.evaluate().prettyPrint();
+			//af3.setX(htta);
+			//af3.evaluate().prettyPrint();
 
 
 	}
@@ -468,7 +474,7 @@ void LIPMPreviewController::DMPC()
 
 void LIPMPreviewController::DMPC()
 {
-	float rl=1e-5;
+	float rl=5e-5;
 	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
 	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
 	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;
