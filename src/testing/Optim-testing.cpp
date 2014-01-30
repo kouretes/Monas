@@ -71,8 +71,8 @@ int main()
   //p.getJacobian().prettyPrint();
   //p.getHessian().prettyPrint();
 
-  //PenaltySolver<float,VAR,NewtonSolver> solv;
-  PenaltyQuadraticSolver<float,VAR,CON> solv;
+  PenaltySolver<float,VAR,NewtonSolver> solv;
+  //PenaltyQuadraticSolver<float,VAR,CON> solv;
 
 
   solv.addPenaltyFunction(&p);

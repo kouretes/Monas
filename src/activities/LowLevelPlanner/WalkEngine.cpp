@@ -6,8 +6,8 @@ WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(P
 
 	Tilerror.identity();
 	Tirerror.identity();
-	fsrlbias.zero();
-	fsrrbias.zero();
+	//fsrlbias.zero();
+	//fsrrbias.zero();
 	currentstep=0;
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	supportleg = KDeviceLists::SUPPORT_LEG_NONE;
@@ -252,6 +252,8 @@ void WalkEngine::Calculate_Desired_COM()
     /** Get Center of Pressure in Inertial Frame **/
 	KVecFloat2 copi=getCoP();
 	/** Get current Com in Inertial Frame **/
+	//(Tis*Tsp).prettyPrint();
+	//nkin.calculateCenterOfMass().prettyPrint();
 	KVecDouble3 CoMm =(Tis*Tsp).transform(nkin.calculateCenterOfMass());
 	CoMm.scalar_mult(1.0/1000.0);
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
@@ -292,31 +294,33 @@ KVecFloat2 WalkEngine::getCoP()
 	KVecFloat2 res;
 	KVecDouble3 copl,copr,copi,cops,copsprime;
 	float weightl,weightr,weights, weightsprime;
+	//std::cout<<"FSRLR"<<std::endl;
     //fsrl.prettyPrint();
     //fsrr.prettyPrint();
 	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
 	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
-
+	//fsrposl.prettyPrint();
+	//fsrposr.prettyPrint();
 	copl=fsrposl*fsrl;
 	copr=fsrposr*fsrr;
 
 	copl.scalar_mult(1./(weightl));
 	copr.scalar_mult(1./(weightr));
 
-	if(weightl<0.05)
+	if(weightl<0.01)
 	{
 		copl.zero();
 		weightl=0;
-		if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-			fsrlbias+=fsrl*0.5;
+		//if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
+		//	fsrlbias+=fsrl*0.5;
 	}
 
-	if(weightr<0.05)
+	if(weightr<0.01)
 	{
 		copr.zero();
 		weightr=0;
-		if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-			fsrrbias+=fsrr*0.5;
+		//if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+		//	fsrrbias+=fsrr*0.5;
 	}
 
 
@@ -341,7 +345,8 @@ KVecFloat2 WalkEngine::getCoP()
 
 	copl.scalar_mult(1000);
 	copr.scalar_mult(1000);
-
+	//copl.prettyPrint();
+	//copr.prettyPrint();
 	if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT)
 	{
 		cops=copr;
@@ -356,8 +361,9 @@ KVecFloat2 WalkEngine::getCoP()
 		weights=weightl;
 		weightsprime=weightr;
 	}
-
-
+	//std::cout<<"TIs Tssprime"<<std::endl;
+	//Tis.prettyPrint();
+	//Tssprime.prettyPrint();
     copi=(Tis.transform(cops)).scalar_mult(weights)+ ((Tis*Tssprime).transform(copsprime)).scalar_mult(weightsprime);
     copi.scalar_mult(1.0/(weights+weightsprime));
 
@@ -366,7 +372,9 @@ KVecFloat2 WalkEngine::getCoP()
 
     if((weights+weightsprime)<1)
 		copi.zero();
-
+	//copi.prettyPrint();
+	//cops.prettyPrint();
+	//copsprime.prettyPrint();
 	res(0)=copi(0);
 	res(1)=copi(1);
 	//res.prettyPrint();

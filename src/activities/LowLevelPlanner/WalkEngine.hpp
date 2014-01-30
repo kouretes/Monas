@@ -67,7 +67,7 @@ private:
 
 	/** FSR Transform **/
 	KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
-	KMath::KMat::GenMatrix<double,4,1> fsrlbias,fsrrbias,fsrl,fsrr;
+	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
 
 
 

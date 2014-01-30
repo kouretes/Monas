@@ -172,7 +172,7 @@ int LowLevelPlanner::Execute()
 			NaoPlanner.oneStep(std::vector<float>(3,0));
 			NaoPlanner.oneStep(std::vector<float>(3,0));
 			NaoPlanner.oneStep(std::vector<float>(3,0));
-			NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
 			while(NaoPlanner.inst.size()>0)
 			{
 					engine->walkbuffer.add(NaoPlanner.inst.front());
@@ -183,7 +183,7 @@ int LowLevelPlanner::Execute()
 			break;
 		case DO_STEPS:
 
-            if(engine->walkbuffer.size()<2)
+            /*if(engine->walkbuffer.size()<2)
 			{
 				NaoPlanner.oneStep(speed);
 				while(NaoPlanner.inst.size()>0)
@@ -191,7 +191,7 @@ int LowLevelPlanner::Execute()
 						engine->walkbuffer.add(NaoPlanner.inst.front());
 						NaoPlanner.inst.pop();
 				}
-			}
+			}*/
 			/*Plan two consecutive Steps with the Predefined Speed
 			 **/
 			//NaoPlanner.oneStep(speed);
@@ -368,6 +368,8 @@ void LowLevelPlanner::initialise_devices()
 	fsrposr(1,1)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontRight/Sensor/YPosition");
 	fsrposr(1,2)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearLeft/Sensor/YPosition");
 	fsrposr(1,3)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearRight/Sensor/YPosition");
+	//fsrposl.prettyPrint();
+	//fsrposr.prettyPrint();
 	engine->initFSR(fsrposl,fsrposr);
 
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);

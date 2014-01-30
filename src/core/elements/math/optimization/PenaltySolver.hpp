@@ -34,7 +34,7 @@ namespace KMath
           pen[i]->processConstraintsAt(x);
           allsatisfied=allsatisfied&pen[i]->allSatisfied();
         }
-        //if(allsatisfied) {  break;}
+        if(allsatisfied) {  break;}
         x=K<T,S>::solve(x);
       }
       return x;
