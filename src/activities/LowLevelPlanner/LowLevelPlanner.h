@@ -95,6 +95,9 @@ class LowLevelPlanner: public IActivity
 		/** function bound to the DCM **/
 		int DCMcallback();
 
+		/** Create DCM hardness Actuator Alias **/
+		void createHardnessActuatorAlias();
+
 		/** Create DCM Position Actuator Alias **/
 		void createJointsPositionActuatorAlias();
 
@@ -104,6 +107,7 @@ class LowLevelPlanner: public IActivity
 		/** Set one hardness value to all Body joints **/
 		void setStiffness(const float &stiffnessValue);
 
+		void setStiffnessDCM(const float &stiffnessValue);
 
 		int state, dcm_state;
 	};
