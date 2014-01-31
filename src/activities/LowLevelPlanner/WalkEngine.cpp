@@ -181,8 +181,8 @@ std::vector<float> WalkEngine::Calculate_IK()
 		com_error=desired;
 		com_error-=Tipprime.transform(measured);
 		//com_error.prettyPrint();
-		if(com_error(2)>4)
-			com_error(2)=4;
+		if(com_error(2)>5)
+			com_error(2)=5;
 		//com_error(0)*=softstand;
 		//com_error(1)*=softstand;
 //		com_error.prettyPrint();

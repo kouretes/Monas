@@ -33,10 +33,10 @@
 #include "Kalman.h"
 #include "Dynamics.h"
 #define PreviewWindow 151
-#define CONST_SKIP 5
-#define CONST_SIZE 70
-#define CONST_STEP 2
-#define LagN 25
+#define CONST_SKIP 0
+#define CONST_SIZE 40
+#define CONST_STEP 3
+#define LagN 24
 class LIPMPreviewController{
     private:
     //KMath::KMat::GenMatrix<float,LagN,PreviewWindow-1> Ky;

@@ -474,7 +474,7 @@ void LIPMPreviewController::DMPC()
 
 void LIPMPreviewController::DMPC()
 {
-	float rl=5e-5;
+	float rl=4e-5;
 	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
 	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
 	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;
