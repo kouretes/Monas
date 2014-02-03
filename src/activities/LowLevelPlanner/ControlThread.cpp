@@ -8,12 +8,13 @@
 
 #include "ControlThread.h"
 #include <iostream>
+
 //#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
 #define SCALECONSTRAINT(i) 0.75
 #define BASISM 3.0
 #define BASISD 3.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -27,6 +28,17 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     DeltauY=0.000;
     uX=0.000;
     uY=0.000;
+    flog.insert("ZMPx",0);
+    flog.insert("ZMPy",0);
+    flog.insert("refZMPx",0);
+    flog.insert("refZMPy",0);
+    flog.insert("COMx",0);
+    flog.insert("COMy",0);
+    flog.insert("Ux",0);
+    flog.insert("Uy",0);
+    flog.insert("Bx",0);
+    flog.insert("By",0);
+
 }
 
 
@@ -100,6 +112,18 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
         predictedErrorX=DynamicsX.predictedError;
         predictedErrorY=DynamicsY.predictedError;
+
+        flog.insert("ZMPx",DynamicsX.zmpstate);
+        flog.insert("ZMPy",DynamicsY.zmpstate);
+        flog.insert("refZMPx",ZmpBuffer[0](0));
+        flog.insert("refZMPy",ZmpBuffer[0](1));
+        flog.insert("COMx",DynamicsX.State(0));
+        flog.insert("COMy",DynamicsY.State(0));
+        flog.insert("Ux",uX);
+        flog.insert("Uy",uY);
+        flog.insert("Bx",DynamicsX.State(3));
+        flog.insert("By",DynamicsY.State(3));
+        flog.periodic_save();
 
 }
 

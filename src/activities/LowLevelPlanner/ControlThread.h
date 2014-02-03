@@ -26,7 +26,7 @@
 
 #define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
-
+#include "matlog.h"
 
 #include "RobotParameters.h"
 
@@ -84,6 +84,8 @@ class LIPMPreviewController{
 		float d;
 		bool isDoubleSupport;
 		KVecFloat2 COM;
+		mat_log flog;
+
 };
 
 

@@ -17,6 +17,7 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			Kalman.cpp
 			Dynamics.h
 			Dynamics.cpp
+			matlog.cpp
 			)
 
 include ( ../activTemplate.cmake )
