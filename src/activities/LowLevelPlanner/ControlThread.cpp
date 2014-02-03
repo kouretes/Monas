@@ -9,7 +9,7 @@
 #include "ControlThread.h"
 #include <iostream>
 //#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
-#define SCALECONSTRAINT(i) 0.85
+#define SCALECONSTRAINT(i) 0.75
 #define BASISM 3.0
 #define BASISD 3.0
 
@@ -68,6 +68,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
       //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
      //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
 
+
       //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
 
 
@@ -80,6 +81,9 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 
       uX=uX+DeltauX;
       uY=uY+DeltauY;
+
+      //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
+      //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
 
       //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
       DynamicsX.Update(uX,errorX);
@@ -149,8 +153,8 @@ void LIPMPreviewController::solveConstrainedMPC()
 
 
 	float yconstr=OurRobot.getWalkParameter(StepY)/2.0;
-	if(isDoubleSupport)
-		yconstr+=OurRobot.getWalkParameter(StepY);
+//	if(isDoubleSupport)
+//		yconstr+=OurRobot.getWalkParameter(StepY)/2.0;
 	//std::cout<<"WHAT?"<<std::endl;
 
 
@@ -159,31 +163,31 @@ void LIPMPreviewController::solveConstrainedMPC()
     //bineq1.prettyPrint();
     //std::cout<<OurRobot.getWalkParameter(StepX)<<std::endl;
     for(unsigned i=0;i<CONST_SIZE;i++)
-		bineq1(i)+=( SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/2.0);
+		bineq1(i)+=( SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/4.0);
     af1.setA(Aineq1);
     af1.setb(bineq1);
     c1.setFunction(af1);
     //std::cout<<"WHAT?2"<<std::endl;
     //CONSTRAINT 2
-    /*fillConstraints(Aineq2,bineq2,false,true);
+    fillConstraints(Aineq2,bineq2,false,true);
 	for(unsigned i=0;i<CONST_SIZE;i++)
 		bineq2(i)+=(SCALECONSTRAINT(i)* yconstr);
     af2.setA(Aineq2);
     af2.setb(bineq2);
-    c2.setFunction(af2);*/
+    c2.setFunction(af2);
 
 	//CONSTRAINT 3
     fillConstraints(Aineq3,bineq3,true,false);
     Aineq3.scalar_mult(-1);
     bineq3.scalar_mult(-1);
     for(unsigned i=0;i<CONST_SIZE;i++)
-		bineq3(i)+=(SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/2.0);
+		bineq3(i)+=(SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/4.0);
 
     af3.setA(Aineq3);
     af3.setb(bineq3);
     c3.setFunction(af3);
 
-    /*fillConstraints(Aineq4,bineq4,false,true);
+    fillConstraints(Aineq4,bineq4,false,true);
     Aineq4.scalar_mult(-1);
     bineq4.scalar_mult(-1);
     for(unsigned i=0;i<CONST_SIZE;i++)
@@ -192,15 +196,15 @@ void LIPMPreviewController::solveConstrainedMPC()
 	//std::cout<<"WHAT?set"<<std::endl;
 	af4.setA(Aineq4);
     af4.setb(bineq4);
-    c4.setFunction(af4);*/
+    c4.setFunction(af4);
 
 	//std::cout<<"WHAT?add"<<std::endl;
 
     //solver.addCostFunction(&costfunct);
     solver.addPenaltyFunction(&c1);
-    //solver.addPenaltyFunction(&c2);
+    solver.addPenaltyFunction(&c2);
     solver.addPenaltyFunction(&c3);
-	//solver.addPenaltyFunction(&c4);
+	solver.addPenaltyFunction(&c4);
     //std::cout<<"WHAT?assign"<<std::endl;
 
     //for(unsigned i=0;i<LagN;i++)
@@ -211,11 +215,13 @@ void LIPMPreviewController::solveConstrainedMPC()
 	//htta.prettyPrint();
 	//af1.setX(htta);
 	c1.setX(htta);
-	//c2.setX(htta);
+	c2.setX(htta);
 	c3.setX(htta);
-	//c4.setX(htta);
+	c4.setX(htta);
 	//af1.setX(htta);
 	//af3.setX(htta);
+	//af2.setX(htta);
+	//af2.evaluate().prettyPrint();
 	bool print=false;
 	if(c1.allSatisfied()==false || c3.allSatisfied()==false)
 		{
@@ -474,7 +480,7 @@ void LIPMPreviewController::DMPC()
 
 void LIPMPreviewController::DMPC()
 {
-	float rl=4e-5;
+	float rl=5e-6;
 	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
 	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
 	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;

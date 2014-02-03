@@ -24,6 +24,7 @@ class Stepplanner
         KMath::KMat::GenMatrix<float,2,1> tempVec;
         KMath::KMat::GenMatrix<float,2,2> RotFootZ,RotPelvisZ,RotStepZ;
         KVecFloat3 Pelvis,anklel,ankler;
+        KVecFloat3 lastvelocity;
         KDeviceLists::SupportLeg support;
         KMath::KMat::GenMatrix<float,2,5> Foot;
         float dx,dy,dtheta,Time;

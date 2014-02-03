@@ -96,9 +96,7 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
 void Dynamics::Update(float u,KVecFloat2 error)
 {
     /** Updating the Dynamics **/
-
     error-=KVecFloat2(State(0),(Cd(0)*State(0)+Cd(2)*State(2)+State(3)));//StatePredict(0));
-
 	if(startup<100)
 	{
 		error.scalar_mult(0.001*startup);

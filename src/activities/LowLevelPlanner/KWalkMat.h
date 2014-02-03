@@ -69,6 +69,11 @@ class KWalkMat
 			return  start+delta*t-delta*sin((t*M_PI*2)/Tss)/((M_PI*2)/Tss);
 
 		}
+		float LinearInterpolation(float t,float start, float end, float Tss)
+		{
+			return  (t*end+(Tss-t)*start)/Tss;
+
+		}
 float CubicSplineInterpolation(float tdot,float p0,float p1,float p2, float p3,float p4,float T)
         {
             float h=T/4.0;

@@ -10,11 +10,11 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
     Bkalman(0)=1.000;//OurRobot.getWalkParameter(Ts);
     StateKalman.zero();
     ProcessNoise.zero();
-	ProcessNoise(0,0)=5e-7;
+	ProcessNoise(0,0)=1e-6;
 	P.zero();
 	P(0,0)=1e-20;
 	MeasurementNoise.identity();
-	MeasurementNoise(0,0)=0.002;
+	MeasurementNoise(0,0)=0.005;
 	MeasurementNoise(1,1)=0.9;
 	Ckalman.zero();
 	Ckalman(0,0)=1.000;

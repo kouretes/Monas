@@ -69,7 +69,7 @@ namespace KMath
 			//std::cout<<"err:"<<(Ai.transp()*x-bi)<<std::endl;
 			//(Hinv*H).prettyPrint();
 			//(Hinv*Ai).prettyPrint();
-			double nom=((f.transp()*Hinv)*Ai)(0);
+			double nom=-(x.transp()*Ai)(0);
 			double denom=((Ai.transp()*Hinv)*Ai)(0) ;
 			//std::cout<<"Scale1:"<<(nom+bi)/denom<<std::endl;
 			//std::cout<<"Scale2:"<<nom/denom+bi/(denom)<<std::endl;

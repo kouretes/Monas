@@ -63,7 +63,7 @@ void LowLevelPlanner::UserInit()
 void LowLevelPlanner::Reset()
 {
 
-	setStiffness(0.75f);
+	setStiffness(0.8f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -92,7 +92,7 @@ int LowLevelPlanner::Execute()
 
 		x =0.00;
 		y =0.000;
-		z = 0.0000;
+		z = 0.000;
 		s = 1;
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->add_parameter(x);
@@ -333,14 +333,14 @@ void LowLevelPlanner::initialise_devices()
 		//Logger::Instance().WriteMsg("AutoBalance", "Error in getting ALmemory proxy", Logger::FatalError);
 		LogEntry(LogLevel::FatalError, GetName()) << "Error in getting ALmemory proxy" << e.getDescription();
 	}
-	try
+	/*try
 	{
 		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
 		motion->setFallManagerEnabled(false);
 	} catch (AL::ALError& e)
 	{
 		LogEntry(LogLevel::FatalError, GetName()) << "Error in getting motion proxy" << e.getDescription();
-	}
+	}*/
 	//Initialise ptr
 	std::vector<std::string> jointKeys = KDeviceLists::getJointKeys();
 	std::vector<std::string> sensorKeys = KDeviceLists::getSensorKeys();
@@ -480,7 +480,8 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 
 void LowLevelPlanner::setStiffness(const float& stiffnessValue)
 {
-	motion->setStiffnesses("Body", stiffnessValue);
+	setStiffnessDCM(stiffnessValue);
+	//motion->setStiffnesses("Body", stiffnessValue);
 }
 
 void LowLevelPlanner::createHardnessActuatorAlias()
@@ -494,7 +495,7 @@ void LowLevelPlanner::createHardnessActuatorAlias()
 	jointAliasses[1].arraySetSize(KDeviceLists::NUMOFJOINTS);
 	std::cout <<"size " <<  KDeviceLists::NUMOFJOINTS << std::endl;
 	// stiffness list
-	std::vector<std::string> HardnessActuatorStrings = KDeviceLists::getPositionActuatorKeys();
+	std::vector<std::string> HardnessActuatorStrings = KDeviceLists::getHardnessActuatorKeys();
 	// Joints actuator list
 	for (int i = 0; i < KDeviceLists::NUMOFJOINTS; i++)
 	{
@@ -530,7 +531,7 @@ void LowLevelPlanner::setStiffnessDCM(const float &stiffnessValue)
 	// from last value to "stiffnessValue" in 1 seconde
 	stiffnessCommands.arraySetSize(3);
 	stiffnessCommands[0] = std::string("jointStiffness");
-	stiffnessCommands[1] = std::string("Merge");
+	stiffnessCommands[1] = std::string("ClearAll");
 	stiffnessCommands[2].arraySetSize(1);
 	stiffnessCommands[2][0].arraySetSize(2);
 	stiffnessCommands[2][0][0] = stiffnessValue;

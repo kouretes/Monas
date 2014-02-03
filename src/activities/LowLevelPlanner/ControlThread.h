@@ -1,4 +1,4 @@
-//
+
 //  ControlThread.h
 //  Kouretes Walk Engine
 //
@@ -32,11 +32,11 @@
 
 #include "Kalman.h"
 #include "Dynamics.h"
-#define PreviewWindow 151
+#define PreviewWindow 121
 #define CONST_SKIP 0
-#define CONST_SIZE 40
+#define CONST_SIZE 25
 #define CONST_STEP 3
-#define LagN 24
+#define LagN 25
 class LIPMPreviewController{
     private:
     //KMath::KMat::GenMatrix<float,LagN,PreviewWindow-1> Ky;

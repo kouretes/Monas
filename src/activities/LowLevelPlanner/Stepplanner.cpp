@@ -15,7 +15,7 @@ Stepplanner::Stepplanner()
 
 void Stepplanner::initialize(RobotParameters OurRobot)
 {
-
+	lastvelocity.zero();
 	Robot = OurRobot;
 	WalkInstruction i;
 	i.targetSupport=KDeviceLists::SUPPORT_LEG_LEFT;
@@ -100,6 +100,8 @@ void Stepplanner::oneStep(std::vector<float> v)
 	velocity(1)= a(1) * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepY);
     velocity(2) = v[2] * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepTheta);
 
+	velocity=velocity*0.1+lastvelocity*0.9;
+	lastvelocity=velocity;
     Pelvis+=velocity;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
     h=RotPelvisZ*h;
@@ -109,7 +111,7 @@ void Stepplanner::oneStep(std::vector<float> v)
 	i.targetSupport=support;
 	i.targetZMP=support;
 	i.target=i.target+velocity;
-	i.target.prettyPrint();
+	//i.target.prettyPrint();
 	if(support==KDeviceLists::SUPPORT_LEG_LEFT)
 		ankler=i.target;
 	else

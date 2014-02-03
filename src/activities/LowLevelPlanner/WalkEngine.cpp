@@ -332,8 +332,8 @@ KVecFloat2 WalkEngine::getCoP()
 		//	fsrrbias+=fsrr*0.5;
 	}
 
-
-#define Margin 0.002
+/*
+//#define Margin 0.000
 
 	if(weightl==0 || weightr==0)
 	{
@@ -351,6 +351,7 @@ KVecFloat2 WalkEngine::getCoP()
 		}
 
 	}
+*/
 
 	copl.scalar_mult(1000);
 	copr.scalar_mult(1000);
@@ -386,7 +387,7 @@ KVecFloat2 WalkEngine::getCoP()
 	//copsprime.prettyPrint();
 	res(0)=copi(0);
 	res(1)=copi(1);
-	//res.prettyPrint();
+	res.prettyPrint();
 
 	return res;
 }
@@ -395,11 +396,11 @@ void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 	KVecFloat3 startZMP;
 	if(Zbuffer.size()>0)
 	{
-		Zbuffer[Zbuffer.size()-1].prettyPrint();
+		//Zbuffer[Zbuffer.size()-1].prettyPrint();
 		startZMP(0)=Zbuffer[Zbuffer.size()-1](0);
 		startZMP(1)=Zbuffer[Zbuffer.size()-1](1);
 		startZMP(2)=Zbuffer[Zbuffer.size()-1](2);
-		startZMP.prettyPrint();
+		//startZMP.prettyPrint();
 	}
 	else
 	{
@@ -407,9 +408,9 @@ void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 		//for(unsigned i=0;i<PreviewWindow-1;i++)
 		//	Zbuffer.cbPush(startZMP);
 	}
+	//std::cout<<"PLANY"<<startZMP(1)<<" "<<destZMP(1)<<std::endl;
 
-
-	for(unsigned p=0;p<steps;p++)
+	for(unsigned p=1;p<=steps;p++)
 	{
 			KVecFloat3 newpoint;
 			newpoint.zero();
@@ -419,6 +420,9 @@ void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 			newpoint(1)=interp.trigIntegInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
 			newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/steps,0,adiff,1.0);
 			Zbuffer.cbPush(newpoint);
+
+			//if(p==steps-1)
+			//std::cout<<newpoint(1)<<std::endl;
 			//newpoint.prettyPrint();
 	}
 }
@@ -487,7 +491,7 @@ void WalkEngine::feed()
 		KVecFloat2 rr=rot*KVecFloat2(-NaoRobot.getWalkParameter(HX),0.0);
 		destZMP(0)+=rr(0);
 		destZMP(1)+=rr(1);
-		std::cout<<"Plan"<<std::endl;
+		//std::cout<<"Plan"<<std::endl;
 		//planL.prettyPrint();
 		//planR.prettyPrint();
 		//destZMP.prettyPrint();
@@ -503,7 +507,7 @@ void WalkEngine::feed()
 
  /** EXECUTION PHASE **/
 
-	if((ci.targetSupport==KDeviceLists::SUPPORT_LEG_NONE||currentstep==ci.steps))
+	if((ci.targetSupport==KDeviceLists::SUPPORT_LEG_NONE||currentstep>ci.steps))
 	{
 
 		WalkInstruction old=ci;
@@ -521,7 +525,7 @@ void WalkEngine::feed()
 		}
 		else
 			double_support=false;
-		currentstep=0;
+		currentstep=1;
 
 	}
 
@@ -595,7 +599,7 @@ std::vector<float> WalkEngine::runStep()
 	}
 
     /** Beginning of command to be executed **/
-	if(currentstep==0)
+	if(currentstep==1)
 	{
 		startL=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
 		startR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
