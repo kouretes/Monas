@@ -8,10 +8,24 @@
 
 #include "ControlThread.h"
 #include <iostream>
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20){
 
+//#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
+#define SCALECONSTRAINT(i) 0.75
+#define BASISM 3.0
+#define BASISD 3.0
+
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
+{
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
+
+
+    /** Compute Gains Kx, Ky **/
+    DMPC();
+
+    //Initializing Variables
+    DeltauX=0.000;
+    DeltauY=0.000;
     uX=0.000;
     uY=0.000;
     flog.insert("ZMPx",0);
@@ -25,136 +39,6 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     flog.insert("Bx",0);
     flog.insert("By",0);
 
-    /** Defining the Optimal Gains for the Preview Controller **/
-    //Integral Feedback Gain
-    Gi=2.2069e+03;
-    //State Feedback Gain
-    Gx(0,0)=1.0e+04 * 7.3550 ;
-    Gx(0,1)=1.0e+04 * 1.2624;
-    Gx(0,2)=1.0e+04 * 0.0147;
-    //Predicted Reference Gain
-   Gd(0)=-2.2069;
-   Gd(1)=-3.4473;
-   Gd(2)=-3.9953;
-   Gd(3)=-3.9547;
-   Gd(4)=-3.7037;
-   Gd(5)=-3.4391;
-   Gd(6)=-3.2096;
-   Gd(7)=-3.0095;
-   Gd(8)=-2.8273;
-   Gd(9)=-2.6567;
-   Gd(10)=-2.4959;
-   Gd(11)=-2.3445;
-   Gd(12)=-2.2021;
-   Gd(13)=-2.0683;
-   Gd(14)=-1.9427;
-   Gd(15)=-1.8247;
-   Gd(16)=-1.7139;
-   Gd(17)=-1.6098;
-   Gd(18)=-1.5121;
-   Gd(19)=-1.4202;
-   Gd(20)=-1.3340;
-   Gd(21)=-1.2530;
-   Gd(22)=-1.1769;
-   Gd(23)=-1.1054;
-   Gd(24)=-1.0383;
-   Gd(25)=-0.9752;
-   Gd(26)=-0.9160;
-   Gd(27)=-0.8604;
-   Gd(28)=-0.8081;
-   Gd(29)=-0.7590;
-   Gd(30)=-0.7129;
-   Gd(31)=-0.6696;
-   Gd(32)=-0.6290;
-   Gd(33)=-0.5908;
-   Gd(34)=-0.5549;
-   Gd(35)=-0.5212;
-   Gd(36)=-0.4896;
-   Gd(37)=-0.4598;
-   Gd(38)=-0.4319;
-   Gd(39)=-0.4057;
-   Gd(40)=-0.3810;
-   Gd(41)=-0.3579;
-   Gd(42)=-0.3362;
-   Gd(43)=-0.3157;
-   Gd(44)=-0.2966;
-   Gd(45)=-0.2786;
-   Gd(46)=-0.2616;
-   Gd(47)=-0.2457;
-   Gd(48)=-0.2308;
-   Gd(49)=-0.2168;
-   Gd(50)=-0.2036;
-    Gd(51)=-0.1913;
-    Gd(52)=-0.1797;
-    Gd(53)=-0.1687;
-    Gd(54)=-0.1585;
-    Gd(55)=-0.1489;
-    Gd(56)=-0.1398;
-    Gd(57)=-0.1313;
-    Gd(58)=-0.1234;
-    Gd(59)=-0.1159;
-      Gd(60)=-0.1088;
-        Gd(61)=-0.1022;
-       Gd(62)=-0.0960;
-       Gd(63)=-0.0902;
-       Gd(64)=-0.0847;
-        Gd(65)=-0.0796;
-         Gd(66)=-0.0747;
-         Gd(67)=-0.0702;
-          Gd(68)=-0.0659;
-           Gd(69)=-0.0619;
-           Gd(70)=-0.0582;
-           Gd(71)= -0.0546;
-           Gd(72)= -0.0513;
-           Gd(73)= -0.0482;
-           Gd(74)= -0.0453;
-           Gd(75)= -0.0425;
-           Gd(76)= -0.0399;
-           Gd(77)= -0.0375;
-           Gd(78)= -0.0352;
-           Gd(79)= -0.0331;
-           Gd(80)= -0.0311;
-           Gd(81)= -0.0292;
-           Gd(82)= -0.0274;
-           Gd(83)= -0.0258;
-           Gd(84)= -0.0242;
-           Gd(85)= -0.0227;
-           Gd(86)= -0.0213;
-           Gd(87)= -0.0201;
-           Gd(88)= -0.0188;
-           Gd(89)= -0.0177;
-           Gd(90)= -0.0166;
-           Gd(91)= -0.0156;
-           Gd(92)= -0.0147;
-           Gd(93)= -0.0138;
-           Gd(94)= -0.0129;
-           Gd(95)= -0.0121;
-           Gd(96)= -0.0114;
-           Gd(97)= -0.0107;
-           Gd(98)= -0.0101;
-           Gd(99)= -0.0095;
-           Gd.scalar_mult(1.0e+03);
-    //Defining the Optimal Observer Gain L
-   /* L(0,0)=0.0654;
-    L(0,1)=0.0264;
-    L(1,0)=-0.3713;
-    L(1,1)=-0.2079;
-    L(2,0)=-10.6090;
-    L(2,1)=1.4385;
-    L(3,0)=-0.0783;
-    L(3,1)=0.0402;
-*/
-    //Initializing Variables
-    Integrationfbx=0.000;
-    Statefbx=0.000;
-    Predictionfbx=0.000;
-    Integrationfby=0.000;
-    Statefby=0.000;
-    Predictionfby=0.000;
-
-
-
-
 }
 
 
@@ -164,63 +48,70 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
     KalmanX.Filter(ZMPMeasuredX,CoMMeasuredX);
 
     KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
-	    //Setting the Reference Signal
 
-	for (unsigned int i = 0; i < PreviewWindow; i++)
+    //Setting the Reference Signal
+	for (int i = 1; i < PreviewWindow; i++)
 	{
 		if (i < ZmpBuffer.size()){
-			ZMPReferenceX(i) = ZmpBuffer[i](0);
-		    ZMPReferenceY(i) = ZmpBuffer[i](1);
+			ZMPReferenceX(i-1) = ZmpBuffer[i](0);
+			ZMPReferenceY(i-1) = ZmpBuffer[i](1);
+			ZMPtheta(i-1) = ZmpBuffer[i](2);
 		}
 		else{
-			ZMPReferenceX(i) = ZmpBuffer[ZmpBuffer.size() - 1](0);
-			ZMPReferenceY(i) = ZmpBuffer[ZmpBuffer.size() - 1](1);
-			}
+
+			ZMPReferenceX(i-1) = ZmpBuffer[ZmpBuffer.size() - 1](0);
+			ZMPReferenceY(i-1) = ZmpBuffer[ZmpBuffer.size() - 1](1);
+			ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
+		}
 	}
 
 
-    //State Feedback Computation
-    Statefbx=0.000;
-    Statefby=0.000;
-    Statefbx=Gx(0,0)*DynamicsX.State(0)+Gx(0,1)*DynamicsX.State(1)+Gx(0,2)*DynamicsX.State(2);
-    Statefby=Gx(0,0)*DynamicsY.State(0)+Gx(0,1)*DynamicsY.State(1)+Gx(0,2)*DynamicsY.State(2);
-    //Updating the Integral Feedback
-    Integrationfbx+=Gi*((DynamicsX.Cd(0)*DynamicsX.State(0)+DynamicsX.Cd(2)*DynamicsX.State(2))-ZMPReferenceX(0));
-    Integrationfby+=Gi*((DynamicsY.Cd(0)*DynamicsY.State(0)+DynamicsY.Cd(2)*DynamicsY.State(2))-ZMPReferenceY(0));
+      DynamicsX.AugmentState();
+      DynamicsY.AugmentState();
 
-    //Predicted Feedback Computation
-   //Predicted Feedback Computation
-    Predictionfbx=0.000;
-    Predictionfby=0.000;
-    unsigned  int z=0;
-    for (unsigned  int i=0;i<PreviewWindow-1;i++)
-    {
-        Predictionfbx+=Gd(z)*ZMPReferenceX(i+1);
-        Predictionfby+=Gd(z)*ZMPReferenceY(i+1);
-        z++;
-    }
-    walkprof.generate_report(1000);
-    //Optimal Preview Control
-    uX=-Statefbx-Integrationfbx-Predictionfbx;
-    uY=-Statefby-Integrationfby-Predictionfby;
-        //Updating the Dynamics
-        KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
-        KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
-        DynamicsX.AugmentState();
-        DynamicsY.AugmentState();
-        DynamicsX.Update(uX,errorX);
-        DynamicsY.Update(uY,errorY);
+      /**define Laguerre Coefficients **/
+
+	 //std::cout<<"==============="<<std::endl;
+      solveConstrainedMPC();
+      walkprof.generate_report(1000);
+      /** Optimal Preview Control **/
+      DeltauX=L0.transp()*httaX;
+      DeltauY=L0.transp()*httaY;
+      //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
+     //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
+
+
+      //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
+
+
+      KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
+      KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
+      //errorX.prettyPrint();
+     // errorY.prettyPrint();
+      //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
+      //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
+
+      uX=uX+DeltauX;
+      uY=uY+DeltauY;
+
+      //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
+      //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
+
+      //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
+      DynamicsX.Update(uX,errorX);
+      DynamicsY.Update(uY,errorY);
+
 
         KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
         //KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
         KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
         //KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
 
-        //Estimated COM position
+         //Estimated COM position
         COM(0)=DynamicsX.State(0);
         COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
-        predictedErrorX=DynamicsX.predictedError*0;
-        predictedErrorY=DynamicsY.predictedError*0;
+        predictedErrorX=DynamicsX.predictedError;
+        predictedErrorY=DynamicsY.predictedError;
 
         flog.insert("ZMPx",DynamicsX.zmpstate);
         flog.insert("ZMPy",DynamicsY.zmpstate);
@@ -235,3 +126,561 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         flog.periodic_save();
 
 }
+
+void LIPMPreviewController::solveConstrainedMPC()
+{
+
+	KPROF_SCOPE(walkprof,"solveConstrainedMPC")
+	KMath::FunctionAffine<float,2*LagN,CONST_SIZE> af1,af2,af3,af4;
+	KMath::FunctionQuadraticPenalty<float,2*LagN,CONST_SIZE> c1(af1),c2(af2),c3(af3),c4(af4);
+
+
+	pX=ZMPReferenceX-Tau*DynamicsX.State_e;
+	pY=ZMPReferenceY-Tau*DynamicsY.State_e;
+	//DynamicsX.State_e.prettyPrint();
+	//DynamicsY.State_e.prettyPrint();
+	//ZMPReferenceX.prettyPrint();
+	//(Tau*DynamicsX.State_e).prettyPrint();
+	//std::cout<<"Ref:"<<(ZMPReferenceX)(100)<<" " <<(ZMPReferenceY)(100)<<std::endl;
+	//std::cout<<"Proj:"<<(Tau*DynamicsX.State_e)(100)<<" " <<(Tau*DynamicsY.State_e)(100)<<std::endl;
+
+
+	httaX=(Ky*(Phitransp*pX*2));
+	httaY=(Ky*(Phitransp*pY*2));
+	/*std::cout<<httaX(0)<<std::endl;
+	std::cout<<httaY(0)<<std::endl;*/
+	htta.zero();
+	//return;
+	for(unsigned i=0;i<LagN;i++)
+	{
+		htta(i)=httaX(i);
+		htta(i+LagN)=httaY(i);
+	}
+
+
+	fx=Phitransp*pX;
+    fx.scalar_mult(2);
+    fy=Phitransp*pY;
+    fy.scalar_mult(2);
+	f.zero();
+	//return ;
+    for(unsigned i=0;i<LagN;i++)
+	{
+		f(i)=-fx(i);
+		f(i+LagN)=-fy(i);
+	}
+	/*std::cout<<"OUT"<<std::endl;
+	htta.prettyPrint();
+	htta=Hinv*f;
+	htta.prettyPrint();*/
+	//costfunct.setf(f);
+
+
+	float yconstr=OurRobot.getWalkParameter(StepY)/2.0;
+//	if(isDoubleSupport)
+//		yconstr+=OurRobot.getWalkParameter(StepY)/2.0;
+	//std::cout<<"WHAT?"<<std::endl;
+
+
+    //CONSTRAINT 1
+    fillConstraints(Aineq1,bineq1,true,false);
+    //bineq1.prettyPrint();
+    //std::cout<<OurRobot.getWalkParameter(StepX)<<std::endl;
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq1(i)+=( SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/4.0);
+    af1.setA(Aineq1);
+    af1.setb(bineq1);
+    c1.setFunction(af1);
+    //std::cout<<"WHAT?2"<<std::endl;
+    //CONSTRAINT 2
+    fillConstraints(Aineq2,bineq2,false,true);
+	for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq2(i)+=(SCALECONSTRAINT(i)* yconstr);
+    af2.setA(Aineq2);
+    af2.setb(bineq2);
+    c2.setFunction(af2);
+
+	//CONSTRAINT 3
+    fillConstraints(Aineq3,bineq3,true,false);
+    Aineq3.scalar_mult(-1);
+    bineq3.scalar_mult(-1);
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq3(i)+=(SCALECONSTRAINT(i)*OurRobot.getWalkParameter(StepX)/4.0);
+
+    af3.setA(Aineq3);
+    af3.setb(bineq3);
+    c3.setFunction(af3);
+
+    fillConstraints(Aineq4,bineq4,false,true);
+    Aineq4.scalar_mult(-1);
+    bineq4.scalar_mult(-1);
+    for(unsigned i=0;i<CONST_SIZE;i++)
+		bineq4(i)+=(SCALECONSTRAINT(i)* yconstr);
+
+	//std::cout<<"WHAT?set"<<std::endl;
+	af4.setA(Aineq4);
+    af4.setb(bineq4);
+    c4.setFunction(af4);
+
+	//std::cout<<"WHAT?add"<<std::endl;
+
+    //solver.addCostFunction(&costfunct);
+    solver.addPenaltyFunction(&c1);
+    solver.addPenaltyFunction(&c2);
+    solver.addPenaltyFunction(&c3);
+	solver.addPenaltyFunction(&c4);
+    //std::cout<<"WHAT?assign"<<std::endl;
+
+    //for(unsigned i=0;i<LagN;i++)
+	//{
+	//	htta(i)=httaX(i);
+	//	htta(i+LagN)=httaY(i);
+	//}
+	//htta.prettyPrint();
+	//af1.setX(htta);
+	c1.setX(htta);
+	c2.setX(htta);
+	c3.setX(htta);
+	c4.setX(htta);
+	//af1.setX(htta);
+	//af3.setX(htta);
+	//af2.setX(htta);
+	//af2.evaluate().prettyPrint();
+	bool print=false;
+	if(c1.allSatisfied()==false || c3.allSatisfied()==false)
+		{
+			std::cout<<"========================== VIOLATE BEFORE"<<std::endl;
+			print=true;
+			//af1.setX(htta);
+			//af3.setX(htta);
+			//af3.evaluate().prettyPrint();
+
+
+			//af1.evaluate().prettyPrint();
+			//af3.evaluate().prettyPrint();
+		}
+
+    //af1.evaluate().prettyPrint();
+
+	{
+		//htta.prettyPrint();
+		//httaX.prettyPrint();
+		//httaY.prettyPrint();
+		KPROF_SCOPE(walkprof,"solver.solve");
+		 htta=solver.solve(H,Hinv,f,htta);
+		 //htta.prettyPrint();
+
+	}
+
+		if(print)
+	{
+			std::cout<<"========================== VIOLATE After"<<std::endl;
+			//af3.setX(htta);
+			//af3.evaluate().prettyPrint();
+
+
+	}
+
+
+  //  af1.setX(htta);
+  //  af1.evaluate().prettyPrint();
+  //  htta.prettyPrint();
+    //std::cout<<"WHAT?assignback"<<std::endl;
+
+	for(unsigned i=0;i<LagN;i++)
+	{
+		httaX(i)=htta(i);
+		httaY(i)=htta(i+LagN);
+	}
+	//httaX.prettyPrint();
+	//httaY.prettyPrint();
+	//httaX=(Ky*(Phitransp*pX*2));
+	//httaY=(Ky*(Phitransp*pY*2));
+	solver.clearCostFunctions();
+
+
+}
+
+void LIPMPreviewController::fillConstraints(
+						KMath::KMat::GenMatrix<float,CONST_SIZE,2*LagN> & A,
+						KMath::KMat::GenMatrix<float,CONST_SIZE,1> &b,
+						bool ecos,bool fcos
+						)
+{
+	A.zero();
+	b.zero();
+	for(unsigned i=0;i<CONST_SIZE;i++)
+	{
+		float a,c;
+		if(ecos)
+			a= cos(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
+		else
+			a= sin(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
+		if(fcos)
+			c= cos(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
+		else
+			c= -sin(-ZMPtheta(i*CONST_STEP+CONST_SKIP));
+		//std::cout<<c<<std::endl;
+
+		for(unsigned j=0;j<LagN;j++)
+		{
+			A(i,j)=(a)*Phitransp(j,i*CONST_STEP+CONST_SKIP);
+			A(i,j+LagN)=(c)*Phitransp(j,i*CONST_STEP+CONST_SKIP);
+		}
+
+		b(i)=(a)*pX(i*CONST_STEP+CONST_SKIP)+(c)*pY(i*CONST_STEP+CONST_SKIP);
+	}
+	//A.prettyPrint();
+	//b.prettyPrint();
+	//pX.prettyPrint();
+	//pY.prettyPrint();
+
+}
+void LIPMPreviewController::generateLaguerre()
+{
+
+	float alpha=0.4;
+
+	float beta=1-alpha*alpha;
+
+
+	KMath::KMat::GenMatrix<float, LagN, 1> v;
+	v(0)=alpha;
+	Al.zero();
+	L0.zero();
+	L0(0)=1;
+	for(unsigned i=1;i<LagN;i++)
+	{
+		v(i)=pow(-alpha,i-1)*beta;
+		L0(i)=pow(-alpha,i);
+	}
+
+	L0.scalar_mult(sqrt(beta));
+	for(unsigned i=0;i<LagN;i++)
+	{
+        Al(i,0)=v(i);
+	}
+
+	for(unsigned j=1;j<LagN;j++)
+	{
+        for(unsigned i=j;i<LagN;i++)
+		{
+			Al(i,j)=v(i-j);
+		}
+	}
+
+
+	/*v.prettyPrint();
+	L0.prettyPrint();
+	Al.prettyPrint();*/
+
+}
+/*
+void LIPMPreviewController::DMPC()
+{
+	generateLaguerre();
+	float rl=4e-6;
+
+
+
+
+    KMath::KMat::GenMatrix<float,3,3> A;
+    KMath::KMat::GenMatrix<float,3,1> b,c;
+    KMath::KMat::GenMatrix<float,4,4> Ae,Aepower;
+    KMath::KMat::GenMatrix<float,4,1> Be;
+    KMath::KMat::GenMatrix<float,1,4> Cetransp;
+    KMath::KMat::GenMatrix<float,1,3> temp;
+    KMath::KMat::GenMatrix<float,1,4> temp2;
+    KMath::KMat::GenMatrix<float,LagN,1> Li;
+    KMath::KMat::GenMatrix<float,4,LagN> tempSc;
+    KMath::KMat::GenMatrix<float,1,LagN> tempPhi;
+
+	KMath::KMat::GenMatrix<float, LagN, LagN> R_l,Tres;
+	KMath::KMat::GenMatrix<float, LagN, PreviewWindow-1> Meg;
+
+	R_l.identity();
+	R_l.scalar_mult(rl);
+
+    A(0,0)=1.0000;
+    A(0,1)=OurRobot.getWalkParameter(Ts);
+    A(0,2)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    A(1,0)=0.0000;
+    A(1,1)=1.0000;
+    A(1,2)=OurRobot.getWalkParameter(Ts);
+    A(2,0)=0.0000;
+    A(2,1)=0.0000;
+    A(2,2)=1.0000;
+
+    b(0)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/6.0000;
+    b(1)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    b(2)=OurRobot.getWalkParameter(Ts);
+
+	c(0)=1.0000;
+    c(1)=0.0000;
+    c(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
+
+    //-------------------Ae
+    Ae.zero();
+
+    for(unsigned i=0;i<3;i++)
+		for(unsigned j=0;j<3;j++)
+			Ae(i,j)=A(i,j);
+	temp=c.transp()*A;
+	for(unsigned j=0;j<3;j++)
+		Ae(3,j)=temp(0,j);
+	Ae(3,3)=1;
+
+
+	//----------------Be
+	for(unsigned j=0;j<3;j++)
+		Be(j)=b(j);
+    Be(3)=c.transp()*b;
+
+    //---------------CeTransp
+
+    Cetransp.zero();
+    Cetransp(0,3)=1;
+
+
+    //---------------CREATE PHI AND TAU
+	Li=L0;
+	Tau.zero();
+	tempSc.zero();
+	Aepower.identity();
+
+    for(unsigned i=0;i<PreviewWindow-1;i++)
+	{
+		tempSc=Ae*tempSc;
+		tempSc+=Be*Li.transp();
+		tempPhi=Cetransp*tempSc;
+
+		for(unsigned j=0;j<LagN;j++)
+			Phi(i,j)=tempPhi(0,j);
+
+		Aepower*=Ae;
+		//Tau row i
+		temp2=Cetransp*Aepower;
+
+		for(unsigned j=0;j<4;j++)
+			Tau(i,j)=temp2(0,j);
+		Li=Al*Li;
+	}
+
+	Tau.prettyPrint();
+	Phi.prettyPrint();
+
+	Tres=(Phi.transp()*Phi+R_l);
+	//FIX H for constrained
+	H.zero();
+    for(unsigned i=0;i<LagN;i++)
+		for(unsigned j=0;j<LagN;j++)
+		{
+			H(i,j)=Tres(i,j);
+			H(i+LagN,j+LagN)=Tres(i,j);
+
+		}
+	std::cout<<"EDW?"<<std::endl;
+
+
+
+	Tres.fast_invert();
+	Meg=Tres*Phi.transp();
+
+	Kx=Meg*Tau;
+	Ky=Meg;
+
+	Aineq1.zero();
+	Aineq2.zero();
+	Aineq3.zero();
+	Aineq4.zero();
+
+	bineq1.zero();
+	bineq2.zero();
+	bineq3.zero();
+	bineq4.zero();
+
+}
+*/
+
+void LIPMPreviewController::DMPC()
+{
+	float rl=5e-6;
+	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
+	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
+	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;
+
+
+
+
+    KMath::KMat::GenMatrix<float,3,3> A;
+    KMath::KMat::GenMatrix<float,3,1> b,c;
+    KMath::KMat::GenMatrix<float,4,4> Ae,Aepower;
+    KMath::KMat::GenMatrix<float,4,1> Be;
+    KMath::KMat::GenMatrix<float,1,4> Cetransp;
+    KMath::KMat::GenMatrix<float,1,3> temp;
+    KMath::KMat::GenMatrix<float,1,4> temp2;
+    KMath::KMat::GenMatrix<float,LagN,1> Li;
+    KMath::KMat::GenMatrix<float,4,LagN> tempSc;
+    KMath::KMat::GenMatrix<float,1,LagN> tempPhi;
+    KMath::KMat::GenMatrix<float, PreviewWindow-1, LagN> Phi;
+    Phi.zero();
+
+	KMath::KMat::GenMatrix<float, LagN, LagN> R_l,Tres;
+	KMath::KMat::GenMatrix<float, LagN, PreviewWindow-1> Meg;
+
+	R_l.identity();
+	R_l.scalar_mult(rl);
+
+    A(0,0)=1.0000;
+    A(0,1)=OurRobot.getWalkParameter(Ts);
+    A(0,2)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    A(1,0)=0.0000;
+    A(1,1)=1.0000;
+    A(1,2)=OurRobot.getWalkParameter(Ts);
+    A(2,0)=0.0000;
+    A(2,1)=0.0000;
+    A(2,2)=1.0000;
+
+    b(0)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/6.0000;
+    b(1)=OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts)/2.0000;
+    b(2)=OurRobot.getWalkParameter(Ts);
+
+	c(0)=1.0000;
+    c(1)=0.0000;
+    c(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
+
+    //-------------------Ae
+    Ae.zero();
+
+    for(unsigned i=0;i<3;i++)
+		for(unsigned j=0;j<3;j++)
+			Ae(i,j)=A(i,j);
+	temp=c.transp()*A;
+	for(unsigned j=0;j<3;j++)
+		Ae(3,j)=temp(0,j);
+	Ae(3,3)=1;
+
+
+	//----------------Be
+	for(unsigned j=0;j<3;j++)
+		Be(j)=b(j);
+    Be(3)=c.transp()*b;
+
+    //---------------CeTransp
+
+    Cetransp.zero();
+    Cetransp(0,3)=1;
+
+
+    //---------------CREATE PHI AND TAU
+    L0.zero();
+    L0(0)=1;
+	Tau.zero();
+	tempSc.zero();
+	Aepower.identity();
+
+    for(unsigned i=0;i<PreviewWindow-1;i++)
+	{
+
+		//COMPUTE Li
+		Li.zero();
+		unsigned base;
+		float denom=1;
+
+		if(i+1<=ttl)
+		{
+			unsigned w=0;
+			unsigned sum=0;
+			for(unsigned l=0;l<BASISM;l++)
+			{
+				for(unsigned j=0;j<BASISD;j++)
+				{
+					sum+=(l+1);
+					w=w+1;
+					if(sum>=i+1)
+					{
+						denom=(l+1);
+						break;
+					}
+
+				}
+				if(sum>=i+1)
+				{
+					denom=(l+1);
+					break;
+
+				}
+			}
+			base=w-1;
+
+		}
+		else
+		{
+			base=ceil((i+1-ttl)/s)+BASISD*BASISM-1;
+			denom=s;
+
+		}
+		if(base<LagN)
+		{
+			Li(base)=1.0/sqrt(denom);
+		}
+		//std::cout<<i<<" "<<base<<" "<<1.0/sqrt(denom)<<std::endl;
+		tempSc=Ae*tempSc;
+		tempSc+=Be*Li.transp();
+		tempPhi=Cetransp*tempSc;
+
+		for(unsigned j=0;j<LagN;j++)
+			Phi(i,j)=tempPhi(0,j);
+
+		Aepower*=Ae;
+		//Tau row i
+		temp2=Cetransp*Aepower;
+
+		for(unsigned j=0;j<4;j++)
+			Tau(i,j)=temp2(0,j);
+		Li=Al*Li;
+	}
+
+	Tau.prettyPrint();
+	Phi.prettyPrint();
+
+	Tres=(Phi.transp()*Phi+R_l);
+	//FIX H for constrained
+	H.zero();
+    for(unsigned i=0;i<LagN;i++)
+		for(unsigned j=0;j<LagN;j++)
+		{
+			H(i,j)=Tres(i,j);
+			H(i+LagN,j+LagN)=Tres(i,j);
+
+		}
+	std::cout<<"EDW?"<<std::endl;
+
+	Tres.prettyPrint();
+	Ky=Tres+Tres.transp();
+	Ky.fast_invert();
+	Ky+=Ky.transp();
+	Ky.scalar_mult(0.5);
+	H.prettyPrint();
+	H=H+H.transp();
+	H.scalar_mult(0.5);
+	Hinv=H+H.transp();
+	Hinv.fast_invert();
+	Hinv+=Hinv.transp();
+	Hinv.scalar_mult(0.5);
+	Phitransp=Phi.transp();
+
+
+	Aineq1.zero();
+	Aineq2.zero();
+	Aineq3.zero();
+	Aineq4.zero();
+
+	bineq1.zero();
+	bineq2.zero();
+	bineq3.zero();
+	bineq4.zero();
+
+}
+
+

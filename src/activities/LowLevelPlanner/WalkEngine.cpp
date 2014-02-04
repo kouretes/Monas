@@ -269,6 +269,8 @@ void WalkEngine::Calculate_Desired_COM()
     /** Get Target Com in Inertial Frame **/
 	NaoLIPM.isDoubleSupport=double_support;
 	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
+	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
+	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
 
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))

@@ -13,7 +13,6 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			CircularBuffer.hpp
 			WalkEngine.hpp
 			WalkEngine.cpp
-			matlog.cpp
 			)
 
 include ( ../activTemplate.cmake )
