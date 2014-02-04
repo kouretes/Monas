@@ -13,10 +13,10 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			CircularBuffer.hpp
 			WalkEngine.hpp
 			WalkEngine.cpp
-			Kalman.h
-			Kalman.cpp
 			Dynamics.h
 			Dynamics.cpp
+			Kalman.h
+			Kalman.cpp
 			matlog.cpp
 			)
 
