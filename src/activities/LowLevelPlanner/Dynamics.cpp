@@ -31,26 +31,29 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
     Cd(2)=-(OurRobot.getWalkParameter(ComZ)*OurRobot.getWalkParameter(CoMZModelError))/OurRobot.getWalkParameter(g);
 
     /** Defining the Optimal Gain for the Observer **/
-
-    //0.0009 0.0015 -0.0051 -0.0074 -0.0303 -0.3325 -0.0003 0.0099
-	//   0.0537    0.0101
-   //-0.2846   -0.0484
-   //-3.6499   -2.8105
-   //-0.0304    0.0281
-
-
-    // 0.2263    0.0074
-   //-1.0010   -0.0352
-  //-34.4651   -2.2820
-   //-0.0873    0.0288
-   L(0,0) =0.044452;
+   // MPC OBSERVER
+   /*L(0,0) =0.044452;
    L(0,1) =0.037499;
    L(1,0) =-0.22693;
    L(1,1) =-0.14403;
    L(2,0) =-3.0241;
    L(2,1) =-13.5139;
    L(3,0) =-0.048684;
-   L(3,1) =0.060181;
+   L(3,1) =0.060181;*/
+    //L.scalar_mult(0);
+
+    /** PREVIEW CONTROLLER OBSERVER **/
+    L(0,0)=0.1307;
+    L(0,1)=0.0392;
+    L(1,0)=-0.6250;
+    L(1,1)=-0.2445;
+    L(2,0)=-26.2666;
+    L(2,1)=-11.9174;
+    L(3,0)= -0.1623;
+    L(3,1)=0.0557;
+    //L.scalar_mult(0);
+
+
 /*
     L(0,0)=0.0009;
     L(0,1)=0.0015;
