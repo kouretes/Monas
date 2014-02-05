@@ -34,9 +34,9 @@
 #include "Dynamics.h"
 #define PreviewWindow 121
 #define CONST_SKIP 0
-#define CONST_SIZE 25
-#define CONST_STEP 3
-#define LagN 25
+#define CONST_SIZE 50
+#define CONST_STEP 2
+#define LagN 30
 class LIPMPreviewController{
     private:
     //KMath::KMat::GenMatrix<float,LagN,PreviewWindow-1> Ky;

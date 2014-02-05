@@ -183,7 +183,7 @@ int LowLevelPlanner::Execute()
 			break;
 		case DO_STEPS:
 
-            if(engine->walkbuffer.size()<2)
+            /*if(engine->walkbuffer.size()<2)
 			{
 				NaoPlanner.oneStep(speed);
 				while(NaoPlanner.inst.size()>0)
@@ -191,7 +191,7 @@ int LowLevelPlanner::Execute()
 						engine->walkbuffer.add(NaoPlanner.inst.front());
 						NaoPlanner.inst.pop();
 				}
-			}
+			}*/
 			/*Plan two consecutive Steps with the Predefined Speed
 			 **/
 			//NaoPlanner.oneStep(speed);

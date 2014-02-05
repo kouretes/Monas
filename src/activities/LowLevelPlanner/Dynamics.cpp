@@ -102,7 +102,7 @@ void Dynamics::Update(float u,KVecFloat2 error)
 		error.scalar_mult(0.001*startup);
 		startup++;
 	}
-
+	error(1)*=2;//.scalar_mult(2);
 	//error(0)*=0.5;//.scalar_mult(0.99);
     //error.scalar_mult(0.2);
     //std::cout<<"ERROR:"<<std::endl;

@@ -387,7 +387,7 @@ KVecFloat2 WalkEngine::getCoP()
 	//copsprime.prettyPrint();
 	res(0)=copi(0);
 	res(1)=copi(1);
-	res.prettyPrint();
+	//res.prettyPrint();
 
 	return res;
 }

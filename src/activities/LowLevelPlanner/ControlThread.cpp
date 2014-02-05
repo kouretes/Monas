@@ -113,7 +113,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         predictedErrorX=DynamicsX.predictedError;
         predictedErrorY=DynamicsY.predictedError;
 
-        flog.insert("ZMPx",DynamicsX.zmpstate);
+        /*flog.insert("ZMPx",DynamicsX.zmpstate);
         flog.insert("ZMPy",DynamicsY.zmpstate);
         flog.insert("refZMPx",ZmpBuffer[0](0));
         flog.insert("refZMPy",ZmpBuffer[0](1));
@@ -123,7 +123,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         flog.insert("Uy",uY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
-        flog.periodic_save();
+        flog.periodic_save();*/
 
 }
 
@@ -504,7 +504,7 @@ void LIPMPreviewController::DMPC()
 
 void LIPMPreviewController::DMPC()
 {
-	float rl=5e-6;
+	float rl=1e-5;
 	float ttl=(BASISM*(BASISM+1.0)*BASISD)/2.0;
 	float s=floor((PreviewWindow-1.0-ttl)/(LagN-BASISM*BASISD));
 	std::cout<<"    ---"<<s<<" "<<ttl<<std::endl;
