@@ -19,6 +19,8 @@ BUILD (for local execution):
 
 - Change TargetPlatform to linux
 
+- Change TargetRobot to host
+
 - Press c to configure
 
 - Press c to configure again.
@@ -45,7 +47,9 @@ CROSSBUILD (for on-board execution):
 
 - Execute: ccmake .
 
-- Change TargetPlatform to robot
+- Change TargetPlatform to linux
+
+- Change TargetRobot to nao
 
 - Press c to configure
 
