@@ -28,12 +28,6 @@ elseif ( "${TargetRobot}" STREQUAL "nao" )
 	  set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/naoqi_${NaoQiVersion}_linux" CACHE PATH "Select the install directory" FORCE )
 	endif( "${SDK_ARCH}" STREQUAL "nao-geode" )
 
-
-elseif ( "${TargetRobot}" STREQUAL "aibo" )
-
-    set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/aibo" CACHE PATH "Select the install directory" FORCE )
-    add_subdirectory ( aibo )
-
 else ( "x${TargetRobot}x" STREQUAL "xx" )
     message ( FATAL_ERROR "Please select a valid platform"  )
 endif ( "x${TargetRobot}x" STREQUAL "xnonex" )
