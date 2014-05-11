@@ -17,7 +17,7 @@
 #include "WalkEngine.hpp"
 
 #include "core/elements/math/KMat.hpp"
-#include "hal/robot/generic_nao/aldebaran-motion.h"
+#include "hal/robot/nao/generic_nao/aldebaran-motion.h"
 
 
 /**

@@ -1,16 +1,16 @@
 #include "LowLevelPlanner.h"
 #include "messages/SensorsMessage.pb.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 
 #include "core/elements/math/Common.hpp"
-#include "hal/robot/generic_nao/aldebaran-sensors.h"
+#include "hal/robot/nao/generic_nao/aldebaran-sensors.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "core/include/Logger.hpp"
 #include "tools/toString.h"
-#include "hal/robot/generic_nao/KinematicsDefines.h"
+#include "hal/robot/nao/generic_nao/KinematicsDefines.h"
 
 //#define LHipRange (LHipPitchHigh - LHipPitchLow)
 //#define RHipRange (RHipPitchHigh - RHipPitchLow)
