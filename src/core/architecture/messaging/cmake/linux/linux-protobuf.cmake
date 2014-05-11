@@ -1,7 +1,8 @@
 
 set(ProtobufPrebuild  ${ConfigDir}/${TargetPlatform}/lib/${CMAKE_SYSTEM_PROCESSOR}/libprotobuf.a)
-if(EXISTS ProtobufPrebuild)
-	set( ProtobufLibrary ProtobufPrebuild)
+message( STATUS ${ConfigDir}/${TargetPlatform}/lib/${CMAKE_SYSTEM_PROCESSOR}/libprotobuf.a)
+if(EXISTS ${ProtobufPrebuild})
+	set( ProtobufLibrary ${ProtobufPrebuild})
 else()
 	find_package(Protobuf)
 	message(STATUS ${PROTOBUF_LIBRARY})
