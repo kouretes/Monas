@@ -1,7 +1,7 @@
 #include "KmeAction.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "core/include/Logger.hpp"
 
 using namespace std;

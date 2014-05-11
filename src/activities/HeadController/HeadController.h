@@ -7,7 +7,7 @@
 #include "core/elements/math/Common.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Motion.pb.h"

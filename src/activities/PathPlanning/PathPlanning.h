@@ -20,7 +20,7 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Motion.pb.h"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 
 //#define KPROFILING_ENABLED

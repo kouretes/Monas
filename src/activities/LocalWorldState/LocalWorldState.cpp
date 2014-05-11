@@ -1,5 +1,5 @@
 #include "LocalWorldState.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "core/include/Logger.hpp"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/RoboCupGameControlData.h"

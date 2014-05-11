@@ -12,7 +12,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupGameControlData.h"
 
-#include "hal/robot/generic_nao/aldebaran-motion.h"
+#include "hal/robot/nao/generic_nao/aldebaran-motion.h"
 
 #include <string>
 #include <math.h>

@@ -1,8 +1,8 @@
 #include "MotionController.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "hal/robot/generic_nao/aldebaran-sensors.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/aldebaran-sensors.h"
 
 
 

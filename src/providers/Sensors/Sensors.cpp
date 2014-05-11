@@ -1,6 +1,6 @@
 #include "Sensors.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 
 #include "core/include/Logger.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"

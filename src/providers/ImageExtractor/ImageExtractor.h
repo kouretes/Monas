@@ -9,7 +9,7 @@
 
 #include "core/include/IProvider.hpp"
 #include "core/include/Blackboard.hpp"
-#include "hal/robot/generic_nao/KImageExtractor.h"
+#include "hal/robot/nao/generic_nao/KImageExtractor.h"
 #include "hal/smart_timer.h"
 #include "messages/Kimage.pb.h"
 

@@ -1,6 +1,6 @@
 #include "robotcontroller.h"
 #include "messages/SensorsMessage.pb.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 #include "core/include/Logger.hpp"
 #include "tools/toString.h"

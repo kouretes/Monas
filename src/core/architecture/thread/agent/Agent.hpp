@@ -11,9 +11,11 @@
 #include "core/architecture/thread/PeriodicThread.hpp"
 #include "core/messages/Architecture.pb.h"
 
-#ifdef NAOQI
-#include "hal/robot/generic_nao/robot_consts.h"
-#endif
+
+//TODO:REMOVE STUB
+//#ifdef NAOQI
+//#include "hal/robot/generic_nao/robot_consts.h"
+//#endif
 
 #include "AgentTiming.hpp"
 #include "tools/toString.h"

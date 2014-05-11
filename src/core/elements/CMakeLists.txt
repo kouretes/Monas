@@ -28,6 +28,7 @@ set(ELEMENT_SRCS
       Singleton.hpp
       KStandard.hpp
       Logger.hpp
+      vision/KImage.h
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

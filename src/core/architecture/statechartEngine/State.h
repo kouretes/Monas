@@ -13,10 +13,10 @@
 
 #include "core/architecture/thread/PeriodicThread.hpp"
 
-#ifdef NAOQI
-
-#include "hal/robot/generic_nao/robot_consts.h"
-#endif
+//TODO: Remove Stub
+//#ifdef NAOQI
+//#include "hal/robot/generic_nao/robot_consts.h"
+//#endif
 
 #include "Containers.h"
 

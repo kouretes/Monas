@@ -1,5 +1,5 @@
-#include "hal/robot/generic_nao/KImageExtractor.h"
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/KImageExtractor.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 #include <qi/os.hpp>
 #include "core/include/Logger.hpp"
 

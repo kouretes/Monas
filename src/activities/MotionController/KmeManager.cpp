@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include "core/include/Logger.hpp"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
 #include "KmeAction.h"
 

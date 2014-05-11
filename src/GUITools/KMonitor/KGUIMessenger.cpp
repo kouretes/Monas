@@ -7,7 +7,7 @@
 #include "core/architecture/messaging/TopicTree.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 using std::string;
 using namespace std;

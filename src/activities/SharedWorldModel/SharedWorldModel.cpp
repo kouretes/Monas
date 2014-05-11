@@ -1,7 +1,7 @@
 #include "SharedWorldModel.h"
 #include "core/include/Logger.hpp"
 #include "tools/toString.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+//#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 
 ACTIVITY_REGISTER(SharedWorldModel);

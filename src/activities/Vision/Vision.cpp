@@ -7,7 +7,7 @@
 //#include "hal/syscall.h"
 #include <vector>
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 #include <vector>
 

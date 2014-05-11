@@ -2,8 +2,8 @@
 #define SENSORS_H
 
 
-#include "hal/robot/generic_nao/aldebaran-sensors.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/aldebaran-sensors.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include <vector>

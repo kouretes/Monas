@@ -5,7 +5,7 @@
 
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "hal/robot/generic_nao/aldebaran-kme.h"
+#include "hal/robot/nao/generic_nao/aldebaran-kme.h"
 
 class KmeAction : public ISpecialAction
 {
