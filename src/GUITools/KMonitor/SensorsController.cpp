@@ -1,7 +1,7 @@
 #include "SensorsController.h"
 #include "ui_SensorsController.h"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "tools/toString.h"
 #include <iostream>
 

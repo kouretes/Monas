@@ -1,5 +1,5 @@
 #include "NAOKinematics.h"
-#include "hal/robot/generic_nao/KinematicsDefines.h"
+#include "KinematicsDefines.h"
 
 
 using namespace KMath;

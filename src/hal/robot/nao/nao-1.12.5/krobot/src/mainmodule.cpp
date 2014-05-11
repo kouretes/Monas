@@ -7,7 +7,7 @@
 
 #include "mainmodule.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 
 #include "core/architecture/configurator/Configurator.hpp"
 

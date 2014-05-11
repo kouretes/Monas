@@ -39,5 +39,4 @@ install ( TARGETS MonasCore
         ARCHIVE DESTINATION   lib/static )
 
 set ( TargetLinkLibraries  MonasCore messaging  ${TargetLinkLibraries} CACHE INTERNAL "" )
-#TODO add narukom link to cmake in narukom
 

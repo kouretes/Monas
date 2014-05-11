@@ -7,7 +7,7 @@ Build:
 	- Enter local folder under Monas/make, if there is no folder create one (mkdir local).
 	- Use cmake gui for native compile.
 		- Change TargetPlatform to linux.
-		- Change TargetRobot to none.
+		- Change TargetRobot to host.
 	- Execute make install -jk, where k is the number of cores in your system.
 	- Execute make KMonitor
 	

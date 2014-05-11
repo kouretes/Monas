@@ -1,7 +1,7 @@
 #ifndef LEDHANDLER_H
 #define LEDHANDLER_H
 
-#include "hal/robot/generic_nao/aldebaran-proxy.h"
+#include "hal/robot/nao/generic_nao/aldebaran-proxy.h"
 #include <string>
 #include "messages/Gamecontroller.pb.h"
 #include "core/include/IProvider.hpp"

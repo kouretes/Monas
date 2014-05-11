@@ -1,6 +1,6 @@
 #ifndef KALBROKER_H
 #define KALBROKER_H
-#include "hal/robot/generic_nao/aldebaran-proxy.h"
+#include "aldebaran-proxy.h"
 #include "core/elements/Singleton.hpp"
 
 namespace AL

@@ -9,7 +9,7 @@
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
-#include "hal/robot/generic_nao/NaoCamera.h"
+#include "hal/robot/nao/generic_nao/NaoCamera.h"
 
 #include "core/include/Logger.hpp"
 
