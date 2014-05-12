@@ -18,7 +18,7 @@
 #include "messages/Debug.pb.h"
 
 //#define KPROFILING_ENABLED
-#include "tools/profiler.hpp"
+#include "core/architecture/time/Profiler.hpp"
 
 #include <vector>
 #include <iostream>
