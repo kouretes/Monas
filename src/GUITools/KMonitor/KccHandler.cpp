@@ -1,11 +1,12 @@
 #include "KccHandler.h"
 #include "ui_KccHandler.h"
 #include "core/architecture/configurator/Configurator.hpp"
-
+#include <fstream>
+#include "tools/toString.h"
 KccHandler::KccHandler(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::KccHandler) {
-	
+
 	ui->setupUi(this);
 	availableKCCHosts = new HostsComboBox(ui->KCComboBox);
 	orangeColor = orange;
@@ -56,6 +57,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	segImL->setPixmap(QPixmap::fromImage(segImage));
 	//segImL->setStyleSheet("border: 3px solid grey");
 	takeSnapshot = false;
+	saveRaw =false;
 	rScale = iScale = 1;
 	zoomInScale = 1.1;
 	zoomOutScale = 0.9;
@@ -86,7 +88,8 @@ KccHandler::KccHandler(QWidget *parent) :
 	connect(ui->pbZinReal, SIGNAL(clicked()), this, SLOT(realZoomIn()) );
 	connect(ui->pbZoutReal, SIGNAL(clicked()), this, SLOT(realZoomOut()) );
 	connect(ui->pbCalibration, SIGNAL(clicked()), this, SLOT(manualCalibration()) );
-	
+	connect(ui->pbSaveRaw, SIGNAL(clicked()), this, SLOT(pbSaveRawPressed()) );
+
 	connect(availableKCCHosts, SIGNAL(SubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)) );
 	basicSegColors[orangeColor] = qRgb(255, 140, 0);
 	basicSegColors[redColor] = qRgb(255, 0, 0);
@@ -103,9 +106,9 @@ KccHandler::KccHandler(QWidget *parent) :
 	yuvColorTable = new KSegmentator(3, 2, 2);
 	// HARDCODED CARE IF YOU CHANGE THE KMONITOR INSTALL PATH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	colortablesPath = QDir::currentPath().append(string("/" + Configurator::Instance().getDirectoryPath() + "colortables").c_str());
-	
+
 	calibrationWidget = NULL;
-	
+
 	connect(this, SIGNAL(updateVisionDebugData(VisionDebugMessage)), realImL, SLOT(updateLabel(VisionDebugMessage)) );
 	connect(this, SIGNAL(updateVisionDebugData(VisionDebugMessage)), segImL, SLOT(updateLabel(VisionDebugMessage)) );
 }
@@ -211,7 +214,29 @@ void KccHandler::undoPressed() {
 		segImL->show();
 	}
 }
+void KccHandler::saveRawImage(KRawImage &img)
+{
+	static unsigned int num=0;
+	int tempWidth = img.width();
+	int tempHeight = img.height();
+	int channels = img.bytes_per_pix();
+	unsigned siz=tempWidth*tempHeight*channels;
+	std::ofstream file;
+	while(file.is_open()==false)
+	{
+		std::string filename;
+		filename.append("rawImage");
+		filename.append(_toString(num));
+		filename.append(".yuv");
+		file.open (filename.c_str(), ios::out  | ios::binary);
+		num++;
+	}
+	file.write(img.image_rawdata().data(),siz);
+	file.close();
 
+
+
+}
 void KccHandler::changeImage(KRawImage rawImage, QString hostId, boost::posix_time::ptime timestamp) {
 	int tempWidth = rawImage.width();
 	int tempHeight = rawImage.height();
@@ -219,6 +244,8 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId, boost::posix_ti
 
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels == 2) {
 		takeSnapshot = false;
+		if(saveRaw) saveRawImage(rawImage);
+		saveRaw=false;
 		curLuminance = rawImage.luminance_scale();
 		yuvColorTable->setLumaScale(powf(curLuminance, 0.42));
 		lumaScale = 1 / yuvColorTable->getLumaScale();
@@ -244,9 +271,14 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId, boost::posix_ti
 		realImL->latestImgPix = QPixmap::fromImage(realImage);
 		realImL->latestTimestamp = timestamp;
 		realImL->show();
+
+		saveRaw=false;
 	}
 }
-
+void KccHandler::pbSaveRawPressed()
+{
+	saveRaw=true;
+}
 void KccHandler::transformYUVtoRGB(const char *yuvImage, QImage *rgbImage) {
 	unsigned char y, cu, cv;
 	int r, g, b, u, v;
@@ -376,7 +408,7 @@ void KccHandler::segZoomOut() {
 
 	if(iScale < 1)
 		ui->pbZoutSeg->setEnabled(false);
-		
+
 	ui->pbZinSeg->setEnabled(true);
 	segImL->show();
 }
@@ -424,11 +456,11 @@ void KccHandler::segOpen() {
 void KccHandler::manualCalibration(){
 	if(calibrationWidget == NULL){
 		calibrationWidget = new KccCameraSettings();
-		
+
 		connect(calibrationWidget, SIGNAL(iAmClosing()), this, SLOT(calibrationDialogClosed()) );
 		connect(calibrationWidget, SIGNAL(sendCameraCalibrationMessage(CameraCalibration)), this, SLOT(catchForwardMsg(CameraCalibration)) );
 		connect(this, SIGNAL(forwardAck(GenericACK, QString)), calibrationWidget, SLOT(genericAckReceived(GenericACK, QString)) );
-		
+
 	 	calibrationWidget->show();
 	}else{
 	 	calibrationWidget->raise();
@@ -484,9 +516,9 @@ void KccHandler::adjustScrollBar(QScrollBar *scrollBar, double factor) {
 }
 
 /*
- * Signal Forwarding 
+ * Signal Forwarding
  */
- 
+
 void KccHandler::changeToHost(QString data1) {
 	availableKCCHosts->changeItem(data1);
 }

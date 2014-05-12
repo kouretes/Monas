@@ -7,7 +7,7 @@
 #include <memory>
 
 #include <time.h>
-#include "hal/robot/generic_nao/KImage.h"
+#include "core/elements/vision/KImage.h"
 
 
 

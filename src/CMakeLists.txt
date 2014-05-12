@@ -3,6 +3,9 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring Sources :::.._ " )
 message ( STATUS "" )
 
+
+
+
 include_directories ( AFTER ../external/protobuf/src/ )
 
 
@@ -26,9 +29,9 @@ add_subdirectory ( ./activities/ )
 add_subdirectory ( ./providers/ )
 add_subdirectory ( ./statecharts/ )
 
-if( ${TargetRobot} STREQUAL "none")
+if( ${TargetRobot} STREQUAL "host")
 	add_subdirectory ( ./GUITools/ )
-endif( ${TargetRobot} STREQUAL "none")
+endif( ${TargetRobot} STREQUAL "host")
 
 #Call function that must be defined somewhere inside hal for proper linking
 

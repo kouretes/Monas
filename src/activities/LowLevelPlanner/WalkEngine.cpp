@@ -1,5 +1,5 @@
 #include "WalkEngine.hpp"
-#include "hal/robot/generic_nao/KinematicsDefines.h"
+#include "hal/robot/nao/generic_nao/KinematicsDefines.h"
 
 WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(PreviewWindow*50),walkbuffer(0)
 {
@@ -385,7 +385,7 @@ KVecFloat2 WalkEngine::getCoP()
 	//copsprime.prettyPrint();
 	res(0)=copi(0);
 	res(1)=copi(1);
-	res.prettyPrint();
+	//res.prettyPrint();
 
 	return res;
 }

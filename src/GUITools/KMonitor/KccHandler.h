@@ -32,15 +32,15 @@ namespace Ui {
 
 class KccHandler : public QWidget {
 	Q_OBJECT
-	
+
 	struct QYuv {
 		unsigned char y, u, v;
-		
+
 		bool operator< (const QYuv &QYuv1) const { // Custom operator because is needed for the map<>
 			return(int((y << 16) |(u << 8) | v) ) <(int((QYuv1.y << 16) |(QYuv1.u << 8) | QYuv1.v) );
 		}
 	};
-	
+
 public:
 	static const unsigned int MAX_UNDO = 10;
 	static const float gammaExposure = 0.45;
@@ -67,13 +67,13 @@ private:
 	unsigned char adjustY(unsigned char y);
 	unsigned char adjustU(unsigned char u);
 	unsigned char adjustV(unsigned char v);
-	
+
 signals:
 	void SubscriptionRequest(QString);
 	void sendCameraCalibrationMessage(CameraCalibration msg);
 	void forwardAck(GenericACK ack, QString hostid);
 	void updateVisionDebugData(VisionDebugMessage vdm);
-	
+
 public slots:
 	void addComboBoxItem(QString, QString);
 	void removeComboBoxItem(QString);
@@ -90,6 +90,7 @@ public slots:
 	void pbBlackPressed();
 	void undoPressed();
 	void pbSnapshotPressed();
+	void pbSaveRawPressed();
 	void segSave();
 	void segOpen();
 	void clearColorTable();
@@ -105,6 +106,7 @@ public slots:
 	void catchForwardMsg(CameraCalibration msg);
 
 private:
+	void saveRawImage(KRawImage &img);
 	double A, B, C, D;
 	int widthInPixels;
 	int heightInPixels;
@@ -114,7 +116,7 @@ private:
 	KSegmentator *yuvColorTable, *yuvColorTableOld;
 
 	KccCameraSettings *calibrationWidget;
-	
+
 	QYuv yuvRealImage[480][640];
 	map<unsigned char, QRgb> basicSegColors;
 
@@ -122,6 +124,7 @@ private:
 
 	vector<map<QYuv, unsigned char> > undoVector;
 	bool takeSnapshot;
+	bool saveRaw;
 	KccLabel *realImL, *segImL;
 	HostsComboBox *availableKCCHosts;
 	QScrollArea *scrollImage, *scrollSeg;

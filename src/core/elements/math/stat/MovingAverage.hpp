@@ -1,5 +1,7 @@
-#ifndef  _statMovingAverage_h_
-#define  _statMovingAverage_h_ 1
+#ifndef  STATMOVINGAVERAGE_HPP
+#define  STATMOVINGAVERAGE_HPP 
+namespace KMath
+{
 
 class StatMovingAverage
 {
@@ -50,5 +52,5 @@ private:
 	double avg_x_sqr;
 
 };
-
-#endif // _statMovingAverage_h_
+}
+#endif // STATMOVINGAVERAGE_HPP

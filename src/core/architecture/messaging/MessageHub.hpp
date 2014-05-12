@@ -33,8 +33,8 @@
 #include "hal/syscall.h"
 
 
-#include "tools/statMovingAverage.h"
-#include "tools/stopWatch.h"
+#include "core/elements/math/stat/MovingAverage.hpp"
+#include "core/architecture/time/StopWatch.hpp"
 
 #ifndef TIXML_USE_STL
 #define TIXML_USE_STL

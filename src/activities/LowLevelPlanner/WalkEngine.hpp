@@ -1,10 +1,10 @@
 #ifndef __WALKENGINE_HPP__
 #define __WALKENGINE_HPP__
 #include <core/elements/math/KMat.hpp>
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "core/elements/buffer/LockedBuffer.hpp"
 #include  "ControlThread.h"
-#include "hal/robot/generic_nao/NAOKinematics.h"
+#include "hal/robot/nao/generic_nao/NAOKinematics.h"
 #include "RobotParameters.h"
 #include "KWalkMat.h"
 #include "core/elements/math/Common.hpp"
