@@ -2,7 +2,7 @@
 
 #include "core/include/Logger.hpp"
 #include "core/elements/math/Common.hpp"
-#include "core/elements/math/Specific.hpp"
+#include "core/elements/math/Combinatorics.hpp"
 #include "core/elements/KStandard.hpp"
 #include <math.h>
 
@@ -13,7 +13,7 @@ using namespace std;
 using namespace FormationParameters;
 using namespace Utility;
 using namespace PSO;
-using KMath::Specific::permutationsOfCombinations;
+using KMath::Combinatorics::permutationsOfCombinations;
 
 ACTIVITY_REGISTER(Behavior);
 
@@ -27,7 +27,7 @@ Behavior::Behavior(Blackboard &b) :
  * Behavior initialization function.
  */
 void Behavior::UserInit() {
-	 
+
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -67,19 +67,19 @@ void Behavior::UserInit() {
 	currentRobotAction = MotionStateMessage::IDLE;
 	Reset();
 	fGen.Init(config.positions);
-			
+
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	
+
 	if(config.playerNumber != 1)
 		currentRole.role = FormationParameters::ONBALL; // default role
 	else
 		currentRole.role = FormationParameters::GOALIE;
-		
+
 	if(penaltyMode)
 		goToPositionFlag = true;
 	else
 		goToPositionFlag = false;
-		
+
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -126,9 +126,9 @@ void Behavior::Reset(){
 	config.kicks.KickBackLeft = Configurator::Instance().findValueForKey("behavior.KickBackLeft").c_str();
 	config.kicks.KickBackRight = Configurator::Instance().findValueForKey("behavior.KickBackRight").c_str();
 	config.ur = atof(Configurator::Instance().findValueForKey("behavior.ur").c_str());
-	
+
 	config.positions = (unsigned int)atoi(Configurator::Instance().findValueForKey("playerConfig.positions").c_str());
-	
+
 	// === read robot configuration xml data from playerConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
 		LogEntry(LogLevel::Error, GetName())<< "Behavior Reset: Invalid player number";
@@ -189,11 +189,11 @@ void Behavior::Reset(){
 /* Behavior Main Execution Function */
 
 int Behavior::Execute() {
-	
+
 	KPROF_SCOPE(prf, "Execute");
-	
+
 	gBestm.Clear();
-	
+
 	readMessages();
 	getBallData();
 	getGameState();
@@ -201,11 +201,11 @@ int Behavior::Execute() {
 	getMotionData();
 	getTeamInfo();
 	checkIfBumperPressed();
-	
+
 	if(PSOflag == true && PSOhasRun == true) {
 		getPSOData();
 	}
-		
+
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -247,9 +247,9 @@ int Behavior::Execute() {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
-				
+
 				coordinationCycle++;
-				
+
 				if(dist) {
 					dist = false;
 					LogEntry(LogLevel::Info, GetName()) << "DISTANCE";
@@ -273,9 +273,9 @@ int Behavior::Execute() {
 
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
-								
+
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY);
-				
+
 				if(!gameMode){
 					sendFormationDebugMessages();
 				}
@@ -288,7 +288,7 @@ int Behavior::Execute() {
 					currentRole = fGen.findRoleInfo(FormationParameters::GOALIE);
 					goToPositionFlag = false;
 				}
-					
+
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
@@ -324,7 +324,7 @@ int Behavior::Execute() {
 			goalie();
 		}
 		else { // not goalie behavior
-			
+
 			if(currentRole.role == FormationParameters::ONBALL) {
 
 				if(goToPositionFlag == false && ballFound == 0) {
@@ -359,7 +359,7 @@ int Behavior::Execute() {
 						&& oppgb < M_PI_4
 						&& oppgb > -M_PI_4
 						&& lastBumperPressed + milliseconds(700) < microsec_clock::universal_time()){
-						
+
 						readyToKick = true;
 						scanAfterKick = true;
                         scanKickTime = microsec_clock::universal_time();
@@ -503,7 +503,7 @@ int Behavior::Execute() {
 
 		if(gsm != 0 && gsm.get() != 0)
 			kickOff = gsm->kickoff();
-		
+
 		if(prevGameState != PLAYER_READY) {
 			fGen.XmlInitFormation(kickOff);
 			if(!gameMode)
@@ -511,7 +511,7 @@ int Behavior::Execute() {
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
 			lastFormation = microsec_clock::universal_time();
 		}
-		
+
 		if(gameState != prevGameState) {
 			// Reset Loc
 			locReset.set_type(LocalizationResetMessage::SET);
@@ -540,7 +540,7 @@ int Behavior::Execute() {
 			_blk.publishState(hcontrol, "behavior");
 		}
 	}
-	
+
 	#ifdef KPROFILING_ENABLED
 		prf.generate_report(1);
 	#endif
@@ -550,26 +550,26 @@ int Behavior::Execute() {
 
 void Behavior::Coordinate() {
 		KPROF_SCOPE(prf, "Coordinate");
-		
+
 		int robotIndex = -1;
-		
+
 		if(PSOflag == true) {
-			
+
 			particle bestParticle;
-			
+
 			bestParticle = runPSO(10, 10, fGen, robots, SharedGlobalBallY);
-				
+
 			sendGlobalBest(bestParticle, gBestCost);
-			
+
 			if(!gameMode) {
 				sendPSODebugMessages(bestParticle);
 			}
 			PSOhasRun = true;
 		}
 		else {
-			
+
 			std::string complexRole;
-			
+
 			for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 				if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE) {
 					complexRole = _toString(fGen.getFormation()->at(i).role);
@@ -582,7 +582,7 @@ void Behavior::Coordinate() {
 			mappings = permutationsOfCombinations(roles, numOfRobots);
 			LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
 			print(mappings, "Behavior");
-			
+
 			roles.clear();
 
 			LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
@@ -601,7 +601,7 @@ void Behavior::Coordinate() {
 					  		minRotation(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, robots[r].robotPhi) -
 
 					  		collisions(mappings[map], robots, fGen, r) -
-					  		
+
 					  		sparse(mappings[map], numOfRobots, fGen, r);
 
 					if(currentRobotPos.role == FormationParameters::ONBALL) {
@@ -619,21 +619,21 @@ void Behavior::Coordinate() {
 
 			robotIndex = getRobotIndex(robots, config.playerNumber);
 			LogEntry(LogLevel::Info, GetName()) << "INDEX IS : " << robotIndex;
-			
+
 			if(robotIndex != -1)
 				currentRole = fGen.findRoleInfo(mappings[index][robotIndex]);
 			else
 				currentRole.role = FormationParameters::ONBALL;
-			
+
 			LogEntry(LogLevel::Info, GetName()) << "OPTIMAL MAP IS: ";
 			print(mappings[index], "Behavior");
 			LogEntry(LogLevel::Info, GetName()) << "OPTIMAL COST IS: " << maxU;
 			LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
-			
+
 			if(!gameMode) {
 				sendBFDebugMessages(mappings[index]);
 			}
-			
+
 			goToPositionFlag = false;
 		}
 }
@@ -664,13 +664,13 @@ void Behavior::checkIfBumperPressed(){
 }
 
 void Behavior::getPSOData() {
-	
+
 	int robotIndex = -1;
 	float d = 0.0f, minD = INF;
 	vector<PSOData> mappings;
-	
+
 	gbm = _blk.readData<gBestMessage>("external", msgentry::HOST_ID_LOCAL_HOST);
-		
+
 	if(gbm != 0 && gbm.get() != 0) {
 		PSOData newData;
 		for(int i = 0 ; i < gbm->gstarparticle_size()-1 ; i++)
@@ -679,7 +679,7 @@ void Behavior::getPSOData() {
 		newData.cycle = gbm->gstarparticle(gbm->gstarparticle_size()-1);
 		mappings.insert(mappings.end(), newData);
     }
-		
+
 	if(!h.get() || (h && h->entrylist_size() == 0)) {
 		;
 	}
@@ -700,7 +700,7 @@ void Behavior::getPSOData() {
 			}
 		}
 	}
-	
+
 	/*
 	LogEntry(LogLevel::Info, GetName()) << "MAPPINGS RECEIVED: " << mappings.size();
 	for(int k = 0 ; k < mappings.size() ; k++) {
@@ -710,10 +710,10 @@ void Behavior::getPSOData() {
 		LogEntry(LogLevel::Info, GetName()) << "U_VALUE:" << mappings[k].value;
 		LogEntry(LogLevel::Info, GetName()) << "TIMESTAMP:" << mappings[k].time;
 	}*/
-				
+
 	for(unsigned int r = 0 ; r < mappings.size() ; r++) {
 		if(r+1 < mappings.size()) {
-			if(/*mappings[r].stamp - mappings[r+1].stamp).total_seconds() > 5*/ mappings[r].cycle != mappings[r+1].cycle 
+			if(/*mappings[r].stamp - mappings[r+1].stamp).total_seconds() > 5*/ mappings[r].cycle != mappings[r+1].cycle
 				&& lastFormation + seconds(4) > microsec_clock::universal_time()) {
 				synchronization = false;
 				break;
@@ -722,16 +722,16 @@ void Behavior::getPSOData() {
 				synchronization = true;
 		}
 	}
-	
+
 	if(synchronization == true) {
 		sortPSOData(mappings);
-	
+
 		LogEntry(LogLevel::Info, GetName()) << "BEST PSO MAPPING:" << mappings[0].value;
-	
+
 		robotIndex = getRobotIndex(robots, config.playerNumber);
 		currentRole.X = mappings[0].gBest[2*robotIndex];
 		currentRole.Y = mappings[0].gBest[2*robotIndex + 1];
-	
+
 		for(unsigned int i = 1 ; i < fGen.getFormation()->size() ; i++) {
 			d = DISTANCE(currentRole.X, fGen.getFormation()->at(i).X, currentRole.Y, fGen.getFormation()->at(i).Y);
 			if(Min(d, minD) == d) {
@@ -744,7 +744,7 @@ void Behavior::getPSOData() {
 		if(!gameMode) {
 			sendPSODebugMessages(mappings[0].gBest);
 		}
-		
+
 		PSOhasRun = false;
 		goToPositionFlag = false;
 	}
@@ -826,7 +826,7 @@ void Behavior::getMotionData() {
 }
 
 void Behavior::sendGlobalBest(PSO::particle &bestParticle, float gBestCost) {
-	
+
 	for(unsigned int i = 0 ; i < bestParticle.size() ; i++)
 		gBestm.add_gstarparticle(bestParticle[i]);
 
@@ -836,7 +836,7 @@ void Behavior::sendGlobalBest(PSO::particle &bestParticle, float gBestCost) {
 }
 
 void Behavior::sendFormationDebugMessages() {
-	
+
 	LogEntry(LogLevel::Info, GetName())
 		<< "BallX: "  << (SharedGlobalBallX)
 		<< " BallY: " << (SharedGlobalBallY);
@@ -859,9 +859,9 @@ void Behavior::sendFormationDebugMessages() {
 }
 
 void Behavior::sendPSODebugMessages(vector<float> &positions) {
-	
+
 	unsigned int nextPos = 0;
-		
+
 	for(unsigned int i = 0 ; i < numOfRobots ; i++) {
 
 		if(psodg.positionspso_size() < (int)(i+1))
@@ -875,19 +875,19 @@ void Behavior::sendPSODebugMessages(vector<float> &positions) {
 }
 
 void Behavior::sendBFDebugMessages(vector<unsigned int> optimalMapping) {
-	
+
 	posInfo nextPos;
-	
+
 	for(unsigned int i = 0 ; i < optimalMapping.size() ; i++) {
 		nextPos = fGen.findRoleInfo(optimalMapping[i]);
-		
+
 		if(mdg.mapping_size() < (int)(i+1))
 			mdg.add_mapping();
-		
+
 		mdg.mutable_mapping(i)->set_x(nextPos.X);
 		mdg.mutable_mapping(i)->set_y(nextPos.Y);
 		mdg.mutable_mapping(i)->set_role(nextPos.role);
-		
+
 	}
 	_blk.publishSignal(mdg, "debug");
 }
