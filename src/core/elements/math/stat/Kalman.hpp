@@ -1,5 +1,5 @@
-#ifndef _KALMAN_H_
-#define _KALMAN_H_
+#ifndef KALMAN_HPP
+#define KALMAN_HPP
 #include "core/elements/math/KMat.hpp"
 namespace KMath
 {
@@ -159,4 +159,4 @@ class Kalman1D
 
 
 }
-#endif //_KALMAN_H_
+#endif //KALMAN_HPP
