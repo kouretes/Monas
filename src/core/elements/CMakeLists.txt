@@ -10,7 +10,10 @@ set(ELEMENT_SRCS
       math/Common.hpp
       math/KMat.hpp
       math/Quaternion.hpp
-      math/Specific.hpp
+      math/Combinatorics.hpp
+      math/stat/Kalman.hpp
+      math/stat/Cumulative.hpp
+      math/stat/MovingAverage.hpp
       math/optimization/IPenaltyFunction.hpp
       math/optimization/ITwiceDiffFunction.hpp
       math/optimization/IDiffFunction.hpp

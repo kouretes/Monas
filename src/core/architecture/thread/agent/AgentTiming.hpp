@@ -7,9 +7,9 @@
 #include <string>
 #include <map>
 
-#include "tools/statMovingAverage.h"
+#include "core/elements/math/stat/MovingAverage.hpp"
 
-#include "tools/stopWatch.h"
+#include "core/architecture/time/StopWatch.hpp"
 
 class IActivity;
 

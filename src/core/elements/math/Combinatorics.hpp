@@ -1,5 +1,5 @@
-#ifndef SPECIFIC_HPP
-#define SPECIFIC_HPP
+#ifndef COMBINATORICS_HPP
+#define COMBINATORICS_HPP
 
 #include <math.h>
 #include <limits>
@@ -11,7 +11,7 @@ using std::fill;
 using std::runtime_error;
 
 namespace KMath {
-	namespace Specific {
+	namespace Combinatorics {
 
 		/**
 		 * Exception class for cases that k combinations of n are required and k is greater than n!
@@ -103,4 +103,4 @@ namespace KMath {
 	};
 };
 
-#endif
+#endif //COMBINATORICS_HPP

@@ -1,7 +1,10 @@
-#ifndef _CUMULATIVE_H_
-#define _CUMULATIVE_H_
+#ifndef CUMULATIVE_HPP
+#define CUMULATIVE_HPP
 #include <cstddef>
 #include "core/elements/math/KMat.hpp"
+
+namespace KMath
+{
 
 
 class sample_counter
@@ -47,6 +50,6 @@ public:
 
 };
 
+}
 
-
-#endif //_CUMULATIVE_H_
+#endif // CUMULATIVE_HPP

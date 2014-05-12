@@ -1,7 +1,7 @@
 //Based on profiler by: Copyright (c) 2005 Christopher Diggins
-
-#ifndef __PROFILER_HPP__
-#define __PROFILER_HPP__
+//copyright : vosk
+#ifndef PROFILER_HPP
+#define PROFILER_HPP
 
 
 
@@ -272,4 +272,4 @@ namespace KProfiling
 #endif
 
 
-#endif // #ifndef __PROFILER_HPP__
+#endif // #ifndef PROFILER_HPP
