@@ -7,13 +7,13 @@ namespace KMath
 {
 
 
-class sample_counter
+class SampleCounter
 {
 public:
 	static const size_t MAXI = 65534;
 	static const size_t MINI = 32767;
 	size_t i;
-	sample_counter() : i(0) {}
+	SampleCounter() : i(0) {}
 	void inc()
 	{
 		i = i + 1 >= MAXI ? MINI : i + 1;
@@ -23,13 +23,13 @@ public:
 
 };
 template<typename T>
-class cumulative_central_moments
+class CumulativeCentralMoments
 {
 private:
 	T avg;
 	T sqavg;
 public:
-	cumulative_central_moments() : avg(0), sqavg(0) {}
+	CumulativeCentralMoments() : avg(0), sqavg(0) {}
 	T read_mean()
 	{
 		return avg;
@@ -42,7 +42,7 @@ public:
 	{
 		return fabs(sqavg - avg * avg);
 	}
-	void update(const T  v, sample_counter const& s )
+	void update(const T  v, KMath::SampleCounter const& s )
 	{
 		avg += (v - avg) / ((T)s.i);
 		sqavg += ((v * v) - sqavg) / ((T)s.i);
