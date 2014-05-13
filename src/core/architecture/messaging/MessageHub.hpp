@@ -27,9 +27,9 @@
 #include <vector>
 #include <set>
 
-#include "hal/Mutex.hpp"
-#include "hal/CondVar.hpp"
-#include "hal/Thread.hpp"
+#include "hal/SystemMutex.hpp"
+#include "hal/SystemCondVar.hpp"
+#include "hal/SystemThread.hpp"
 #include "hal/syscall.h"
 
 
@@ -52,7 +52,7 @@ MessageHub class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
 
 */
-class MessageHub : public KSystem::Thread
+class MessageHub : public KSystem::SystemThread
 {
 
 public:
@@ -68,7 +68,7 @@ public:
 	virtual int Execute();
 	inline void requestMailMan( MessageBuffer  * m)
 	{
-		KSystem::Mutex::scoped_lock cvlock(cond_mutex);
+		KSystem::SystemMutex::scoped_lock cvlock(cond_mutex);
 
 		if(m!=NULL && cond_publishers.find(m) == cond_publishers.end())
 		{
@@ -84,7 +84,7 @@ private:
 	StringRegistry pubsubRegistry;
 
 
-	KSystem::Mutex pub_sub_mutex;
+	KSystem::SystemMutex pub_sub_mutex;
 	//Locked by pub_sub_mutex;
 	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
 	std::vector<std::set<MessageBuffer*> > publisherbuffers, subscriberBuffers; //Maps pubsubregistry ids to Buffers
@@ -92,10 +92,10 @@ private:
 
 
 	//Waking up stuff
-	KSystem::Mutex  cond_mutex;
+	KSystem::SystemMutex  cond_mutex;
 	std::set<MessageBuffer*> cond_publishers;
 	std::vector<MessageBuffer*> cond_publishers_queue;
-	KSystem::CondVar cond;
+	KSystem::SystemCondVar cond;
 
 	StopWatch<> agentStats;
 

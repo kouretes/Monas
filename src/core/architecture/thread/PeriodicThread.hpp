@@ -3,7 +3,7 @@
 
 #include "ThreadConfig.hpp"
 
-#include "hal/Thread.hpp"
+#include "hal/SystemThread.hpp"
 #include "hal/syscall.h"
 #include "hal/smart_timer.h"
 
@@ -13,13 +13,13 @@
 
 namespace KSystem
 {
-	class PeriodicThread : public Thread
+	class PeriodicThread : public SystemThread
 	{
 
 	public:
 
 
-		PeriodicThread ( ThreadConfig &c, bool start = false ) : Thread(start)
+		PeriodicThread ( ThreadConfig &c, bool start = false ) : SystemThread(start)
 		{
 			IsRealTime = c.IsRealTime;
 			Priority = c.Priority;

@@ -1,19 +1,19 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#ifndef SYSTEMTHREADPOOL_HPP
+#define SYSTEMTHREADPOOL_HPP
 
 #include "core/architecture/executable/IExecutable.hpp"
 
 
 #include "../external/threadpool-0_2_5-src/threadpool/boost/threadpool.hpp"
 
-class ThreadPool
+class SystemThreadPool
 {
 
 public:
 
 	//            ThreadPool ( int numOfThreads ); //TODO add thread config
 
-	ThreadPool () : _pool(10)
+	SystemThreadPool () : _pool(10)
 	{
 		;
 	}
@@ -32,4 +32,4 @@ private:
 };
 
 
-#endif /* THREADPOOL_H_ */
+#endif /* SYSTEMTHREADPOOL_HPP */

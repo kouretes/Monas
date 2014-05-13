@@ -18,8 +18,6 @@
 
 #include "hal/robot/nao/generic_nao/robot_consts.h"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-
 #include "FormationGenerator.h"
 #include "Utility.h"
 #include "PSO.h"

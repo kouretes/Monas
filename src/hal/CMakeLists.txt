@@ -4,11 +4,10 @@ message ( STATUS "" )
 
 
 set(HAL_SRCS
-      Thread.hpp
-      threadable.h
-      threadPool.h
-      Mutex.hpp
-      CondVar.hpp
+      SystemThread.hpp
+      SystemThreadPool.hpp
+      SystemMutex.hpp
+      SystemCondVar.hpp
 )
 
 add_custom_target(Monas-hal SOURCES ${HAL_SRCS}  )

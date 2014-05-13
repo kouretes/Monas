@@ -1,29 +1,25 @@
-#ifndef THREAD_HPP
-#define THREAD_HPP
+#ifndef SYSTEMTHREAD_HPP
+#define SYSTEMTHREAD_HPP
 
 #include "core/architecture/executable/IExecutable.hpp"
 #include <boost/thread.hpp>
 
 
-
-
-
-
 namespace KSystem
 {
 
-	class Thread : public IExecutable
+	class SystemThread : public IExecutable
 	{
 
 	public:
 
-		Thread ( bool start = false ) : running(false)
+		SystemThread ( bool start = false ) : running(false)
 		{
 			if ( start )
 				StartThread();
 		}
 
-		virtual ~Thread()
+		virtual ~SystemThread()
 		{
 			;
 		}
@@ -36,7 +32,7 @@ namespace KSystem
 		virtual void StartThread()
 		{
 			running = true;
-			bThread = boost::thread( &Thread::startHelper , this);
+			bThread = boost::thread( &SystemThread::startHelper , this);
 		}
 
 		virtual void StopThread()
@@ -72,4 +68,4 @@ namespace KSystem
 
 };
 
-#endif // _thread_h_
+#endif // SYSTEMTHREAD_HPP

@@ -3,8 +3,8 @@
 #include <string>
 
 #include "core/architecture/messaging/EndPoint.hpp"
-#include "hal/Thread.hpp"
-#include "hal/Mutex.hpp"
+#include "hal/SystemThread.hpp"
+#include "hal/SystemMutex.hpp"
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
 #include "rawPacketDePacket.h"
@@ -20,7 +20,7 @@
 namespace KNetwork
 {
 
-	class MulticastPoint : public EndPoint, private KSystem::Thread
+	class MulticastPoint : public EndPoint, private KSystem::SystemThread
 	{
 	public:
 		MulticastPoint(std::string const& name, unsigned payloadsize);
@@ -76,7 +76,7 @@ namespace KNetwork
 		void cleanupLocalSubscriptions();
 
 
-		KSystem::Mutex  mut;
+		KSystem::SystemMutex  mut;
 
 
 		//Random Early Detection... for outgoing only

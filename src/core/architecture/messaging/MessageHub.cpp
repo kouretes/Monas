@@ -34,7 +34,7 @@ using std::string;
 using namespace std;
 using namespace KSystem;
 
-MessageHub::MessageHub() : Thread(false),
+MessageHub::MessageHub() : SystemThread(false),
 	multicast(NULL), pubsubRegistry(), pub_sub_mutex(), subscriptions(), publisherbuffers(), subscriberBuffers(),
 	cond_mutex(), cond_publishers(), cond_publishers_queue(), cond(), agentStats()
 {
@@ -76,7 +76,7 @@ void MessageHub::purgeBuffer(MessageBuffer *b)
 	if(b == NULL)
 		return;
 
-	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
+	SystemMutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 	std::vector< std::set<MessageBuffer*> >::iterator mit = subscriptions.begin();
 
 	for(; mit != subscriptions.end(); ++mit)
@@ -89,7 +89,7 @@ void MessageHub::purgeBuffer(MessageBuffer *b)
 }
 MessageBuffer* MessageHub::makeWriteBuffer(std::string const& s)
 {
-	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
+	SystemMutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 	size_t newid = pubsubRegistry.registerNew(s);
 	publisherbuffers.resize(pubsubRegistry.size() + 1);
 	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
@@ -101,7 +101,7 @@ MessageBuffer* MessageHub::makeWriteBuffer(std::string const& s)
 
 MessageBuffer* MessageHub::makeReadBuffer(std::string const& s)
 {
-	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
+	SystemMutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 	size_t newid = pubsubRegistry.registerNew(s);
 	subscriberBuffers.resize(pubsubRegistry.size() + 1);
 	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
@@ -145,7 +145,7 @@ void MessageHub::process_queued_msg()
 {
 	std::vector<MessageBuffer *> toprocess;
 	/* LOCKING */
-	Mutex::scoped_lock cond_lock(cond_mutex);
+	SystemMutex::scoped_lock cond_lock(cond_mutex);
 
 	while(cond_publishers.size() == 0)
 		cond.wait(cond_lock);
@@ -168,7 +168,7 @@ void MessageHub::process_queued_msg()
 		std::vector<msgentry> mtp = (*pit)->remove();
 		// cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
 		const std::size_t pownerid = (*pit)->getOwnerID();
-		Mutex::scoped_lock pub_sub_mutexlock(pub_sub_mutex);
+		SystemMutex::scoped_lock pub_sub_mutexlock(pub_sub_mutex);
 
 		for(std::vector<msgentry>::iterator mit = mtp.begin(); mit != mtp.end(); ++mit)
 		{

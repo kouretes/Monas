@@ -1,8 +1,8 @@
 #ifndef IDLINGTHREAD_HPP
 #define IDLINGTHREAD_HPP
 
-#include "hal/CondVar.hpp"
-#include "hal/Mutex.hpp"
+#include "hal/SystemCondVar.hpp"
+#include "hal/SystemMutex.hpp"
 #include "PeriodicThread.hpp"
 
 namespace KSystem
@@ -27,13 +27,13 @@ namespace KSystem
 
 		void wakeUpThread()
 		{
-			KSystem::Mutex::scoped_lock cvlock(mutexCondSleeponit);
+			KSystem::SystemMutex::scoped_lock cvlock(mutexCondSleeponit);
 			running=true;
 			condSleeponit.notify_one();
 		}
 		void idleThread()
 		{
-			KSystem::Mutex::scoped_lock cvlock(mutexCondSleeponit);
+			KSystem::SystemMutex::scoped_lock cvlock(mutexCondSleeponit);
 			running=false;
 		}
 	protected:
@@ -42,7 +42,7 @@ namespace KSystem
 			while(idling)
 			{
 				PeriodicThread::startHelper();
-				Mutex::scoped_lock cond_lock(mutexCondSleeponit);
+				SystemMutex::scoped_lock cond_lock(mutexCondSleeponit);
 				while(running==false)
 					condSleeponit.wait(cond_lock);
 
@@ -54,8 +54,8 @@ namespace KSystem
 
 		}
 		virtual const std::string GetName() const = 0;
-		CondVar condSleeponit;
-		Mutex   mutexCondSleeponit;
+		SystemCondVar condSleeponit;
+		SystemMutex   mutexCondSleeponit;
 		bool idling;
 
 

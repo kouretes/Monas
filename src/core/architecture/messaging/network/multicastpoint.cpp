@@ -19,7 +19,7 @@ namespace KNetwork
 
 
 	MulticastPoint::MulticastPoint(std::string const& name, unsigned payloadsize) :
-		EndPoint(name), Thread(false) ,
+		EndPoint(name), SystemThread(false) ,
 		rio(), sio(), senderwork(sio), multireceive(rio),
 		multisend(sio), timer_(rio), payloadsize_(payloadsize),
 		cleanupandbeacon(10), otherHosts(), localsubscriptions(), uni(boost::mt19937(),  boost::uniform_real<>(0, 1))
@@ -178,7 +178,7 @@ namespace KNetwork
 		}
 
 		{
-			Mutex::scoped_lock data_lock(mut);
+			SystemMutex::scoped_lock data_lock(mut);
 			queuesize--;
 		}
 
@@ -426,7 +426,7 @@ namespace KNetwork
 		packet pack = msgentryToBytes(m); //Serialize msgentry
 		//std::cout<<"New set"<<std::endl;
 		{
-			Mutex::scoped_lock data_lock(mut);
+			SystemMutex::scoped_lock data_lock(mut);
 			queuesize++;
 		}
 		//std::cout<<"Pending:"<<queuesize<<std::endl;
