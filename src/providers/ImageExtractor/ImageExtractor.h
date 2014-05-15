@@ -10,7 +10,6 @@
 #include "core/include/IProvider.hpp"
 #include "core/include/Blackboard.hpp"
 #include "hal/robot/nao/generic_nao/KImageExtractor.h"
-#include "hal/smart_timer.h"
 #include "messages/Kimage.pb.h"
 
 
@@ -44,8 +43,6 @@ private:
 	Blackboard _blk;
 
 	KImageExtractor imext;
-
-	KSystem::smart_timer t;
 
 	KImageConst imstore;
 	KRawImage outmsg;

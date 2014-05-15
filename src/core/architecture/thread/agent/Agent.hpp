@@ -51,7 +51,7 @@ private:
 
 	ActivList _activities; //in execution order
 
-	AgentTiming agentStats;
+	KSystem::AgentTiming agentStats;
 
 	unsigned int _statsCycle;
 

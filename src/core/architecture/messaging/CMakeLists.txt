@@ -27,7 +27,7 @@ set(NETWORK_SRCS
 )
 
 #setting default module path for cmake finding .cmake files
-set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake {CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 #Setting the configuration Directory where all the .cmake are stored it's the same as CMAKE_MODULE_PATH
 set (ConfigDir ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(cmake/external_dependencies.cmake)

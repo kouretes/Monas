@@ -8,6 +8,7 @@ set(HAL_SRCS
       SystemThreadPool.hpp
       SystemMutex.hpp
       SystemCondVar.hpp
+      SystemClock.hpp
 )
 
 add_custom_target(Monas-hal SOURCES ${HAL_SRCS}  )

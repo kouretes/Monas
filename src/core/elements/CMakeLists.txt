@@ -32,6 +32,7 @@ set(ELEMENT_SRCS
       KStandard.hpp
       Logger.hpp
       vision/KImage.h
+      IClonableCRTP.hpp
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

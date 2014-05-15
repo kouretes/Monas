@@ -36,7 +36,7 @@ using namespace KSystem;
 
 MessageHub::MessageHub() : SystemThread(false),
 	multicast(NULL), pubsubRegistry(), pub_sub_mutex(), subscriptions(), publisherbuffers(), subscriberBuffers(),
-	cond_mutex(), cond_publishers(), cond_publishers_queue(), cond(), agentStats()
+	cond_mutex(), cond_publishers(), cond_publishers_queue(), cond(), hubstats()
 {
 	subscriptions.resize(Topics::Instance().size() + 1); //Force Generation of instance and resize subscription vector
 	string multicastip = "";
@@ -160,7 +160,7 @@ void MessageHub::process_queued_msg()
 	static int _executions = 0;
 	static int msgs = 0;
 	_executions ++;
-	agentStats.StartTiming();
+	hubstats.StartTiming();
 	std::map<MessageBuffer *, std::vector<msgentry> > ready;
 
 	for(std::vector<MessageBuffer *>::iterator pit = toprocess.begin(); pit != toprocess.end(); ++pit)
@@ -240,12 +240,12 @@ void MessageHub::process_queued_msg()
 
 	if ( ! (_executions % 10000) )
 	{
-		cout << "Narukom time " << agentStats.StopTiming() / msgs << endl;
+		cout << "Narukom time " << hubstats.StopTiming() / msgs << endl;
 		_executions = 0;
 		msgs = 0;
 	}
 	else
-		agentStats.StopTiming();
+		hubstats.StopTiming();
 }
 
 

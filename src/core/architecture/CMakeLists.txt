@@ -28,6 +28,11 @@ add_library ( MonasCore ${LibBuildType}
 			configurator/ConfigNode.cpp
 			time/StopWatch.hpp
 			time/Profiler.hpp
+			time/SystemClockProvider.hpp
+			time/SystemClockProvider.cpp
+			time/IClock.hpp
+			time/TimeTypes.hpp
+			time/Timer.hpp
 			talws.h
 			talws.cpp
 			statechartWrapper.h

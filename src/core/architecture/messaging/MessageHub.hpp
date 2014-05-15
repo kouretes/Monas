@@ -97,7 +97,7 @@ private:
 	std::vector<MessageBuffer*> cond_publishers_queue;
 	KSystem::SystemCondVar cond;
 
-	StopWatch<> agentStats;
+	KSystem::Time::StopWatch<> hubstats;
 
 	void subscribeTo(std::size_t subid, std::size_t  topic , int where);
 	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);

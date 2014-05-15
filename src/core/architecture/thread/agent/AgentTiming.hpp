@@ -12,64 +12,66 @@
 #include "core/architecture/time/StopWatch.hpp"
 
 class IActivity;
-
-class AgentTiming
+namespace KSystem
 {
-public:
+    class AgentTiming
+    {
+    public:
 
-	AgentTiming ()
-	{
-		//TODO Get Alpha from XML
-	}
+        AgentTiming ()
+        {
+            //TODO Get Alpha from XML
+        }
 
-	void StartAgentTiming ()
-	{
-		agentStats.StartTiming();
-	}
+        void StartAgentTiming ()
+        {
+            agentStats.StartTiming();
+        }
 
-	double  StopAgentTiming()
-	{
-		return agentStats.StopTiming();
-	}
+        double  StopAgentTiming()
+        {
+            return agentStats.StopTiming();
+        }
 
 
-	double GetAgentAvgExecTime ()
-	{
-		return agentStats.GetAvg();
-	}
+        double GetAgentAvgExecTime ()
+        {
+            return agentStats.GetAvg();
+        }
 
-	double GetAgentVarExecTime ()
-	{
-		return agentStats.GetVar();
-	}
+        double GetAgentVarExecTime ()
+        {
+            return agentStats.GetVar();
+        }
 
-	void StartActivityTiming ( IActivity * a )
-	{
-		activityStats[a].StartTiming();
-	}
+        void StartActivityTiming ( IActivity * a )
+        {
+            activityStats[a].StartTiming();
+        }
 
-	double StopActivityTiming ( IActivity * a )
-	{
-		return activityStats[a].StopTiming();
-	}
+        double StopActivityTiming ( IActivity * a )
+        {
+            return activityStats[a].StopTiming();
+        }
 
-	double GetActivityAvgExecTime ( IActivity * a )
-	{
-		return activityStats[a].GetAvg();
-	}
+        double GetActivityAvgExecTime ( IActivity * a )
+        {
+            return activityStats[a].GetAvg();
+        }
 
-	double GetActivityVarExecTime ( IActivity * a )
-	{
-		return activityStats[a].GetVar();
-	}
+        double GetActivityVarExecTime ( IActivity * a )
+        {
+            return activityStats[a].GetVar();
+        }
 
-private:
+    private:
 
-	StopWatch<> agentStats;
+        Time::StopWatch<> agentStats;
 
-	std::map<IActivity*, StopWatch<> > activityStats;
+        std::map<IActivity*, Time::StopWatch<> > activityStats;
 
-};
+    };
+}
 
 
 

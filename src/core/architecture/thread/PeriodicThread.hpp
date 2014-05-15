@@ -5,7 +5,8 @@
 
 #include "hal/SystemThread.hpp"
 #include "hal/syscall.h"
-#include "hal/smart_timer.h"
+#include "core/architecture/time/SystemClockProvider.hpp"
+#include "core/architecture/time/Timer.hpp"
 
 #include "core/include/Logger.hpp"
 
@@ -19,13 +20,14 @@ namespace KSystem
 	public:
 
 
-		PeriodicThread ( ThreadConfig &c, bool start = false ) : SystemThread(start)
+		PeriodicThread ( ThreadConfig &c, bool start = false ) :
+		SystemThread(start),
+		t(Time::SystemClockProvider::getSystemClock())
 		{
 			IsRealTime = c.IsRealTime;
 			Priority = c.Priority;
 			ThreadPeriod = c.ThreadPeriod;
 		}
-
 		void StartThread()
 		{
 			running = true;
@@ -38,7 +40,7 @@ namespace KSystem
 		{
 			while (running)
 			{
-				t.restart ();
+		        t.restart ();
 				this->Execute();
 				float el = t.elapsed();
 
@@ -48,7 +50,7 @@ namespace KSystem
 					SysCall::_usleep( (ThreadPeriod - el) * 1000000L );
 			}
 		}
-		KSystem::smart_timer t;
+		KSystem::Time::Timer t;
 
 		bool IsRealTime;
 
