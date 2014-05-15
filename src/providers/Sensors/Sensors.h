@@ -81,7 +81,7 @@ private:
 
 	struct buttonstate
 	{
-		boost::posix_time::ptime last_pressed;
+		KSystem::Time::TimeAbsolute last_pressed;
 		unsigned char last_val, count;
 	};
 	std::vector<struct buttonstate> buttonevnts;

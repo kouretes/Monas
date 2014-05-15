@@ -8,7 +8,7 @@
 #define NAOCAMERA_H
 
 #include <linux/videodev2.h>
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #ifndef V4L2_CID_AUTOEXPOSURE
 #  define V4L2_CID_AUTOEXPOSURE     (V4L2_CID_BASE+32)
@@ -111,7 +111,7 @@ enum  v4l2_exposure_auto_type {
 #define NAO_LOWER_CAMERA 0x02
 #define NAO_UPPER_CAMERA 0x01
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <core/architecture/time/TimeTypes.hpp>
 
 
 //#define USE_USERPTR
@@ -150,7 +150,7 @@ public:
 	* Timestamp of the last captured image.
 	* \return The timestamp.
 	*/
-	boost::posix_time::ptime getTimeStamp() const;
+	KSystem::Time::TimeAbsolute getTimeStamp() const;
 
 	unsigned char  switchToUpper();
 	unsigned char switchToLower();
@@ -208,7 +208,7 @@ private:
 	int memLength[frameBufferCount]; /**< The length of each frame buffer. */
 	struct v4l2_buffer *buf; /**< Reusable parameter struct for some ioctl calls. */
 	struct v4l2_buffer *currentBuf; /**< The last dequeued frame buffer. */
-	boost::posix_time::ptime timeStamp; /**< Timestamp of the last captured image. */
+	KSystem::Time::TimeAbsolute timeStamp; /**< Timestamp of the last captured image. */
 
 
 

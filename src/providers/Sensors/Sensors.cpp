@@ -264,8 +264,8 @@ void Sensors::synchronisedDCMcallback()
 	newptr->CopyFrom(ASM);
 	nmsg.msg.reset(newptr);
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	//nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+	//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
 	nmsg.timestamp = now;
 	nmsg.topic = sensorstopicid;
 	//nmsg.publisher=Publisher::getName();
@@ -279,8 +279,8 @@ void Sensors::synchronisedDCMcallback()
 		newptr->CopyFrom(BM);
 		nmsg.msg.reset(newptr);
 		nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-		boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-		//nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
+		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+		//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
 		nmsg.timestamp = now;
 		nmsg.topic = buttoneventstopicid;
 		//nmsg.publisher=Publisher::getName();
@@ -306,7 +306,7 @@ void Sensors::initialization()
 	sensorValues.assign(sensorKeys.size(), 0);
 	buttonValues.assign(buttonKeys.size(), 0);
 	struct buttonstate t;
-	t.last_pressed = boost::posix_time::microsec_clock::universal_time();
+	t.last_pressed = KSystem::Time::SystemTime::now();
 	t.last_val = KDeviceLists::Interpret::BUTTON_PRESSED;
 	t.count = 0;
 	buttonevnts.assign(buttonKeys.size(), t);
@@ -373,10 +373,10 @@ void Sensors::initialization()
 bool Sensors::updateButtons()
 {
 	bool dispachevent = false;
-	boost::posix_time::ptime now, d, t;
-	now = boost::posix_time::microsec_clock::universal_time();
-	d = now - boost::posix_time::milliseconds(DEBOUNCE_MILLISEC);
-	t = now - boost::posix_time::milliseconds(MCLICKDISTANCE_MILLISEC);
+	KSystem::Time::TimeAbsolute now, d, t;
+	now = KSystem::Time::SystemTime::now();
+	d = now - KSystem::Time::milliseconds(DEBOUNCE_MILLISEC);
+	t = now - KSystem::Time::milliseconds(MCLICKDISTANCE_MILLISEC);
 
 	for(unsigned i = 0; i < buttonValues.size(); ++i)
 	{

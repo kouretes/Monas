@@ -56,8 +56,8 @@ namespace KNetwork
 		{
 			//hostid h;
 			std::string hostname;
-			boost::posix_time::time_duration timecorrection;
-			boost::posix_time::ptime lastseen;
+			KSystem::Time::TimeDuration timecorrection;
+			KSystem::Time::TimeAbsolute lastseen;
 			std::set<size_t> needsTopics;//Ie what I broadcast because this host needs it
 			std::set<size_t> providesTopics;//Ie what I receive from this host
 			/*bool operator== (const struct hostDescription & b) const {return h==b.h;	};

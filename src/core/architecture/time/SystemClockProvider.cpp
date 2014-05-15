@@ -1,5 +1,3 @@
-#ifndef SYSTEMCLOCKPROVIDER_HPP
-#define SYSTEMCLOCKPROVIDER_HPP
 #include "SystemClockProvider.hpp"
 #include "hal/SystemClock.hpp"
 namespace KSystem
@@ -16,5 +14,3 @@ namespace KSystem
 
 
 }
-
-#endif //SYSTEMCLOCKPROVIDER_HPP

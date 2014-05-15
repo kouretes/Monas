@@ -3,6 +3,8 @@
 #include "core/include/Logger.hpp"
 #include <boost/crc.hpp>
 
+
+#include "tools/toString.h"
 #include <fstream>
 #include <streambuf>
 

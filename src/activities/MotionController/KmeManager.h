@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "ISpecialAction.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/SystemTime.hpp"
 
 
 class KmeManager
@@ -20,23 +20,23 @@ public:
 		std::vector< std::vector<float> > seqMotion;
 	};
 
-	static boost::posix_time::ptime future_time;
+	static KSystem::Time::TimeAbsolute future_time;
 
-	static void set_end_time(boost::posix_time::ptime time)
+	static void set_end_time(KSystem::Time::TimeAbsolute time)
 	{
 		future_time = time;
 	}
 
 	static bool isDCMKmeRunning()
 	{
-		if(boost::posix_time::microsec_clock::universal_time() > future_time)
+		if(KSystem::Time::SystemTime::now() > future_time)
 		{
-			//	Logger::Instance().WriteMsg("KmeManager", "isDCMKmeRunning FALSE!!!!  " + _toString(future_time) + " " +  _toString(boost::posix_time::microsec_clock::universal_time()), Logger::ExtraInfo);
+			//	Logger::Instance().WriteMsg("KmeManager", "isDCMKmeRunning FALSE!!!!  " + _toString(future_time) + " " +  _toString(KSystem::Time::SystemTime::now()), Logger::ExtraInfo);
 			return false;
 		}
 		else
 		{
-			//Logger::Instance().WriteMsg("KmeManager", "isDCMKmeRunning TRUE!!!!  " + _toString(future_time) + " " +  _toString(boost::posix_time::microsec_clock::universal_time()), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("KmeManager", "isDCMKmeRunning TRUE!!!!  " + _toString(future_time) + " " +  _toString(KSystem::Time::SystemTime::now()), Logger::ExtraInfo);
 			return true;
 		}
 	}

@@ -1,7 +1,6 @@
 #ifndef KCAMERATRANSFORMATION_H
 #define KCAMERATRANSFORMATION_H
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/nao/generic_nao/aldebaran-kme.h"
 
 
@@ -10,7 +9,6 @@
 
 
 #define sqrd(x) ( (x)*(x) )
-//#include "boost/date_time/local_time/local_time.hpp"
 
 
 typedef  struct measurement_struct
@@ -55,7 +53,7 @@ typedef struct cameraPose
 	//float Vpitch;
 	float cameraPitch;
 	//unsigned  timediff;
-	//boost::posix_time::ptime time;//time of sensors
+	//KSystem::Time::TimeAbsolute time;//time of sensors
 	float focallength;//in pixels
 	float cameraX;
 	float cameraY;

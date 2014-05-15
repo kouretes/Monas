@@ -1,8 +1,10 @@
 #ifndef TIMETYPES_HPP
 #define TIMETYPES_HPP
 #include <stdint.h>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-
+#include "boost/date_time/posix_time/posix_time_duration.hpp"
+#include "boost/date_time/posix_time/posix_time_io.hpp"
+#include "boost/date_time/posix_time/time_parsers.hpp"
+#include "boost/date_time/posix_time/time_formatters.hpp"
 namespace KSystem
 {
 
@@ -38,6 +40,13 @@ namespace KSystem
                 ClockValue res;
                 res.p=p;
                 res.p-=rhs.p;
+                return res;
+            }
+             ClockValue operator +(ClockValue const& rhs) const
+            {
+                ClockValue res;
+                res.p=p;
+                res.p+=rhs.p;
                 return res;
             }
 

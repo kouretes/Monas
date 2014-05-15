@@ -14,6 +14,7 @@
    Boston, MA 02110-1301, USA.
 */
 #include "EndPoint.hpp"
+#include "core/architecture/time/SystemTime.hpp"
 #include "MessageBuffer.hpp"
 #include "TopicTree.hpp"
 
@@ -76,8 +77,8 @@ void EndPoint::publishData(const google::protobuf::Message & msg, std::string co
 	//cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	//nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+	//nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
 	nmsg.timestamp = now;
 	nmsg.topic = Topics::Instance().getId(topic);
 	//nmsg.publisher=Publisher::getName();
@@ -94,8 +95,8 @@ void EndPoint::publishSignal(const google::protobuf::Message & msg, std::string 
 	//cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	//nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+	//nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
 	nmsg.timestamp = now;
 	nmsg.topic = Topics::Instance().getId(topic);
 	//nmsg.publisher=Publisher::getName();
@@ -112,8 +113,8 @@ void EndPoint::publishState(const google::protobuf::Message & msg, std::string c
 	//cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	//nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+	//nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
 	nmsg.timestamp = now;
 	nmsg.topic = Topics::Instance().getId(topic);
 	//nmsg.publisher=Publisher::getName();

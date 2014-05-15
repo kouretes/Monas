@@ -5,6 +5,7 @@
 #include "core/include/Logger.hpp"
 #include "core/elements/math/KMat.hpp"
 //#include "hal/syscall.h"
+#include "core/architecture/time/TimeTypes.hpp"
 #include <vector>
 
 #include "hal/robot/nao/generic_nao/robot_consts.h"
@@ -65,7 +66,7 @@ void Vision::Reset(){
 		delete conffile;
 	}
 
-	stamp = boost::posix_time::microsec_clock::universal_time();
+	stamp = KSystem::Time::SystemTime::now();
 	seg = segbottom;
 	config.sensordelay =  atoi(Configurator::Instance().findValueForKey("vision.sensordelay").c_str());
 	config.Dfov = atof(Configurator::Instance().findValueForKey("vision.Dfov").c_str());
@@ -117,7 +118,7 @@ void Vision::fetchAndProcess()
 	obs.Clear();
 	vdm.Clear();
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
-	boost::posix_time::ptime oldstamp = stamp;
+	KSystem::Time::TimeAbsolute oldstamp = stamp;
 	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
 	if(stamp <= oldstamp)
 		return ;
@@ -129,11 +130,11 @@ void Vision::fetchAndProcess()
 	//Remove constness, tricky stuff :/
 	rawImage.copyFrom(img->image_rawdata().data(),
 	                  img->width(), img->height(), img->bytes_per_pix());
-	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
-	vdm.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
+	obs.set_image_timestamp(KSystem::Time::to_iso_string(stamp));
+	vdm.set_image_timestamp(KSystem::Time::to_iso_string(stamp));
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
-	stamp += boost::posix_time::millisec(config.sensordelay);
+	stamp += KSystem::Time::millisec(config.sensordelay);
 
 	if (img->active_camera() == KRawImage::BOTTOM)//bottom cam
 	{
@@ -166,12 +167,12 @@ void Vision::fetchAndProcess()
 	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timeo, &stamp, Blackboard::DATA_NEAREST_NOTNEWER);
 	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp, Blackboard::DATA_NEAREST_NOTOLDER);
 #ifdef DEBUGVISION
-	cout << "ImageTimestamp:" << boost::posix_time::to_iso_string(stamp) << endl;
-	cout << "Now:" << boost::posix_time::microsec_clock::universal_time() << endl;
-	cout << "SensorTimestamp:" << boost::posix_time::to_iso_string(timeo) << "," << boost::posix_time::to_iso_string(timen) << endl;
-	//	boost::posix_time::ptime t;
+	cout << "ImageTimestamp:" << KSystem::Time::to_iso_string(stamp) << endl;
+	cout << "Now:" << KSystem::Time::SystemTime::now() << endl;
+	cout << "SensorTimestamp:" << KSystem::Time::to_iso_string(timeo) << "," << KSystem::Time::to_iso_string(timen) << endl;
+	//	KSystem::Time::TimeAbsolute t;
 	//	_blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
-	//	cout << "Lasttimestamp:"<< boost::posix_time::to_iso_string(t) << endl;
+	//	cout << "Lasttimestamp:"<< KSystem::Time::to_iso_string(t) << endl;
 #endif
 
 	if (asvmn.get() == NULL || asvmo.get() == NULL) //No sensor data!

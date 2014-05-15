@@ -101,8 +101,6 @@ private:
 
 	void subscribeTo(std::size_t subid, std::size_t  topic , int where);
 	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
-
-	//Recursive call, UNLOCKED
 };
 
 #endif // MESSAGE_HUB_H

@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "NaoCamera.h"
 
 #include "core/elements/vision/KImage.h"
@@ -28,7 +27,7 @@ public:
 
 	~KImageExtractor();
 	//Get new Image from hardware
-	boost::posix_time::ptime fetchImage(KImageConst & img);
+	KSystem::Time::TimeAbsolute fetchImage(KImageConst & img);
 	//Create new space for image
 	float calibrateCamera(int sleeptime = 500, int exp = 15);
 	float getExpUs() const;

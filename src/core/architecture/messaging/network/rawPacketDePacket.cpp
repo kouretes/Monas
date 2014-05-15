@@ -1,5 +1,7 @@
 
 #include "rawPacketDePacket.h"
+#include "core/architecture/time/SystemTime.hpp"
+// Required for hton*
 #include  <boost/asio.hpp>
 #include <vector>
 using namespace std;
@@ -151,7 +153,7 @@ namespace KNetwork
 		if(ph.flags & PACKETFLAG_FRISTPACKET)
 			pm.totalpackets = ph.number + 1;
 
-		pm.lastupdate = boost::posix_time::microsec_clock::universal_time();
+		pm.lastupdate = KSystem::Time::SystemTime::now();
 
 		//if(ph.number==0)
 		//std::cout<<"Host:"<<(ph.hid)<<" messageid:"<<(int)(ph.mid)<<" Number:"<<(ph.number)
@@ -200,9 +202,9 @@ namespace KNetwork
 	}
 
 
-	void RawDepacketizer::cleanOlderThan(boost::posix_time::time_duration t)
+	void RawDepacketizer::cleanOlderThan(KSystem::Time::TimeDuration t)
 	{
-		boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 		std::map<hostid, hostMessages>::iterator hit = pending.begin();
 
 		for(; hit != pending.end(); hit++)

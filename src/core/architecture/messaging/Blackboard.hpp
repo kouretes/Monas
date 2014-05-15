@@ -17,6 +17,7 @@
 #ifndef BLACKBOARD_HPP
 #define BLACKBOARD_HPP
 #include "msg.h"
+#include "core/architecture/time/SystemTime.hpp"
 #include "EndPoint.hpp"
 #include "core/elements/StringRegistry.hpp"
 #include "TopicTree.hpp"
@@ -46,11 +47,11 @@ public:
 	    DATA_NEAREST, DATA_NEAREST_NOTOLDER, DATA_NEAREST_NOTNEWER
 	} ;
 	template<class Data>
-	boost::shared_ptr<const Data> readData(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, boost::posix_time::ptime* const tmp = 0 , boost::posix_time::ptime const* const time_req = 0, DataReq dtype = DATA_NEAREST);
+	boost::shared_ptr<const Data> readData(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 , KSystem::Time::TimeAbsolute const* const time_req = 0, DataReq dtype = DATA_NEAREST);
 	template<class Data>
-	boost::shared_ptr<const Data> readSignal(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, boost::posix_time::ptime* const tmp = 0 );
+	boost::shared_ptr<const Data> readSignal(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
 	template<class Data>
-	boost::shared_ptr<const Data> readState(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, boost::posix_time::ptime* const tmp = 0 );
+	boost::shared_ptr<const Data> readState(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
 	void publishData(const google::protobuf::Message & msg, std::string const& topic);
 	void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
 	void publishState(const google::protobuf::Message &msg, std::string const& topic);
@@ -61,8 +62,8 @@ private:
 	typedef struct blackboard_record_s
 	{
 		boost::shared_ptr<const google::protobuf::Message > msg;
-		boost::posix_time::ptime timestamp;
-		//boost::posix_time::ptime timeoutstamp;
+		KSystem::Time::TimeAbsolute timestamp;
+		//KSystem::Time::TimeAbsolute timeoutstamp;
 		bool operator== (const struct blackboard_record_s & b) const
 		{
 			return msg == b.msg;
@@ -71,7 +72,7 @@ private:
 		{
 			return timestamp < b.timestamp;
 		};
-		bool operator<(const struct  boost::posix_time::ptime  &b) const
+		bool operator<(const KSystem::Time::TimeAbsolute  &b) const
 		{
 			return timestamp < b;
 		};
@@ -79,7 +80,7 @@ private:
 
 	//=== Data struct: list of records, alongside a list of timeouts
 	typedef std::set< brecord> recordlist;
-	typedef std::map<std::size_t, boost::posix_time::time_duration> datatimeouts;
+	typedef std::map<std::size_t, KSystem::Time::TimeDuration> datatimeouts;
 	typedef std::map<std::size_t, recordlist> datastruct;
 	//=== State struct : single record per type
 	typedef std::map<std::size_t, brecord> statestruct;
@@ -121,7 +122,7 @@ private:
 	typedef std::map<region_index, disjoint_region> regions;
 	regions allrecords;
 
-	//boost::posix_time::ptime cur_tmsp;
+	//KSystem::Time::TimeAbsolute cur_tmsp;
 	//To be published
 	std::vector<msgentry> topublish;
 	int cleanup();
@@ -133,8 +134,8 @@ private:
 
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, const std::size_t  host,
-        boost::posix_time::ptime* const tmp ,
-        boost::posix_time::ptime const * const time_req,
+        KSystem::Time::TimeAbsolute* const tmp ,
+        KSystem::Time::TimeAbsolute const * const time_req,
         DataReq dtype)
 {
 	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
@@ -178,7 +179,7 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, con
 	}
 
 	//Update timeout
-	boost::posix_time::time_duration nt = boost::posix_time::microsec_clock::universal_time() - *time_req;
+	KSystem::Time::TimeDuration nt = KSystem::Time::SystemTime::now() - *time_req;
 	nt *= TIMEOUTSCALE;
 
 	if((*rit).second.blkdatatimeouts.find(atypeid) == (*rit).second.blkdatatimeouts.end())
@@ -254,7 +255,7 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, con
 }
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  , boost::posix_time::ptime* tmp )
+boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
 {
 	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
@@ -288,7 +289,7 @@ boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, c
 }
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::size_t  host  , boost::posix_time::ptime* tmp )
+boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
 {
 	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;

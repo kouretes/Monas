@@ -2,14 +2,13 @@
 #define LOCALWORLDSTATE_H
 
 #include <string>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <pthread.h>
 #include <netinet/in.h>
 #include <math.h>
 #include <csignal>
 
 #include "core/include/IActivity.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 //#include "hal/robot/nao/generic_nao/robot_consts.h"
 
@@ -109,12 +108,12 @@ private:
 	void InputOutputLogger();
 
 	//Time variables
-	boost::posix_time::ptime timeStart, timeStop;
-	boost::posix_time::ptime lastObservationTime, gamePlaying;
-	boost::posix_time::ptime lastFilterTime;
-	boost::posix_time::ptime now;
-    boost::posix_time::ptime odometryMessageTime;
-    boost::posix_time::ptime debugMessageTime;
+	KSystem::Time::TimeAbsolute timeStart, timeStop;
+	KSystem::Time::TimeAbsolute lastObservationTime, gamePlaying;
+	KSystem::Time::TimeAbsolute lastFilterTime;
+	KSystem::Time::TimeAbsolute now;
+    KSystem::Time::TimeAbsolute odometryMessageTime;
+    KSystem::Time::TimeAbsolute debugMessageTime;
 	//Usefull for gui tools
 
 	int LocalizationDataForGUILoad();

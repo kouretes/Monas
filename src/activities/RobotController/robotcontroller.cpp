@@ -5,7 +5,7 @@
 #include "core/include/Logger.hpp"
 #include "tools/toString.h"
 
-using boost::posix_time::milliseconds;
+//using KSystem::Time::milliseconds;
 
 ACTIVITY_REGISTER(RobotController);
 RobotController::RobotController(Blackboard &b) : IActivity(b) , gm(game_data) //Initialize game controller with message pointer
@@ -21,7 +21,7 @@ void RobotController::UserInit()
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.publishState(gm_state, "worldstate");
 	LogEntry(LogLevel::Info,GetName()) << "Robot Controller Initialized" << std::endl;
-	lastalive = boost::posix_time::microsec_clock::universal_time();
+	lastalive = KSystem::Time::SystemTime::now();
 }
 
 void RobotController::Reset(){
@@ -32,12 +32,12 @@ int RobotController::Execute()
 	static int delay;
 	bool changed = false;
 	bool received = gm.poll();
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 
 	if(lastalive < now && received && gm_state.override_state() == OVERRIDE_DISABLED)
 	{
 		gm.SendAlive(conf.player_number() );
-		lastalive = now + milliseconds(ALIVEMS);
+		lastalive = now + KSystem::Time::milliseconds(ALIVEMS);
 	}
 
 	//Check if the msg changes from the outer world
@@ -64,7 +64,7 @@ int RobotController::Execute()
 		new_gm_state.set_penalty(game_data.teams[teamindx].players[conf.player_number() - 1].penalty);
 		new_gm_state.set_previous_player_state(gm_state.player_state());
 		new_gm_state.set_secs_remaining(game_data.secsRemaining);
-		
+
 		// Depreciated PLAYER_PENALISED State does not exist any more!
 		new_gm_state.set_player_state((game_data.teams[teamindx].players[conf.player_number() - 1].penalty == 0) ? game_data.state : PLAYER_PENALISED);
 

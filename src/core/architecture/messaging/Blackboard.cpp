@@ -1,9 +1,8 @@
 #include "Blackboard.hpp"
 #include "msg.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/SystemTime.hpp"
 using google::protobuf::Message;
-using boost::posix_time::ptime;
-using boost::posix_time::milliseconds;
+using namespace KSystem::Time;
 using std::string;
 
 
@@ -79,8 +78,8 @@ void Blackboard::process_messages()
 int Blackboard::cleanup()
 {
 	regions::iterator rit = allrecords.begin();
-	boost::posix_time::time_duration t;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	KSystem::Time::TimeDuration t;
+	KSystem::Time::TimeAbsolute now = SystemTime::now();
 
 	for(; rit != allrecords.end(); ++rit)
 	{
@@ -98,7 +97,7 @@ int Blackboard::cleanup()
 			}
 			else
 			{
-				boost::posix_time::ptime timeoutstamp = now - r.blkdatatimeouts[(*it).first];
+				KSystem::Time::TimeAbsolute timeoutstamp = now - r.blkdatatimeouts[(*it).first];
 				brecord ar;
 				ar.timestamp = timeoutstamp;
 				recordlist::iterator qit = q.upper_bound(ar);
@@ -148,8 +147,8 @@ void Blackboard::publishData(const google::protobuf::Message & msg, std::string 
 	//std::cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	//nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+	TimeAbsolute now =SystemTime::now();
+	//nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
 	nmsg.timestamp = now;
 	nrec.timestamp = now;
 	nmsg.topic = Topics::Instance().getId(topic);
@@ -183,7 +182,7 @@ void Blackboard::publishSignal(const google::protobuf::Message & msg, std::strin
 	//cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	TimeAbsolute now =SystemTime::now();
 	//nmsg.timeoutstamp=now;//Signal, no timeout
 	nmsg.timestamp = now;
 	nrec.timestamp = now;
@@ -215,7 +214,7 @@ void Blackboard::publishState(const google::protobuf::Message & msg, std::string
 	//cout<<"In:"<<&msg;
 	//cout<<"Copy:"<<nmsg.msg<<endl;
 	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	TimeAbsolute now =SystemTime::now();
 	//nmsg.timeoutstamp=now;//State, no timeout :)
 	nmsg.timestamp = now;
 	nrec.timestamp = now;

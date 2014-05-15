@@ -6,7 +6,7 @@
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
 
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "core/elements/factory/Factory.hpp"
 #include "core/elements/factory/Registrar.hpp"

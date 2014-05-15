@@ -8,6 +8,7 @@ set(INCLUDE_SRCS
       IActivity.hpp
       IProvider.hpp
       MessageHub.hpp
+      Configurator.hpp
       Logger.hpp
 )
 

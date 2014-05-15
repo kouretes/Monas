@@ -3,8 +3,8 @@
 #include <qi/os.hpp>
 #include "core/include/Logger.hpp"
 
-using boost::posix_time::ptime;
-static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970, 1, 1));
+using KSystem::Time::TimeAbsolute;
+static const  KSystem::Time::TimeAbsolute time_t_epoch( boost::gregorian::date(1970, 1, 1));
 
 using namespace AL;
 using namespace std;
@@ -51,7 +51,7 @@ void KImageExtractor::_releaseImage()
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
-boost::posix_time::ptime KImageExtractor::fetchImage(KImageConst & img)
+KSystem::Time::TimeAbsolute KImageExtractor::fetchImage(KImageConst & img)
 {
 	//cout << "Remote method off" << endl;
 	_releaseImage();

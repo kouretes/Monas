@@ -1,11 +1,11 @@
 #include "LedHandler.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "hal/robot/nao/generic_nao/kAlBroker.h"
+#include "core/architecture/time/SystemTime.hpp"
 #include "tools/toString.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 using std::string;
-using namespace boost::posix_time;
+using namespace KSystem::Time;
 
 PROVIDER_REGISTER(LedHandler);
 
@@ -147,12 +147,12 @@ void LedHandler::SetBatteryLevel()
 	}
 
 	battery_level = new_battery_level;
-	static ptime last_ledchange = microsec_clock::universal_time();
+	static ptime last_ledchange = KSystem::Time::SystemTime::now();
 
-	if(microsec_clock::universal_time() - last_ledchange < milliseconds(2000 / (1 + battery_level)))
+	if(KSystem::Time::SystemTime::now() - last_ledchange < milliseconds(2000 / (1 + battery_level)))
 		return ;
 
-	last_ledchange = microsec_clock::universal_time();
+	last_ledchange = KSystem::Time::SystemTime::now();
 	static bool ledonoff = false;
 	ledonoff = !ledonoff;
 	for(unsigned int i = 0; i < left_ear_names.size(); i++)

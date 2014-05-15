@@ -4,11 +4,13 @@
 #include "core/elements/math/Common.hpp"
 #include "core/elements/math/Combinatorics.hpp"
 #include "core/elements/KStandard.hpp"
+#include "core/architecture/time/SystemTime.hpp"
 #include <math.h>
 
 using namespace KMath;
 using namespace KStandard;
-using namespace boost::posix_time;
+using namespace KSystem::Time;
+
 using namespace std;
 using namespace FormationParameters;
 using namespace Utility;
@@ -81,16 +83,16 @@ void Behavior::UserInit() {
 		goToPositionFlag = false;
 
 	srand(time(0));
-	lastWalk = microsec_clock::universal_time();
-	lastPlay = microsec_clock::universal_time();
-	lastPenalised = microsec_clock::universal_time();
-	lastFormation = microsec_clock::universal_time();
-	dispTimer = microsec_clock::universal_time();
-    scanKickTime = microsec_clock::universal_time();
-    lastBumperPressed = microsec_clock::universal_time();
-	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
-	lastBallFound = microsec_clock::universal_time() - seconds(20);
-	lastScan = microsec_clock::universal_time() + seconds(3);
+	lastWalk = KSystem::Time::SystemTime::now();
+	lastPlay = KSystem::Time::SystemTime::now();
+	lastPenalised = KSystem::Time::SystemTime::now();
+	lastFormation = KSystem::Time::SystemTime::now();
+	dispTimer = KSystem::Time::SystemTime::now();
+    scanKickTime = KSystem::Time::SystemTime::now();
+    lastBumperPressed = KSystem::Time::SystemTime::now();
+	lastGoToCenter = KSystem::Time::SystemTime::now()- seconds(10);
+	lastBallFound = KSystem::Time::SystemTime::now() - seconds(20);
+	lastScan = KSystem::Time::SystemTime::now() + seconds(3);
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 }
@@ -215,9 +217,9 @@ int Behavior::Execute() {
 	else if (gameState == PLAYER_PLAYING) {
 
 		if(prevGameState == PLAYER_PENALISED) {
-			lastPenalised = microsec_clock::universal_time();
+			lastPenalised =KSystem::Time::SystemTime::now();
 			// Check if the penalized was a wrong decision
-			if(microsec_clock::universal_time() - penalisedStarted > seconds(10) || !gameMode){
+			if(KSystem::Time::SystemTime::now() - penalisedStarted > seconds(10) || !gameMode){
 				direction = 1;
 				locReset.set_type(LocalizationResetMessage::PENALISED);
 				locReset.set_kickoff(kickOff);
@@ -230,7 +232,7 @@ int Behavior::Execute() {
 			}
 		}
 		else if(prevGameState == PLAYER_SET) {
-			lastPlay = microsec_clock::universal_time();
+			lastPlay = KSystem::Time::SystemTime::now();
 		}
 
 		if(swim == 0 && config.playerNumber != 1) {
@@ -245,7 +247,7 @@ int Behavior::Execute() {
 		if(sharedBallFound == true && !penaltyMode) {
 		LogEntry(LogLevel::Info, GetName()) << "SHARED BALL";
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
-				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
+				(lastFormation + seconds(20) < KSystem::Time::SystemTime::now()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
 
 				coordinationCycle++;
@@ -289,18 +291,18 @@ int Behavior::Execute() {
 					goToPositionFlag = false;
 				}
 
-				lastFormation = microsec_clock::universal_time();
+				lastFormation = KSystem::Time::SystemTime::now();
 			}
 		}
 
-		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
+		if (lastPenalised + seconds(4) > KSystem::Time::SystemTime::now()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
 			return 0;
 		}
 
         if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
-            if (scanKickTime + seconds(2) < microsec_clock::universal_time())
+            if (scanKickTime + seconds(2) < KSystem::Time::SystemTime::now())
 			    scanAfterKick = false;
 
             stopRobot();
@@ -341,7 +343,7 @@ int Behavior::Execute() {
 
 					goToPositionFlag = true;
 
-		            lastBallFound = microsec_clock::universal_time();
+		            lastBallFound = KSystem::Time::SystemTime::now();
 					side = (ballBearing > 0) ? 1 : -1;
 
 		            double loppgb = anglediff2(atan2(config.oppGoalLeftY - robotY, config.oppGoalLeftX - robotX), robotPhi);
@@ -358,11 +360,11 @@ int Behavior::Execute() {
 					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY))
 						&& oppgb < M_PI_4
 						&& oppgb > -M_PI_4
-						&& lastBumperPressed + milliseconds(700) < microsec_clock::universal_time()){
+						&& lastBumperPressed + milliseconds(700) < KSystem::Time::SystemTime::now()){
 
 						readyToKick = true;
 						scanAfterKick = true;
-                        scanKickTime = microsec_clock::universal_time();
+                        scanKickTime = KSystem::Time::SystemTime::now();
 						//return 0; // do nothing!!!
 						kick();
 						direction = (side == +1) ? -1 : +1;
@@ -380,14 +382,14 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL NOT FOUND";
 
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
-					if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
+					if(lastPenalised + seconds(20) > KSystem::Time::SystemTime::now()) {
                     	pathPlanningRequest(3.0, 0.0, 0.0, false);
 					}
 					else {
 		            	if(sharedBallFound == true)
 		                	goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
 						else {
-							if(lastGoToCenter + seconds(10) > microsec_clock::universal_time()) {
+							if(lastGoToCenter + seconds(10) > KSystem::Time::SystemTime::now()) {
 		                            if(robotX < 0.0)
 		                                goToPosition(-fGen.Field.MaxX/2.0f, 0.0, 0.0);
 		                            else
@@ -395,14 +397,14 @@ int Behavior::Execute() {
 							}
 		                    else {
 		                        if(searchFlag) {
-		                            lastBallFound = microsec_clock::universal_time();
+		                            lastBallFound = KSystem::Time::SystemTime::now();
 		                            searchFlag = false;
 		                        }
 
-		                        if (lastBallFound + seconds(20) > microsec_clock::universal_time())
+		                        if (lastBallFound + seconds(20) > KSystem::Time::SystemTime::now())
 		                            littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 		                        else{
-		                            lastGoToCenter = microsec_clock::universal_time();
+		                            lastGoToCenter = KSystem::Time::SystemTime::now();
 		                            searchFlag = true;
 		                        }
 		                    }
@@ -420,7 +422,7 @@ int Behavior::Execute() {
 					else
 						goToPositionFlag = true;
 				}
-				else if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
+				else if(lastPenalised + seconds(20) > KSystem::Time::SystemTime::now()) {
                     	pathPlanningRequest(3.0, 0.0, 0.0, false);
 				}
 				else if(ballFound == 1) {
@@ -451,12 +453,12 @@ int Behavior::Execute() {
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 
-					if(lastScan + seconds(3) < microsec_clock::universal_time() && lastScan + seconds(8) > microsec_clock::universal_time()) {
+					if(lastScan + seconds(3) < KSystem::Time::SystemTime::now() && lastScan + seconds(8) > KSystem::Time::SystemTime::now()) {
 						littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 						return 0;
 					}
-					else if(lastScan + seconds(8) < microsec_clock::universal_time()) {
-						lastScan = microsec_clock::universal_time();
+					else if(lastScan + seconds(8) < KSystem::Time::SystemTime::now()) {
+						lastScan = KSystem::Time::SystemTime::now();
 					}
 
 					stopRobot();
@@ -483,7 +485,7 @@ int Behavior::Execute() {
 			if(!gameMode)
 				sendFormationDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-			lastFormation = microsec_clock::universal_time();
+			lastFormation = KSystem::Time::SystemTime::now();
 			locReset.set_type(LocalizationResetMessage::READY);
 			locReset.set_kickoff(kickOff);
 			_blk.publishSignal(locReset, "worldstate");
@@ -509,7 +511,7 @@ int Behavior::Execute() {
 			if(!gameMode)
 				sendFormationDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-			lastFormation = microsec_clock::universal_time();
+			lastFormation = KSystem::Time::SystemTime::now();
 		}
 
 		if(gameState != prevGameState) {
@@ -535,7 +537,7 @@ int Behavior::Execute() {
 		}
 
 		if(gameState != prevGameState) {
-			penalisedStarted = microsec_clock::universal_time();
+			penalisedStarted = KSystem::Time::SystemTime::now();
 			hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
 			_blk.publishState(hcontrol, "behavior");
 		}
@@ -658,7 +660,7 @@ void Behavior::checkIfBumperPressed(){
 		int lbump = bm->data(KDeviceLists::L_BUMPER_L) + bm->data(KDeviceLists::L_BUMPER_R);
 		int rbump = bm->data(KDeviceLists::R_BUMPER_L) + bm->data(KDeviceLists::R_BUMPER_R);
 		if(lbump == 1 || rbump == 1){
-			lastBumperPressed = microsec_clock::universal_time();
+			lastBumperPressed = KSystem::Time::SystemTime::now();
 		}
 	}
 }
@@ -714,7 +716,7 @@ void Behavior::getPSOData() {
 	for(unsigned int r = 0 ; r < mappings.size() ; r++) {
 		if(r+1 < mappings.size()) {
 			if(/*mappings[r].stamp - mappings[r+1].stamp).total_seconds() > 5*/ mappings[r].cycle != mappings[r+1].cycle
-				&& lastFormation + seconds(4) > microsec_clock::universal_time()) {
+				&& lastFormation + seconds(4) > KSystem::Time::SystemTime::now()) {
 				synchronization = false;
 				break;
 			}
@@ -917,7 +919,7 @@ void Behavior::updateOrientation() {
 
 void Behavior::kick() {
 
-	if(kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0) ) ) {
+	if(kickOff && (KSystem::Time::SystemTime::now() <= lastPlay + seconds(0) ) ) {
 		if(side == 1)
             amot.set_command(config.kicks.KickSideLeft);
         else
@@ -972,7 +974,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 		ct = 0.0;
 	}
 	else {
-		if( lastWalk + milliseconds(200) > microsec_clock::universal_time() )
+		if( lastWalk + milliseconds(200) > KSystem::Time::SystemTime::now() )
 			return;
 
 		x = (x > +1.0) ? +1.0 : x;
@@ -991,7 +993,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 	wmot.set_parameter(2, ct);
 	wmot.set_parameter(3, f);
 	_blk.publishSignal(wmot, "motion");
-	lastWalk = microsec_clock::universal_time();
+	lastWalk = KSystem::Time::SystemTime::now();
 }
 
 

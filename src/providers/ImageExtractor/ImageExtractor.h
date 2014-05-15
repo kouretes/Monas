@@ -24,7 +24,7 @@ public:
 		IProvider("ImageExtractor", c, n), _blk("ImageExtractorBlackboard"), imext()
 	{
 		_blk.attachTo(n);
-		lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
+		lastrefresh = KSystem::Time::SystemTime::now() - KSystem::Time::microseconds(camerarefreshmillisec + 10);
 		UserInit();
 	};
 	int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();
@@ -49,7 +49,7 @@ private:
 
 	boost::shared_ptr<const CalibrateCamMessage>  ccm;
 
-	boost::posix_time::ptime lastrefresh;
+	KSystem::Time::TimeAbsolute lastrefresh;
 };
 PROVIDER_END
 #endif

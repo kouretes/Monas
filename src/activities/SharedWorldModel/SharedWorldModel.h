@@ -4,7 +4,7 @@
 #include "core/include/IActivity.hpp"
 #include "core/elements/math/Common.hpp"
 #include "core/elements/math/KMat.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
@@ -78,10 +78,10 @@ private:
 */
 //    RobotPose robotStateEst[numOfRobots], robotPrevStateEst[numOfRobots];
 //	GlobalBall ballEst, prevBallEst;
-	boost::posix_time::ptime last_filter_time;
-	boost::posix_time::ptime last_ball_update_time;
-	boost::posix_time::ptime now;
-    boost::posix_time::time_duration duration;
+	KSystem::Time::TimeAbsolute last_filter_time;
+	KSystem::Time::TimeAbsolute last_ball_update_time;
+	KSystem::Time::TimeAbsolute now;
+    KSystem::Time::TimeDuration duration;
 
 
     //End Kalman

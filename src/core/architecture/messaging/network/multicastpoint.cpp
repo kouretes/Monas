@@ -1,10 +1,9 @@
 
 #include "multicastpoint.hpp"
 #include "core/include/Logger.hpp"
-
+#include "core/architecture/time/TimeTypes.hpp"
 #include "msgentryserialize.hpp"
 #include <boost/functional/hash.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <google/protobuf/descriptor.h>
 #include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
@@ -26,8 +25,8 @@ namespace KNetwork
 	{
 		//hash time and produce string
 		boost::hash<std::string> h;
-		boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-		thishost = h(boost::posix_time::to_iso_string(now)); //Generate random hostid from current time
+		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+		thishost = h(KSystem::Time::to_iso_string(now)); //Generate random hostid from current time
 		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
 		p.setHost(thishost );  //My host id is used to tag multicast messages
 		LogEntry(LogLevel::Info,"Multicast")<< "Multicast hostid:" <<(thishost);
@@ -100,7 +99,7 @@ namespace KNetwork
 			multireceive.set_option( boost::asio::ip::multicast::join_group(multicast_address));
 			multireceive.set_option( boost::asio::ip::multicast::hops(2));//Limit to two hop only, ie local+1
 			queue_receive();
-			timer_.expires_from_now(boost::posix_time::milliseconds(100));
+			timer_.expires_from_now(KSystem::Time::milliseconds(100));
 			timer_.async_wait(
 			    boost::bind(&MulticastPoint::handle_timeout, this,
 			                boost::asio::placeholders::error));
@@ -195,11 +194,11 @@ namespace KNetwork
 		{
 			//std::cout<<"timeout"<<std::endl;
 			canWarn = true; //Re enable send error warnings
-			boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+			KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 			{
 				//Clean old hosts first
 				std::map<hostid, hostDescription>::iterator  t, hit = otherHosts.begin();
-				boost::posix_time::ptime oldest = now - boost::posix_time::milliseconds(cleanupandbeacon * 4);
+				KSystem::Time::TimeAbsolute oldest = now - KSystem::Time::milliseconds(cleanupandbeacon * 4);
 
 				while(hit != otherHosts.end())
 				{
@@ -277,8 +276,8 @@ namespace KNetwork
 				m.host = msgentry::HOST_ID_LOCAL_HOST;
 				publish(m);
 			}
-			dep.cleanOlderThan(boost::posix_time::milliseconds(cleanupandbeacon * 2));
-			timer_.expires_from_now(boost::posix_time::milliseconds(cleanupandbeacon));
+			dep.cleanOlderThan(KSystem::Time::milliseconds(cleanupandbeacon * 2));
+			timer_.expires_from_now(KSystem::Time::milliseconds(cleanupandbeacon));
 			timer_.async_wait(
 			    boost::bind(&MulticastPoint::handle_timeout, this,
 			                boost::asio::placeholders::error));
@@ -468,7 +467,7 @@ namespace KNetwork
 		if(m.msg->GetTypeName() == "HostSubscriptions" && r.host != thishost)
 		{
 			hostDescription &hd = otherHosts[r.host];
-			hd.lastseen = boost::posix_time::microsec_clock::universal_time();
+			hd.lastseen = KSystem::Time::SystemTime::now();
 			hd.timecorrection = hd.lastseen - m.timestamp;
 			//std::cout<<"Found host:"<<r.host<<std::endl;
 			std::vector<msgentry> newsubscriptions;

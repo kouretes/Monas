@@ -28,7 +28,7 @@ using namespace KDeviceLists;
 
 MotionController::MotionController(Blackboard &b) : IActivity(b)
 {
-	waitfor = microsec_clock::universal_time() - hours(1);
+	waitfor = KSystem::Time::SystemTime::now() - hours(1);
 }
 
 void MotionController::UserInit()
@@ -123,7 +123,7 @@ void MotionController::UserInit()
 	sm.set_type(MotionStateMessage::IDLE);
 	sm.set_detail("");
 	sm.set_lastaction("");
-	standUpStartTime = boost::posix_time::microsec_clock::universal_time();
+	standUpStartTime = KSystem::Time::SystemTime::now();
 	walkingWithVelocity = false;
 	LogEntry(LogLevel::Info,GetName())<<"Initialization Completed";
 
@@ -147,7 +147,7 @@ int MotionController::Execute()
 	vector<float> CangleTemp(22);
 
 	/* Return if waiting time has not expired yet */
-	if (waitfor > microsec_clock::universal_time())
+	if (waitfor > KSystem::Time::SystemTime::now())
 		return 0;
 
 	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
@@ -226,7 +226,7 @@ int MotionController::Execute()
 			_blk.publishState(sm, "worldstate");
 		}
 
-		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
+		waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::milliseconds(350);
 		return 0;
 	}
 
@@ -249,9 +249,9 @@ int MotionController::Execute()
 			)
 			{
 				LogEntry(LogLevel::ExtraInfo,GetName()) <<"Robot falling: Stiffness off";
-				timeLapsed = boost::posix_time::microsec_clock::universal_time();
+				timeLapsed = KSystem::Time::SystemTime::now();
 
-				if(timeLapsed - standUpStartTime >= boost::posix_time::seconds(3.5))
+				if(timeLapsed - standUpStartTime >= KSystem::Time::seconds(3.5))
 				{
 					if(currentstate == PLAYER_PLAYING || currentstate == PLAYER_READY)
 					{
@@ -265,7 +265,7 @@ int MotionController::Execute()
 					sm.set_type(MotionStateMessage::FALL);
 					sm.set_detail("");
 					_blk.publishState(sm, "worldstate");
-					waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
+					waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::milliseconds(350);
 					return 0;
 				}
 			}
@@ -327,7 +327,7 @@ int MotionController::Execute()
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
-		standUpStartTime = boost::posix_time::microsec_clock::universal_time();
+		standUpStartTime = KSystem::Time::SystemTime::now();
 		LogEntry(LogLevel::ExtraInfo,GetName()) << "StandUp ID: " << (actionPID);
 		return 0;
 	}

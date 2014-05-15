@@ -4,7 +4,7 @@
 #include "ISpecialAction.h"
 
 #include <string>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/TimeTypes.hpp"
 #include "hal/robot/nao/generic_nao/aldebaran-kme.h"
 
 class KmeAction : public ISpecialAction
@@ -22,9 +22,9 @@ public:
 
 	int ExecutePost();
 	AL::ALValue ReturnALValues();
-	boost::posix_time::ptime ExecuteDCM();
+	KSystem::Time::TimeAbsolute ExecuteDCM();
 
-	boost::posix_time::ptime ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd);
+	KSystem::Time::TimeAbsolute ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd);
 
 private:
 

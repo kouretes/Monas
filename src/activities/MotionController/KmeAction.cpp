@@ -82,7 +82,7 @@ AL::ALValue KmeAction::ReturnALValues()
 	return actionAngles;
 }
 
-boost::posix_time::ptime KmeAction::ExecuteDCM()
+KSystem::Time::TimeAbsolute KmeAction::ExecuteDCM()
 {
 	try
 	{
@@ -104,13 +104,13 @@ boost::posix_time::ptime KmeAction::ExecuteDCM()
 	}
 
 	float max_time = actionTimes[0][(actionTimes[0].getSize()) - 1];
-	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
+	return KSystem::Time::SystemTime::now() + KSystem::Time::seconds(max_time);
 }
 
-boost::posix_time::ptime KmeAction::ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd)
+KSystem::Time::TimeAbsolute KmeAction::ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd)
 {
 	if(frameEnd < frameStart)
-		return boost::posix_time::microsec_clock::universal_time();
+		return KSystem::Time::SystemTime::now();
 
 	if(frameEnd > actionTimes[0].getSize() - 1)
 		frameEnd = actionTimes[0].getSize() - 1;
@@ -161,7 +161,7 @@ boost::posix_time::ptime KmeAction::ExecuteFrameDCM(unsigned int frameStart, uns
 		LogEntry(LogLevel::FatalError, "KMEAction") << "Error when creating Alias";
 	}
 
-	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
+	return KSystem::Time::SystemTime::now() + KSystem::Time::seconds(max_time);
 }
 
 

@@ -126,7 +126,7 @@ bool NaoCamera::captureNew()
 
 	// dequeue a frame buffer (this call blocks when there is no new image available) */
 	assert (ioctl (fd, VIDIOC_DQBUF, buf) != -1);
-	timeStamp = boost::posix_time::microsec_clock::universal_time();
+	timeStamp = KSystem::Time::SystemTime::now();
 	assert (buf->bytesused == SIZE);
 	currentBuf = buf;
 	static bool shout = true;
@@ -150,7 +150,7 @@ const unsigned char *NaoCamera::getImage() const
 #endif
 }
 
-boost::posix_time::ptime NaoCamera::getTimeStamp() const
+KSystem::Time::TimeAbsolute NaoCamera::getTimeStamp() const
 {
 	assert (currentBuf);
 	return timeStamp;

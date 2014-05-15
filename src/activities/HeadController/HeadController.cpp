@@ -1,8 +1,7 @@
 #include "HeadController.h"
-
+#include "tools/toString.h"
 
 using namespace KMath;
-using namespace boost::posix_time;
 
 ACTIVITY_REGISTER(HeadController);
 using namespace std;
@@ -30,11 +29,11 @@ void HeadController::UserInit()
 	robotY = 0.0;
 	robotPhi = 0.0;
 	forceStopMotion = false;
-	
+
 	Reset();
 
-	actionStarted = microsec_clock::universal_time();
-	
+	actionStarted = KSystem::Time::SystemTime::now();
+
 	currentCommand = HeadControlMessage::NOTHING;
 	previousCommand = HeadControlMessage::NOTHING;
 	stay = false;
@@ -59,7 +58,7 @@ int HeadController::Execute()
 		currentHeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();
 		currentHeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH).sensorvalue();
 	}
-	
+
 	if(control.get()==0){
 		currentCommand=HeadControlMessage::FROWN;
 		useExternalSpeed = false;
@@ -98,7 +97,7 @@ int HeadController::Execute()
 				ysign = currentHeadYaw > 0 ? +1 : -1;
 			}
 			if(CheckForBall()) //Do we see the ball? then
-			{	
+			{
 				forceStopMotion = true;
 				smartPhase = BLUE;
 				smartState = START;
@@ -155,7 +154,7 @@ int HeadController::Execute()
         case HeadControlMessage::GOALIE_LOCALIZE_CLOSE:
 			HeadScanStepHigh(2.085f, 0.0f, FAST, 100);
 			break;
-		
+
 	}
 	previousCommand = currentCommand;
 	return 0;
@@ -207,7 +206,7 @@ void HeadController::MakeHeadAction()
 	}else{
 		hmot.set_parameter(2, targetSpeed);
 	}
-	actionStarted = boost::posix_time::microsec_clock::universal_time();
+	actionStarted = KSystem::Time::SystemTime::now();
 	_blk.publishSignal(hmot, "motion");
 }
 
@@ -222,14 +221,14 @@ void HeadController::HeadScanStepHigh(float yawLimit, float pitch, int speed, in
 	if(reachedTargetHead())
 	{
 		if(stay){
-			sleepTime = boost::posix_time::microsec_clock::universal_time();
+			sleepTime = KSystem::Time::SystemTime::now();
 			stay = false;
 		}
-		if(boost::posix_time::microsec_clock::universal_time() - sleepTime < boost::posix_time::milliseconds(millesecStay)){
+		if(KSystem::Time::SystemTime::now() - sleepTime < KSystem::Time::milliseconds(millesecStay)){
 			return;
 		}
 		if(goalScanState == GOALMIDDLE1)
-		{	
+		{
 			//GO LEFT
 			targetPitch = pitch;
 			targetYaw = 0.0f;
@@ -242,7 +241,7 @@ void HeadController::HeadScanStepHigh(float yawLimit, float pitch, int speed, in
 			goalScanState = GOALMIDDLE2;
 			stay = true;
 		}else if(goalScanState == GOALMIDDLE2){
-			
+
 			targetPitch = pitch;
 			targetYaw = 0.0f;
 			goalScanState = GOALRIGHT;
@@ -437,7 +436,7 @@ bool HeadController::reachedTargetHead()
 		forceStopMotion = false;
 		return true;
 	}
-	return  boost::posix_time::microsec_clock::universal_time() - actionStarted > boost::posix_time::milliseconds(millisecondsToWait) ||
+	return  KSystem::Time::SystemTime::now() - actionStarted > KSystem::Time::milliseconds(millisecondsToWait) ||
 			previousCommand != currentCommand ||
 			((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
 			fabs(currentHeadYaw)>YAWMAX ||

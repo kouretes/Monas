@@ -7,7 +7,6 @@
 #include "core/include/Logger.hpp"
 
 
-using namespace boost::posix_time;
 using namespace std;
 
 ACTIVITY_REGISTER (PathPlanning);
@@ -32,22 +31,22 @@ PathPlanning::PathPlanning(Blackboard &b) :
 void PathPlanning::UserInit() {
 	_blk.updateSubscription ("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription ("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
-	
+
 	//Setup path map
 	int radiusRings = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRingsInRadius").c_str());
 	int ringCells = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRingsInRadius").c_str());
 	float realMetters = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRadiusInMeters").c_str());
 	pathMap.setupGrid (radiusRings, ringCells, realMetters);
-	
+
 	//Setup small map
 	float smallRealMetters = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SmallGridRadiusInMeters").c_str());
 	smallPathMap.setupGrid (radiusRings, ringCells, smallRealMetters);
-	
+
 	//Setup sonars
 	leftSonars = new float[KDeviceLists::US_SIZE];
 	rightSonars = new float[KDeviceLists::US_SIZE];
-	
-	currentTime = boost::posix_time::microsec_clock::universal_time();
+
+	currentTime = KSystem::Time::SystemTime::now();
 
 	//Initialize astar properties
 	aStarDirections = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.AStarDirections").c_str());
@@ -65,11 +64,11 @@ void PathPlanning::UserInit() {
 }
 
 void PathPlanning::Reset() {
-	hasTarget = false;	
+	hasTarget = false;
 	firstOdometryData = true;
-	
+
 	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
-	if(!gameMode){	
+	if(!gameMode){
 		for (int i = 0; i < pathMap.getRingCells(); i++){
 			for (int j = 0; j < pathMap.getRadiusCells(); j++) {
 				gridInfoMessage.add_gridcells(0.0f);
@@ -87,8 +86,8 @@ void PathPlanning::Reset() {
 int PathPlanning::Execute() {
 
 	//update the grid with the new sonar values
-	while(currentTime < boost::posix_time::microsec_clock::universal_time()){
-		currentTime = currentTime + boost::posix_time::milliseconds(100);
+	while(currentTime < KSystem::Time::SystemTime::now()){
+		currentTime = currentTime +KSystem::Time::milliseconds(100);
 		rpm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 		processOdometryData();
 		pathMap.updateCells();
@@ -116,12 +115,12 @@ int PathPlanning::Execute() {
 				pathMap.updateGrid (rightSonars[0], KMath::wrapTo0_2Pi (-0.4363f), KMath::TO_RAD (SonarsConeInDegs), false);
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	pprm = _blk.readSignal<PathPlanningRequestMessage> ("pathplanning");
-	
+
 
 	if(pprm != 0){
 		aStarUseSmallGrid = pprm->forceuseofsmallmap();
@@ -130,7 +129,7 @@ int PathPlanning::Execute() {
 		}else{
 			aStarUseSmallGrid = false;
 		}
-		
+
 		if(pprm->targetx()==0 && pprm->targety()==0){
 			aStarTargetR = 255;
 			aStarTargetC = 255;
@@ -150,12 +149,12 @@ int PathPlanning::Execute() {
 		aStarTargetZ = KMath::wrapTo0_2Pi(pprm->targetorientation())/aStarTransformation;
 		hasTarget = true;
 
-		aStar();	
+		aStar();
 		commitMovement();
 	}else{
 		hasTarget = false;
 	}
-	
+
 	if(!gameMode){
 		publishGridInfo();
 	}
@@ -203,7 +202,7 @@ void PathPlanning::publishGridInfo() {
 		gridInfoMessage.set_realgridlength (smallPathMap.getRealMetters() );
 	}
 	gridInfoMessage.set_usingsmallmap(aStarUseSmallGrid);
-	
+
 	if(hasTarget){
 		gridInfoMessage.set_pathlength (pathFromAStar.size() );
 	}else{
@@ -255,12 +254,12 @@ void PathPlanning::publishGridInfo() {
 
 void PathPlanning::commitMovement(){
 	//The path from A* has the revert path, so the start is in the end of the vector :)
-	if(pathFromAStar.size()==0){		
-		velocityWalk(0.0f,0.0f,0.0f,1.0f);	
+	if(pathFromAStar.size()==0){
+		velocityWalk(0.0f,0.0f,0.0f,1.0f);
 		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit return";
 		return;
 	}
-	
+
 	int lastElement = pathFromAStar.size()-1;
 	if((pathFromAStar.at(lastElement).z > aStarDirections/8 && pathFromAStar.at(lastElement).z < aStarDirections-aStarDirections/8) || pathFromAStar.size() == 1){
 		float phiSpeed;
@@ -281,11 +280,11 @@ void PathPlanning::commitMovement(){
 			cartX = KMath::toCartesianX (pathFromAStar.at(lastElement-1).x * smallPathMap.getMoveSteps() + smallPathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * smallPathMap.getTurnsteps());
 			cartY = KMath::toCartesianY (pathFromAStar.at(lastElement-1).x * smallPathMap.getMoveSteps() + smallPathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * smallPathMap.getTurnsteps());
 		}
-		
+
 		float xSpeed, ySpeed, phiSpeed;
 		float factor = 1.0f;
 		if(pathFromAStar.size() < 3){
-			factor = pathFromAStar.size()/3.0f;		
+			factor = pathFromAStar.size()/3.0f;
 		}
 		if(fabs(cartX) > fabs(cartY)){
 			xSpeed = KMath::sign(cartX);
@@ -300,8 +299,8 @@ void PathPlanning::commitMovement(){
 			factor = factor > 1 ? 1 : factor;
 		}
 		xSpeed *= factor;
-		ySpeed *= factor;	
-		
+		ySpeed *= factor;
+
 		velocityWalk(xSpeed,ySpeed,phiSpeed/3,1.0f);
 		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit Move 2 factor = " << factor << " xSpeed = " << xSpeed << " ySpeed = " << ySpeed << " phiSpeed = " << phiSpeed << " smallGrid = " << aStarUseSmallGrid;
 	}
@@ -331,11 +330,11 @@ void PathPlanning::aStar () {
 
 	currentValues.init();
 	directions.init();
-	
+
 	int currentX, currentY, currentZ, newX, newY, newZ;
 	//Initialization just to be sure
 	currentX = currentY = currentZ = newX = newY = newZ = 255;
-	
+
 	if(!aStarUseSmallGrid){
 		aStarRealTargetX = pathMap.getRealX (aStarTargetR, aStarTargetC);
 		aStarRealTargetY = pathMap.getRealY (aStarTargetR, aStarTargetC);
@@ -347,7 +346,7 @@ void PathPlanning::aStar () {
 
 	node *popNode;
 	node *newNode;
-	
+
 	for (int i = 0; i < aStarDirections; i++) {
 		popNode = pool.malloc();
 		setupNode (popNode, 255, 255, i, 0.0f);

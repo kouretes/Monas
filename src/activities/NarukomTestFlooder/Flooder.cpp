@@ -17,6 +17,13 @@ int Drain::Execute()
 {
 	KPROF_SCOPE(p, Drain::Execute());
 	boost::shared_ptr<const KnownHosts> h = _blk.readState<KnownHosts>("communication");
+        /*float q=1;
+
+		for(unsigned long k=0;k<1000000;k++)
+		{
+		        q=q+q+sqrt(q);
+		}
+		cout<<"CONSUME SOME CPU"<<endl;*/
 
 	if(!h.get() || (h && h->entrylist_size() == 0))
 	{
@@ -52,6 +59,8 @@ int Drain::Execute()
 			_blk.publishData(newdrop, "communication");
 			cout << "Drop reduced to:" << newdrop.counter() << endl;
 		}
+
+
 	}
 
 	p.generate_report();

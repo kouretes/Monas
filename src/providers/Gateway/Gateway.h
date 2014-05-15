@@ -8,7 +8,7 @@
 
 #include "core/architecture/executable/provider/IProvider.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 #include "core/messages/Network.pb.h"
 #include "core/messages/Architecture.pb.h"
 
@@ -74,7 +74,7 @@ private:
 	 * @param incomingHostId: the id of the host that send us this message.
 	 * */
 	void processExternalConfig(uint32_t incomingHostId);
-	
+
 	/**
 	 * Send a message to the image provider to re-calibrate the camera
 	 * @param incomingHostId: the id of the host that send us this message.

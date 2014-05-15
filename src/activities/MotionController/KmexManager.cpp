@@ -3,6 +3,7 @@
 #include <fstream>
 #include <dirent.h>
 #include "core/include/Logger.hpp"
+#include "tools/toString.h"
 #include "core/include/IActivity.hpp"
 
 using namespace std;

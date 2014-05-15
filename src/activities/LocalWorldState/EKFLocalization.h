@@ -5,7 +5,7 @@
 #include <vector>
 #include "core/elements/math/Common.hpp"
 #include "core/elements/math/KMat.hpp"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/TimeTypes.hpp"
 #include "KLocalization.h"
 #include <math.h>
 #include "KalmanModel.h"
@@ -13,7 +13,6 @@
 #include "LocalizationStructs.h"
 using namespace std;
 using namespace KMath;
-using namespace boost::posix_time;
 class EKFLocalization{
 
 public :
@@ -38,8 +37,8 @@ public :
     // structs to store xml data
     Localization::LocConfig* locConfig;
 
-    boost::posix_time::ptime lastPrint;
-	boost::posix_time::ptime now;
+    KSystem::Time::TimeAbsolute lastPrint;
+	KSystem::Time::TimeAbsolute now;
 };
 
 

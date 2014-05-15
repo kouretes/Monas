@@ -1,4 +1,5 @@
 #include "LocalWorldState.h"
+#include "core/architecture/time/TimeTypes.hpp"
 #include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "core/include/Logger.hpp"
 #include "messages/RoboCupGameControlData.h"
@@ -8,12 +9,13 @@
 #include <google/protobuf/descriptor.h>
 #include <math.h>
 
-
+#include "tools/toString.h"
 #define NO_GAME
 #define MAX_TIME_TO_RESET 3 //in seconds
 
 using namespace std;
 using namespace KMath;
+using namespace KSystem::Time;
 
 ACTIVITY_REGISTER(LocalWorldState);
 
@@ -34,12 +36,12 @@ void LocalWorldState::UserInit()
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	//time variables initialization
-    timeStart = boost::posix_time::microsec_clock::universal_time();
-	lastObservationTime = boost::posix_time::microsec_clock::universal_time();
-	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
-    odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
-    debugMessageTime = boost::posix_time::microsec_clock::universal_time();
-    gamePlaying = boost::posix_time::microsec_clock::universal_time();
+    timeStart = KSystem::Time::SystemTime::now();
+	lastObservationTime = KSystem::Time::SystemTime::now();
+	lastFilterTime = KSystem::Time::SystemTime::now();
+    odometryMessageTime = KSystem::Time::SystemTime::now();
+    debugMessageTime = KSystem::Time::SystemTime::now();
+    gamePlaying = KSystem::Time::SystemTime::now();
     //read xml files..set parameters for localizationWorld
     Reset();
     ReadFieldConf();
@@ -73,7 +75,7 @@ void LocalWorldState::Reset(){
 
 int LocalWorldState::Execute()
 {
-	now = boost::posix_time::microsec_clock::universal_time();
+	now = KSystem::Time::SystemTime::now();
 
 	ProcessMessages();
 
@@ -88,8 +90,8 @@ int LocalWorldState::Execute()
 			    localizationWorld.SpreadParticlesAfterFall();
             }
 		}
-		timeStart = boost::posix_time::microsec_clock::universal_time();
-        
+		timeStart = KSystem::Time::SystemTime::now();
+
         MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	    MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	    MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
@@ -102,13 +104,13 @@ int LocalWorldState::Execute()
 
 	    _blk.publishData(MyWorld, "external");
 	    _blk.publishData(MyWorld, "worldstate");
-		
+
         return 0;
 	}else
 		fallBegan = true;
 
 	if (lrm != 0){
-		timeStart = boost::posix_time::microsec_clock::universal_time();
+		timeStart = KSystem::Time::SystemTime::now();
 
         if (locConfig.ekfEnable == true){
             ekfLocalization.InitializeHypothesis((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
@@ -127,7 +129,7 @@ int LocalWorldState::Execute()
     }
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
-         gamePlaying = microsec_clock::universal_time();
+         gamePlaying =KSystem::Time::SystemTime::now();
 
     if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
          stability++;
@@ -151,7 +153,7 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
-    
+
     _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
@@ -162,7 +164,7 @@ int LocalWorldState::Execute()
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
 
-            if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
+            if ((KSystem::Time::SystemTime::now() > debugMessageTime + seconds(4)) || lrm != 0){
                 for (int i = 0; i < ekfLocalization.numberOfModels - 1 ; i++)
 	            {
 		            if(ekfMHypothesis.kmodel_size() < (int)(i+1))
@@ -175,7 +177,7 @@ int LocalWorldState::Execute()
 	            }
                 ekfMHypothesis.set_size(ekfLocalization.numberOfModels-1);
                 _blk.publishSignal(ekfMHypothesis, "debug");
-                debugMessageTime = boost::posix_time::microsec_clock::universal_time();
+                debugMessageTime = KSystem::Time::SystemTime::now();
 
 
             }
@@ -190,8 +192,8 @@ int LocalWorldState::Execute()
 
 void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & robotModel)
 {
-	boost::posix_time::time_duration duration;
-	boost::posix_time::ptime observationTime;
+	KSystem::Time::TimeDuration duration;
+	KSystem::Time::TimeAbsolute observationTime;
 
 	float dt;
     float dx,dy,gx,gy;
@@ -293,7 +295,7 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 
 void LocalWorldState::ProcessMessages()
 {
-	boost::posix_time::ptime observation_time;
+	KSystem::Time::TimeAbsolute observation_time;
 
 	gsm = _blk.readState<GameStateMessage>("worldstate");
 	obsm = _blk.readSignal<ObservationMessage>("vision");
@@ -313,7 +315,7 @@ void LocalWorldState::ProcessMessages()
 	if (obsm != 0)
 	{
 		Localization::KObservationModel tmpOM;
-		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
+		observation_time =KSystem::Time::from_iso_string(obsm->image_timestamp());
 
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
@@ -407,12 +409,12 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 	TrackPoint.y += sin(TrackPoint.phi + robot_dir) * robot_dist;
 	TrackPoint.phi += DR;
 
-    if ( microsec_clock::universal_time() > odometryMessageTime + seconds(5) ){
+    if (KSystem::Time::SystemTime::now() > odometryMessageTime + seconds(5) ){
         odometryInfoM.set_trackpointx(TrackPoint.x);
         odometryInfoM.set_trackpointy(TrackPoint.y);
         odometryInfoM.set_trackpointphi(TrackPoint.phi);
         _blk.publishSignal(odometryInfoM, "debug");
-        odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
+        odometryMessageTime = KSystem::Time::SystemTime::now();
     }
 
     //robot orientation change because of action (kick)
@@ -549,7 +551,7 @@ int LocalWorldState::LocalizationDataForGUILoad()
 }
 
 void LocalWorldState::InputOutputLogger(){
-	boost::posix_time::ptime currentExecute = boost::posix_time::microsec_clock::universal_time();
+	KSystem::Time::TimeAbsolute currentExecute = KSystem::Time::SystemTime::now();
 
 	string YellowLeft = "", YellowRight = "", Yellow = "", RobotPosition = "", RobotMovement = "";
 

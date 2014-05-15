@@ -3,7 +3,7 @@
 #include <fstream>
 #include <dirent.h>
 #include "core/include/Logger.hpp"
-
+#include "core/include/Configurator.hpp"
 #include "hal/robot/nao/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
 #include "XarAction.h"

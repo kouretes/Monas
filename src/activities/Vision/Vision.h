@@ -2,7 +2,7 @@
 #define VISION_H
 
 #include "core/include/IActivity.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include <memory>
 
@@ -125,7 +125,7 @@ private:
 #endif
 	//Incoming messages!
 	boost::shared_ptr<const AllSensorValuesMessage> asvmo, asvmn; //Older and newer than requested timestamp
-	boost::posix_time::ptime timeo, timen, stamp; //time of earlier sensors, later, and the image itself
+	KSystem::Time::TimeAbsolute timeo, timen, stamp; //time of earlier sensors, later, and the image itself
 
 	//Camera transformation matrix
 	cpose p;//Robot pose

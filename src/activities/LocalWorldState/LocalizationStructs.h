@@ -1,6 +1,7 @@
 #ifndef LOCALIZATIONSTRUCTS_H
 #define LOCALIZATIONSTRUCTS_H
 
+#include "core/architecture/time/TimeTypes.hpp"
 #include <string>
 #include <map>
 using namespace std;
@@ -116,7 +117,7 @@ namespace Localization{
         feature Feature;
         randvar Distance;
         randvar Bearing;
-        boost::posix_time::ptime observationTime;
+        KSystem::Time::TimeAbsolute observationTime;
     } KObservationModel;
 
 

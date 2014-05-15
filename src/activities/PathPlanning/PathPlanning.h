@@ -11,7 +11,6 @@
 #include <cstdlib>
 #include <list>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/pool/object_pool.hpp>
 
 #include "core/include/IActivity.hpp"
@@ -29,7 +28,7 @@
 #include "core/elements/math/Common.hpp"
 #include "core/elements/customTypes/K3DArray.hpp"
 #include "core/elements/customTypes/ReservaplePrioryQueue.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "GridMap.h"
 
@@ -146,7 +145,7 @@ private:
 	float oldOdometryX,oldOdometryY,oldOdometryZ;
 	bool firstOdometryData;
 
-	boost::posix_time::ptime currentTime;
+	KSystem::Time::TimeAbsolute currentTime;
 
 	/*std::vector<temp>::iterator returnMin(){
 		float min = 1000000.0f;

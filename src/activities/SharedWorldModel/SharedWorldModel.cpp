@@ -61,7 +61,7 @@ void SharedWorldModel::UserInit()
     R2.get(1,1) = Q.read(1,1);
     R2.get(2,2) = Q.read(2,2);
 
-    now = boost::posix_time::microsec_clock::universal_time();
+    now = KSystem::Time::SystemTime::now();
     last_filter_time = now;
     LogEntry(LogLevel::Info, GetName()) << "Initialized" ;
 }
@@ -126,7 +126,7 @@ int SharedWorldModel::Execute()
 		}
 	}
 
-	now = boost::posix_time::microsec_clock::universal_time();
+	now = KSystem::Time::SystemTime::now();
     duration = now - last_ball_update_time;
     dtBall = duration.total_microseconds() / 1000000.0f;
 
@@ -206,7 +206,7 @@ void SharedWorldModel::gather_info(){
 
 void SharedWorldModel::predict()
 {
-    now = boost::posix_time::microsec_clock::universal_time();
+    now = KSystem::Time::SystemTime::now();
     duration = now - last_filter_time;
     last_filter_time = now;
     dt = duration.total_microseconds() / 1000000.0f;
@@ -238,7 +238,7 @@ void SharedWorldModel::predict()
 
 void SharedWorldModel::update(int rid)
 {
-    last_ball_update_time = boost::posix_time::microsec_clock::universal_time();
+    last_ball_update_time = KSystem::Time::SystemTime::now();
 
     float phi=State(rid*3+2);
     float bx=State(dim-2);

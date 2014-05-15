@@ -24,7 +24,7 @@ int ImageExtractor::Execute()
 
 	if(!firstRun){
 		float scale = imext.calibrateCamera(1500, 10);
-		lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
+		lastrefresh = KSystem::Time::SystemTime::now() - KSystem::Time::microseconds(camerarefreshmillisec + 10);
 		firstRun = true;
 	}
 
@@ -36,10 +36,10 @@ int ImageExtractor::Execute()
 		}
 	}
 
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	boost::posix_time::ptime  timestamp;
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+	KSystem::Time::TimeAbsolute  timestamp;
 
-	if(lastrefresh + boost::posix_time::millisec(camerarefreshmillisec) < now)
+	if(lastrefresh + KSystem::Time::millisec(camerarefreshmillisec) < now)
 	{
 		imext.refreshValues();//Reload
 		imext.setNewUserPrefs();

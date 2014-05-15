@@ -30,7 +30,6 @@ set(ELEMENT_SRCS
       StringRegistry.hpp
       Singleton.hpp
       KStandard.hpp
-      Logger.hpp
       vision/KImage.h
       IClonableCRTP.hpp
 )

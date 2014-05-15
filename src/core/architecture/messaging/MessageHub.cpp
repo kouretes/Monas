@@ -25,7 +25,7 @@
 
 #include "network/multicastpoint.hpp"
 
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 
 

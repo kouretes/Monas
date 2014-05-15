@@ -8,11 +8,9 @@
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
 #include "core/include/IActivity.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "gamecontroller.h"
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
@@ -82,7 +80,7 @@ private:
 	 */
 	GameStateMessage gm_state;
 	GameStateMessage new_gm_state;
-	boost::posix_time::ptime lastalive;
+	KSystem::Time::TimeAbsolute lastalive;
 	/**
 	 * @brief Read the gsm from the blackboard and replase the local gm with that. This is usefull if the gateway changes the gsm message
 	 * from a gui command.

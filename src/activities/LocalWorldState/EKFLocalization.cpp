@@ -11,7 +11,7 @@ void EKFLocalization::Initialize(){
 
     kalmanModels.resize(32);
 	InitializeHypothesis(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
-    lastPrint = boost::posix_time::microsec_clock::universal_time();
+    lastPrint = KSystem::Time::SystemTime::now();
 }
 
 void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float inX, float inY, float inPhi)
@@ -23,7 +23,7 @@ void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float in
 
         float setPositionX =  locConfig->initX[(kickOff) ? 0 : 1] ;
         float setPositionY =  locConfig->initY[(kickOff) ? 0 : 1] ;
-	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];        
+	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];
 
         kalmanModels[0].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1.0/3 , true );
 	}
@@ -150,23 +150,23 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
             //cout << "step"<< endl;
             hypothesisMerging(threshold);
             //cout << "Number Of Models after merging : " << numberOfModels << endl;
-            threshold += dt;     
+            threshold += dt;
         }
 
     }
 
     /*
-   if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
+   if (KSystem::Time::SystemTime::now() > lastPrint + seconds(5)){
 	   LogEntry(LogLevel::Info,"EKFLocalization")
 				<<"Distance scale factor : " << (kalmanModels[0].state(3,0))
 				<<" Drift :  " << (kalmanModels[0].state(4,0))
 				<<"Rotation scale factor : " << (kalmanModels[0].state(5,0));
-        lastPrint = boost::posix_time::microsec_clock::universal_time();
+        lastPrint = KSystem::Time::SystemTime::now();
 		LogEntry(LogLevel::Info,"EKFLocalization")
 				<<"Distance scale factor variance : "<< (kalmanModels[0].var(3,3))
 				<<" Drift variance:  " << (kalmanModels[0].var(4,4))
 				<<"Rotation scale factor variance: " << (kalmanModels[0].var(5,5));
-        lastPrint = boost::posix_time::microsec_clock::universal_time();
+        lastPrint = KSystem::Time::SystemTime::now();
     }*/
 
     agentPosition.x = kalmanModels[0].state(0,0);
@@ -192,11 +192,11 @@ void EKFLocalization::hypothesisMerging(float thres){
     vector<KalmanModel> kalmanTmp;
     int numberOfM = 0;
     double k;
-    
+
     KMath::KMat::GenMatrix<float,6,1> st1;
     KMath::KMat::GenMatrix<float,6,1> st2;
     KMath::KMat::GenMatrix<float,6,6> varInv;
-   
+
     for(int i=0; i<numberOfModels; i++) {
         if (kalmanModels[i].active==true){
             kalmanTmp.push_back(kalmanModels[i]);
@@ -206,7 +206,7 @@ void EKFLocalization::hypothesisMerging(float thres){
             invert_square_matrix(varInv);
 
             for(int j=i+1; j<numberOfModels; j++) {
-                
+
                 st1 = kalmanModels[i].state;
                 st2 = kalmanModels[j].state;
 

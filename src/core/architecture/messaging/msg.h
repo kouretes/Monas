@@ -18,7 +18,7 @@
 #define MSG_H
 
 #include <boost/shared_ptr.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <core/architecture/time/TimeTypes.hpp>
 #include <google/protobuf/message.h>
 
 typedef struct msgentry_
@@ -36,8 +36,8 @@ typedef struct msgentry_
 	static const std::size_t HOST_ID_ANY_HOST = 0;
 	static const std::size_t HOST_ID_LOCAL_HOST = 1;
 	boost::shared_ptr<const google::protobuf::Message > msg;
-	boost::posix_time::ptime timestamp;
-	//boost::posix_time::ptime timeoutstamp;
+	KSystem::Time::TimeAbsolute timestamp;
+	//KSystem::Time::TimeAbsolute timeoutstamp;
 	std::size_t topic;
 	std::size_t host;
 	//std::string publisher;
@@ -55,7 +55,7 @@ struct msgentrytimestampComparator
 	{
 		return a.timestamp < b.timestamp;
 	};
-	bool operator()(const msgentry &a, const boost::posix_time::ptime &b)
+	bool operator()(const msgentry &a, const KSystem::Time::TimeAbsolute &b)
 	{
 		return a.timestamp < b;
 	};

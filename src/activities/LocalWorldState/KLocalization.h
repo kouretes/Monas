@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <map>
 #include "core/elements/math/Common.hpp"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "messages/RoboCupPlayerData.h"
 #include "messages/WorldInfo.pb.h"
 #include "LocalizationStructs.h"

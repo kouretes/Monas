@@ -5,7 +5,7 @@
 
 #include "core/include/IActivity.hpp"
 #include "core/elements/math/Common.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "hal/robot/nao/generic_nao/robot_consts.h"
 
@@ -20,7 +20,7 @@
 
 #include "core/include/Logger.hpp"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/TimeTypes.hpp"
 
 
 ACTIVITY_START
@@ -95,11 +95,11 @@ private:
 	/* Target joint values */
 	float targetYaw, targetPitch, targetSpeed;
 	/* Find out if an action take a lot of time to complete */
-	boost::posix_time::ptime actionStarted;
+	KSystem::Time::TimeAbsolute actionStarted;
 	static const int millisecondsToWait = 1500;
 
 	/* Sleep time just to stay to a location */
-	boost::posix_time::ptime sleepTime;
+	KSystem::Time::TimeAbsolute sleepTime;
 	bool stay;
 	/* Force completition of all actions */
 	bool forceStopMotion;

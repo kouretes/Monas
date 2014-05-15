@@ -2,7 +2,7 @@
 #define BEHAVIOR_H
 
 #include "core/include/IActivity.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -304,8 +304,8 @@ private:
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, scanKickTime, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
-	boost::posix_time::ptime lastBumperPressed; //more times
+	KSystem::Time::TimeAbsolute lastWalk, scanKickTime, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
+	KSystem::Time::TimeAbsolute lastBumperPressed; //more times
 
 	bool synchronization;
 

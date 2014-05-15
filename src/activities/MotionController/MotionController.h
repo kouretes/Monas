@@ -1,11 +1,10 @@
 #ifndef MOTIONCONTROLLER_H
 #define MOTIONCONTROLLER_H
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "core/include/IActivity.hpp"
 #include "core/elements/math/Common.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -26,7 +25,7 @@
 #include "KmexManager.h"
 #include "KmexAction.h"
 
-using namespace boost::posix_time;
+using namespace KSystem::Time;
 using namespace std;
 
 ACTIVITY_START
@@ -118,7 +117,7 @@ private:
 	SpCont SpKmexActions;
 
 	void readWalkParameters();
-	boost::posix_time::ptime standUpStartTime, timeLapsed;
+	KSystem::Time::TimeAbsolute standUpStartTime, timeLapsed;
 };
 
 ACTIVITY_END

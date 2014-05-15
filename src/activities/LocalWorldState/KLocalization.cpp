@@ -7,14 +7,15 @@
 #include <time.h>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
+#include "core/architecture/time/SystemTime.hpp"
 #include <boost/math/distributions/normal.hpp>
 #include <math.h>
 #include "KLocalization.h"
 #include <iomanip>
 
-using namespace boost;
+//using namespace boost;
+using namespace KSystem::Time;
 using namespace KMath;
-using namespace boost::posix_time;
 
 KLocalization::KLocalization()
 {
@@ -190,7 +191,7 @@ Localization::belief KLocalization::LocalizationStepSIR(Localization::KMotionMod
 }
 
 void KLocalization::windowObservationsUpdate(){
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 
     if (windowObservations.size()>0 && windowObservations.front().observationTime < now - seconds(augMCL.winDuration))
         windowObservations.clear();
