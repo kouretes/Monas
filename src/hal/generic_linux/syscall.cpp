@@ -9,30 +9,12 @@ int SysCall::_usleep ( unsigned long usec )
 	return usleep( usec );
 }
 
-//safe on both 32 & 64 bit.
-unsigned long SysCall::_GetCurrentTimeInUSec ()
-{
-	struct timeval tp;
-	gettimeofday ( &tp, NULL );
-	unsigned long tm = tp.tv_sec * 1000000 + tp.tv_usec;
-	return tm;
-}
 
 void SysCall::_exit ( int status )
 {
 	exit( status );
 }
 
-bool SysCall::_GetCwd ( std::string& path )
-{
-	char _cPath[300];
-
-	if ( ! getcwd ( _cPath, 300) )
-		return false;
-
-	path = _cPath;
-	return true;
-}
 
 
 void SysCall::_Shutdown (  )
