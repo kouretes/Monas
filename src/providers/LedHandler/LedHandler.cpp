@@ -13,7 +13,7 @@ void LedHandler::UserInit()
 {
 	//led_change = 0;
 
-	updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
+	updateSubscription("leds", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	EndPoint::getReadBuffer()->setNotifier(boost::bind(&LedHandler::processBuffer, this, _1));
 	IdlingThread::setIdling(true);
 
@@ -81,8 +81,8 @@ void LedHandler::Reset(){
 
 int LedHandler::Execute()
 {
-	std::vector<msgentry> msg = EndPoint::remove();
-	std::vector<msgentry>::iterator it = msg.begin();
+	std::vector<Messaging::MessageEntry> msg = Messaging::EndPoint::remove();
+	std::vector<Messaging::MessageEntry>::iterator it = msg.begin();
 
 	for(; it != msg.end(); ++it)
 	{

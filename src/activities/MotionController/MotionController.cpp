@@ -105,10 +105,10 @@ void MotionController::UserInit()
 	motion->setWalkArmsEnable(true, true);
 
 	LogEntry(LogLevel::Info,GetName())<< "Subcribing to topics";
-	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("motion", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
 	AccYvalue = 0.0;

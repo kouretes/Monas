@@ -9,8 +9,8 @@ using namespace std;
 
 void SharedWorldModel::UserInit()
 {
-	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
-	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	idx = -1;
 
     ReadFieldConf();

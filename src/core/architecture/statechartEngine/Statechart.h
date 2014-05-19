@@ -17,7 +17,7 @@ namespace statechart_engine
 
 	public:
 
-		Statechart ( std::string name, MessageHub* com );
+		Statechart ( std::string name, Messaging::MessageHub* com );
 
 		virtual ~Statechart ();
 
@@ -37,9 +37,9 @@ namespace statechart_engine
 
 	private:
 
-		MessageHub* _narukom;
+		Messaging::MessageHub* _narukom;
 
-		Blackboard _blackboard;
+		Messaging::Blackboard _blackboard;
 
 		SystemThreadPool _tp;
 

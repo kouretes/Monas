@@ -70,8 +70,8 @@ int Drain::Execute()
 void Drain::UserInit()
 {
 	cout << "Hey!" << endl;
-	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
 }
 
 void Drain::Reset(){
@@ -125,7 +125,7 @@ int Pipe::Execute()
 void Pipe::UserInit()
 {
 	cout << "Hey!" << endl;
-	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
 }
 
 void Pipe::Reset(){

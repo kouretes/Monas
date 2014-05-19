@@ -15,7 +15,7 @@ void ImageExtractor::UserInit()
 {
 	imext.Init();
 	firstRun = false;
-	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 }
 
 int ImageExtractor::Execute()
@@ -71,14 +71,14 @@ int ImageExtractor::Execute()
 	outmsg.mutable_image_rawdata()->reserve(imstore.imageSize());
 	outmsg.mutable_image_rawdata()->assign(imstore.imageData, imstore.imageSize());
 	//Publish msg
-	msgentry nmsg;
+	Messaging::MessageEntry nmsg;
 	google::protobuf::Message * newptr = outmsg.New();
 	newptr->CopyFrom(outmsg);
 	nmsg.msg.reset(newptr);
-	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 	nmsg.timestamp = timestamp;
-	nmsg.topic = Topics::Instance().getId("image");
-	nmsg.msgclass = msgentry::DATA;
+	nmsg.topic = Messaging::Topics::Instance().getId("image");
+	nmsg.msgclass = Messaging::MessageEntry::DATA;
 	this->publish(nmsg);
 	return 0;
 }

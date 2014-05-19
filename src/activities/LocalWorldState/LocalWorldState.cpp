@@ -21,10 +21,10 @@ ACTIVITY_REGISTER(LocalWorldState);
 
 void LocalWorldState::UserInit()
 {
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 
     actionKick=false;
 	firstOdometry = true;
@@ -351,7 +351,7 @@ void LocalWorldState::ProcessMessages()
 			}
 		}
 
-		rpsm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
+		rpsm = _blk.readData<RobotPositionMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
 		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}

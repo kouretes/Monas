@@ -18,7 +18,7 @@ void RobotController::UserInit()
 	readConfiguration();
 	gm.connectTo(conf.port(), conf.team_number());
 	gm.setNonBlock(true);
-	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("buttonevents", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	_blk.publishState(gm_state, "worldstate");
 	LogEntry(LogLevel::Info,GetName()) << "Robot Controller Initialized" << std::endl;
 	lastalive = KSystem::Time::SystemTime::now();

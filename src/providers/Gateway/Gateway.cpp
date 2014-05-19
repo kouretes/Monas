@@ -14,9 +14,9 @@ PROVIDER_REGISTER (Gateway);
 
 
 void Gateway::UserInit() {
-	_blk.updateSubscription ("communication", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription ("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
-	_blk.updateSubscription ("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription ("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription ("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription ("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	localHostId = 0;
 	lockId = 0;
 	locked = false;

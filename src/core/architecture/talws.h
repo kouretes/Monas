@@ -30,7 +30,7 @@ private:
 	std::vector<StatechartWrapper*> StatechartPlans;
 
 
-	MessageHub com;
+	Messaging::MessageHub com;
 
 };
 

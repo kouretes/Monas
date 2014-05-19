@@ -16,7 +16,7 @@
 
 #ifndef BLACKBOARD_HPP
 #define BLACKBOARD_HPP
-#include "msg.h"
+#include "MessageEntry.hpp"
 #include "core/architecture/time/SystemTime.hpp"
 #include "EndPoint.hpp"
 #include "core/elements/StringRegistry.hpp"
@@ -29,296 +29,293 @@
 #include <string>
 
 
-
-
-class Blackboard : virtual public EndPoint
+namespace Messaging
 {
-public:
+
+    class Blackboard : virtual public EndPoint
+    {
+    public:
 
 
-	explicit
-	Blackboard(const std::string& );
+        explicit
+        Blackboard(const std::string& );
 
-	virtual ~Blackboard() {}
-	void process_messages();
-	void publish_all();
-	enum  DataReq
-	{
-	    DATA_NEAREST, DATA_NEAREST_NOTOLDER, DATA_NEAREST_NOTNEWER
-	} ;
-	template<class Data>
-	boost::shared_ptr<const Data> readData(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 , KSystem::Time::TimeAbsolute const* const time_req = 0, DataReq dtype = DATA_NEAREST);
-	template<class Data>
-	boost::shared_ptr<const Data> readSignal(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
-	template<class Data>
-	boost::shared_ptr<const Data> readState(const std::string& topic, const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
-	void publishData(const google::protobuf::Message & msg, std::string const& topic);
-	void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
-	void publishState(const google::protobuf::Message &msg, std::string const& topic);
-private:
-	StringRegistry typeRegistry;
+        virtual ~Blackboard() {}
+        void process_messages();
+        void publish_all();
+        enum  DataReq
+        {
+            DATA_NEAREST, DATA_NEAREST_NOTOLDER, DATA_NEAREST_NOTNEWER
+        } ;
+        template<class Data>
+        boost::shared_ptr<const Data> readData(const std::string& topic, const std::size_t  host = MessageEntry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 , KSystem::Time::TimeAbsolute const* const time_req = 0, DataReq dtype = DATA_NEAREST);
+        template<class Data>
+        boost::shared_ptr<const Data> readSignal(const std::string& topic, const std::size_t  host = MessageEntry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
+        template<class Data>
+        boost::shared_ptr<const Data> readState(const std::string& topic, const std::size_t  host = MessageEntry::HOST_ID_LOCAL_HOST, KSystem::Time::TimeAbsolute* const tmp = 0 );
+        void publishData(const google::protobuf::Message & msg, std::string const& topic);
+        void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
+        void publishState(const google::protobuf::Message &msg, std::string const& topic);
+    private:
+        StringRegistry typeRegistry;
 
-	//Each blackboard record is:
-	typedef struct blackboard_record_s
-	{
-		boost::shared_ptr<const google::protobuf::Message > msg;
-		KSystem::Time::TimeAbsolute timestamp;
-		//KSystem::Time::TimeAbsolute timeoutstamp;
-		bool operator== (const struct blackboard_record_s & b) const
-		{
-			return msg == b.msg;
-		};
-		bool operator<(const struct blackboard_record_s &b) const
-		{
-			return timestamp < b.timestamp;
-		};
-		bool operator<(const KSystem::Time::TimeAbsolute  &b) const
-		{
-			return timestamp < b;
-		};
-	} brecord;
+        //Each blackboard record is:
+        typedef struct blackboard_record_s
+        {
+            boost::shared_ptr<const google::protobuf::Message > msg;
+            KSystem::Time::TimeAbsolute timestamp;
+            //KSystem::Time::TimeAbsolute timeoutstamp;
+            bool operator== (const struct blackboard_record_s & b) const
+            {
+                return msg == b.msg;
+            };
+            bool operator<(const struct blackboard_record_s &b) const
+            {
+                return timestamp < b.timestamp;
+            };
+            bool operator<(const KSystem::Time::TimeAbsolute  &b) const
+            {
+                return timestamp < b;
+            };
+        } brecord;
 
-	//=== Data struct: list of records, alongside a list of timeouts
-	typedef std::set< brecord> recordlist;
-	typedef std::map<std::size_t, KSystem::Time::TimeDuration> datatimeouts;
-	typedef std::map<std::size_t, recordlist> datastruct;
-	//=== State struct : single record per type
-	typedef std::map<std::size_t, brecord> statestruct;
-	//Signal struct: single record per type, with marking for clearing
-	typedef struct signalentry_st
-	{
-		brecord d;
-		bool cleared;
-	} signalentry;
-	typedef std::map<std::size_t, signalentry> signalstruct;
+        //=== Data struct: list of records, alongside a list of timeouts
+        typedef std::set< brecord> recordlist;
+        typedef std::map<std::size_t, KSystem::Time::TimeDuration> datatimeouts;
+        typedef std::map<std::size_t, recordlist> datastruct;
+        //=== State struct : single record per type
+        typedef std::map<std::size_t, brecord> statestruct;
+        //Signal struct: single record per type, with marking for clearing
+        typedef struct signalentry_st
+        {
+            brecord d;
+            bool cleared;
+        } signalentry;
+        typedef std::map<std::size_t, signalentry> signalstruct;
 
-	//Registry of string types:
-	typedef std::size_t type_t;
-	typedef std::size_t topic_t;
-	typedef std::size_t host_t;
-	typedef struct region_index_s
-	{
-		topic_t tid;
-		host_t hid;
+        //Registry of string types:
+        typedef std::size_t type_t;
+        typedef std::size_t topic_t;
+        typedef std::size_t host_t;
+        typedef struct region_index_s
+        {
+            topic_t tid;
+            host_t hid;
 
-		bool operator== (const struct region_index_s & b) const
-		{
-			return (tid == 0 || b.tid == 0 || tid == b.tid) &&
-			       (hid == msgentry::HOST_ID_ANY_HOST || b.hid == msgentry::HOST_ID_ANY_HOST || hid == b.hid);
-		};
-		bool operator<(const struct region_index_s &b) const
-		{
-			return hid == b.hid ? tid < b.tid : hid < b.hid;
-		};
-	} region_index;
-	//Distjoint region: one per topic and per host
-	typedef struct
-	{
-		datatimeouts blkdatatimeouts;
-		datastruct blkdata;
-		signalstruct blksignal;
-		statestruct blkstate;
-	} disjoint_region;
-	typedef std::map<region_index, disjoint_region> regions;
-	regions allrecords;
+            bool operator== (const struct region_index_s & b) const
+            {
+                return (tid == 0 || b.tid == 0 || tid == b.tid) &&
+                       (hid == MessageEntry::HOST_ID_ANY_HOST || b.hid == MessageEntry::HOST_ID_ANY_HOST || hid == b.hid);
+            };
+            bool operator<(const struct region_index_s &b) const
+            {
+                return hid == b.hid ? tid < b.tid : hid < b.hid;
+            };
+        } region_index;
+        //Distjoint region: one per topic and per host
+        typedef struct
+        {
+            datatimeouts blkdatatimeouts;
+            datastruct blkdata;
+            signalstruct blksignal;
+            statestruct blkstate;
+        } disjoint_region;
+        typedef std::map<region_index, disjoint_region> regions;
+        regions allrecords;
 
-	//KSystem::Time::TimeAbsolute cur_tmsp;
-	//To be published
-	std::vector<msgentry> topublish;
-	int cleanup();
-	static const float TIMEOUTSCALE = 1.2;
-};
+        //KSystem::Time::TimeAbsolute cur_tmsp;
+        //To be published
+        std::vector<MessageEntry> topublish;
+        int cleanup();
+        static const float TIMEOUTSCALE = 1.2;
+    };
 
+    template<class Data>
+    boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, const std::size_t  host,
+            KSystem::Time::TimeAbsolute* const tmp ,
+            KSystem::Time::TimeAbsolute const * const time_req,
+            DataReq dtype)
+    {
+        const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
+        region_index i;
+        i.tid = Topics::Instance().getId(topic);
+        i.hid = host;
 
+        if(topic == "") i.tid = 0; //Wildcard
 
+        regions::iterator rit = allrecords.begin();
 
-template<class Data>
-boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, const std::size_t  host,
-        KSystem::Time::TimeAbsolute* const tmp ,
-        KSystem::Time::TimeAbsolute const * const time_req,
-        DataReq dtype)
-{
-	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
-	region_index i;
-	i.tid = Topics::Instance().getId(topic);
-	i.hid = host;
+        for(; rit != allrecords.end(); ++rit)
+        {
+            if((*rit).first == i && (*rit).second.blkdata.find(atypeid) != (*rit).second.blkdata.end())
+                break;
+        }
 
-	if(topic == "") i.tid = 0; //Wildcard
+        if(rit == allrecords.end())
+            return boost::shared_ptr<const Data>();
 
-	regions::iterator rit = allrecords.begin();
+        const datastruct &d = (*rit).second.blkdata;
+        datastruct::const_iterator dit = d.find(atypeid);
 
-	for(; rit != allrecords.end(); ++rit)
-	{
-		if((*rit).first == i && (*rit).second.blkdata.find(atypeid) != (*rit).second.blkdata.end())
-			break;
-	}
+        if(dit == d.end())
+            return boost::shared_ptr<const Data>();
 
-	if(rit == allrecords.end())
-		return boost::shared_ptr<const Data>();
+        const recordlist &q = (*dit).second;
 
-	const datastruct &d = (*rit).second.blkdata;
-	datastruct::const_iterator dit = d.find(atypeid);
+        //Empty set, avoid iterators beiing beign()==end()
+        if(q.size() == 0)
+            return boost::shared_ptr<const Data>();
 
-	if(dit == d.end())
-		return boost::shared_ptr<const Data>();
+        if(time_req == NULL)
+        {
+            recordlist::const_reverse_iterator it = q.rbegin();
 
-	const recordlist &q = (*dit).second;
+            if(tmp != NULL)
+                *tmp = (*it).timestamp;
 
-	//Empty set, avoid iterators beiing beign()==end()
-	if(q.size() == 0)
-		return boost::shared_ptr<const Data>();
+            return  boost::static_pointer_cast<const Data>( (*it).msg);
+        }
 
-	if(time_req == NULL)
-	{
-		recordlist::const_reverse_iterator it = q.rbegin();
+        //Update timeout
+        KSystem::Time::TimeDuration nt = KSystem::Time::SystemTime::now() - *time_req;
+        nt *= TIMEOUTSCALE;
 
-		if(tmp != NULL)
-			*tmp = (*it).timestamp;
+        if((*rit).second.blkdatatimeouts.find(atypeid) == (*rit).second.blkdatatimeouts.end())
+            (*rit).second.blkdatatimeouts[atypeid] = nt;
+        else
+            (*rit).second.blkdatatimeouts[atypeid] = (*rit).second.blkdatatimeouts[atypeid] < nt ? nt : (*rit).second.blkdatatimeouts[atypeid];
 
-		return  boost::static_pointer_cast<const Data>( (*it).msg);
-	}
+        brecord s;
+        s.timestamp = *time_req;
+        recordlist::const_iterator lit = q.lower_bound(s);
 
-	//Update timeout
-	KSystem::Time::TimeDuration nt = KSystem::Time::SystemTime::now() - *time_req;
-	nt *= TIMEOUTSCALE;
+        if(dtype == DATA_NEAREST_NOTOLDER)
+        {
+            if(lit == q.end())
+            {
+                return boost::shared_ptr<const Data>();
+            }
 
-	if((*rit).second.blkdatatimeouts.find(atypeid) == (*rit).second.blkdatatimeouts.end())
-		(*rit).second.blkdatatimeouts[atypeid] = nt;
-	else
-		(*rit).second.blkdatatimeouts[atypeid] = (*rit).second.blkdatatimeouts[atypeid] < nt ? nt : (*rit).second.blkdatatimeouts[atypeid];
+            if(tmp != NULL)
+                *tmp = (*lit).timestamp;
 
-	brecord s;
-	s.timestamp = *time_req;
-	recordlist::const_iterator lit = q.lower_bound(s);
+            return  boost::static_pointer_cast<const Data>( (*lit).msg);
+        }
+        else if(dtype == DATA_NEAREST_NOTNEWER)
+        {
+            if(lit == q.end())
+                lit--;
+            else if(s < *lit)
+            {
+                if(lit == q.begin())
+                {
+                    return boost::shared_ptr<const Data>();
+                }
 
-	if(dtype == DATA_NEAREST_NOTOLDER)
-	{
-		if(lit == q.end())
-		{
-			return boost::shared_ptr<const Data>();
-		}
+                --lit;//At least one element, and not at begining, see check q.size()==0 above
+            }
 
-		if(tmp != NULL)
-			*tmp = (*lit).timestamp;
+            if(tmp != NULL)
+                *tmp = (*lit).timestamp;
 
-		return  boost::static_pointer_cast<const Data>( (*lit).msg);
-	}
-	else if(dtype == DATA_NEAREST_NOTNEWER)
-	{
-		if(lit == q.end())
-			lit--;
-		else if(s < *lit)
-		{
-			if(lit == q.begin())
-			{
-				return boost::shared_ptr<const Data>();
-			}
+            return  boost::static_pointer_cast<const Data>( (*lit).msg);
+        }
 
-			--lit;//At least one element, and not at begining, see check q.size()==0 above
-		}
+        if(lit == q.end()) //No newer message that lit, this is the nearest, and is OLDER than requested
+        {
+            lit--;
 
-		if(tmp != NULL)
-			*tmp = (*lit).timestamp;
+            if(tmp != NULL)
+                *tmp = (*lit).timestamp;
 
-		return  boost::static_pointer_cast<const Data>( (*lit).msg);
-	}
+            return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is last, meaning request wast too recent
+        }
 
-	if(lit == q.end()) //No newer message that lit, this is the nearest, and is OLDER than requested
-	{
-		lit--;
+        //Here lit!=end()
+        if(lit == q.begin()) //No older message that lit, this is the nearest
+        {
+            if(tmp != NULL)
+                *tmp = (*lit).timestamp;
 
-		if(tmp != NULL)
-			*tmp = (*lit).timestamp;
+            return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is the lower_bound==begin(), meaning request was too old
+        }
 
-		return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is last, meaning request wast too recent
-	}
+        recordlist::const_iterator uit = lit;
+        uit--;
 
-	//Here lit!=end()
-	if(lit == q.begin()) //No older message that lit, this is the nearest
-	{
-		if(tmp != NULL)
-			*tmp = (*lit).timestamp;
+        if(s.timestamp - (*uit).timestamp < (*lit).timestamp - s.timestamp) //Upper_bound is closer to search
+            lit = uit;
 
-		return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is the lower_bound==begin(), meaning request was too old
-	}
+        if(tmp != NULL)
+            *tmp = (*lit).timestamp;
 
-	recordlist::const_iterator uit = lit;
-	uit--;
+        return  boost::static_pointer_cast<const Data>( (*lit).msg);
+    }template<class Data>
+    boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
+    {
+        const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
+        region_index i;
+        i.tid = Topics::Instance().getId(topic);
+        i.hid = host;
 
-	if(s.timestamp - (*uit).timestamp < (*lit).timestamp - s.timestamp) //Upper_bound is closer to search
-		lit = uit;
+        if(topic == "") i.tid = 0; //Wildcard
 
-	if(tmp != NULL)
-		*tmp = (*lit).timestamp;
+        regions::iterator rit = allrecords.begin();
 
-	return  boost::static_pointer_cast<const Data>( (*lit).msg);
+        for(; rit != allrecords.end(); ++rit)
+        {
+            if((*rit).first == i && (*rit).second.blksignal.find(atypeid) != (*rit).second.blksignal.end())
+                break;
+        }
+
+        if(rit == allrecords.end())
+            return boost::shared_ptr<const Data>();
+
+        signalstruct &s = (*rit).second.blksignal;
+        signalstruct::iterator it = s.find(atypeid);
+
+        if(it == s.end())
+            return boost::shared_ptr<const Data>();
+
+        if(tmp != NULL)
+            *tmp = (*it).second.d.timestamp;
+
+        (*it).second.cleared = true;
+        return  boost::static_pointer_cast<const Data>((*it).second.d.msg);
+    }
+
+    template<class Data>
+    boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
+    {
+        const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
+        region_index i;
+        i.tid = Topics::Instance().getId(topic);
+        i.hid = host;
+
+        if(topic == "") i.tid = 0; //Wildcard
+
+        regions::const_iterator rit = allrecords.begin();
+
+        for(; rit != allrecords.end(); ++rit)
+        {
+            if((*rit).first == i && (*rit).second.blkstate.find(atypeid) != (*rit).second.blkstate.end())
+                break;
+        }
+
+        if(rit == allrecords.end())
+            return boost::shared_ptr<const Data>();
+
+        const statestruct &s = (*rit).second.blkstate;
+        statestruct::const_iterator it = s.find(atypeid);
+
+        if(it == s.end())
+            return boost::shared_ptr<const Data>();
+
+        if(tmp != NULL) //Return timestamp :P
+            *tmp = (*it).second.timestamp;
+
+        return  boost::static_pointer_cast<const Data>((*it).second.msg);
+    }
 }
 
-template<class Data>
-boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
-{
-	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
-	region_index i;
-	i.tid = Topics::Instance().getId(topic);
-	i.hid = host;
-
-	if(topic == "") i.tid = 0; //Wildcard
-
-	regions::iterator rit = allrecords.begin();
-
-	for(; rit != allrecords.end(); ++rit)
-	{
-		if((*rit).first == i && (*rit).second.blksignal.find(atypeid) != (*rit).second.blksignal.end())
-			break;
-	}
-
-	if(rit == allrecords.end())
-		return boost::shared_ptr<const Data>();
-
-	signalstruct &s = (*rit).second.blksignal;
-	signalstruct::iterator it = s.find(atypeid);
-
-	if(it == s.end())
-		return boost::shared_ptr<const Data>();
-
-	if(tmp != NULL)
-		*tmp = (*it).second.d.timestamp;
-
-	(*it).second.cleared = true;
-	return  boost::static_pointer_cast<const Data>((*it).second.d.msg);
-}
-
-template<class Data>
-boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::size_t  host  , KSystem::Time::TimeAbsolute* tmp )
-{
-	const type_t atypeid = typeRegistry.getId(Data::default_instance().GetTypeName());
-	region_index i;
-	i.tid = Topics::Instance().getId(topic);
-	i.hid = host;
-
-	if(topic == "") i.tid = 0; //Wildcard
-
-	regions::const_iterator rit = allrecords.begin();
-
-	for(; rit != allrecords.end(); ++rit)
-	{
-		if((*rit).first == i && (*rit).second.blkstate.find(atypeid) != (*rit).second.blkstate.end())
-			break;
-	}
-
-	if(rit == allrecords.end())
-		return boost::shared_ptr<const Data>();
-
-	const statestruct &s = (*rit).second.blkstate;
-	statestruct::const_iterator it = s.find(atypeid);
-
-	if(it == s.end())
-		return boost::shared_ptr<const Data>();
-
-	if(tmp != NULL) //Return timestamp :P
-		*tmp = (*it).second.timestamp;
-
-	return  boost::static_pointer_cast<const Data>((*it).second.msg);
-}
-
-#endif // BLACKBOARD_H
+#endif // BLACKBOARD_HPP

@@ -10,6 +10,7 @@ set(INCLUDE_SRCS
       MessageHub.hpp
       Configurator.hpp
       Logger.hpp
+      MessageEntry.hpp
 )
 
 add_custom_target(Monas-Include SOURCES ${INCLUDE_SRCS}  )

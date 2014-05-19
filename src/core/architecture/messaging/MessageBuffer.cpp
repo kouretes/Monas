@@ -19,7 +19,9 @@
 */
 
 #include "MessageBuffer.hpp"
-
-//Explicit Template Instantation for MessageBuffer
-template class LockedBuffer<msgentry> ;
+//namespace Messaging
+//{
+    //Explicit Template Instantation for MessageBuffer
+    template class ::LockedBuffer<Messaging::MessageEntry> ;
+//}
 

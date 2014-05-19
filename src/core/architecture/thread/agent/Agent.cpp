@@ -1,6 +1,6 @@
 #include "Agent.hpp"
 #include "core/include/Logger.hpp"
-Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub& com, std::vector<std::string> activities ) :
+Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, Messaging::MessageHub& com, std::vector<std::string> activities ) :
 	PeriodicThread(cfg),
 	_statsCycle(stats),
 	_name(name),
@@ -17,7 +17,7 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub
 	for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); ++it )
 		(*it)->UserInit();
 
-	_blk.updateSubscription("architecture", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("architecture", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 };
 
 Agent::~Agent ()

@@ -16,15 +16,15 @@ namespace statechart_engine
 
 	public:
 
-		void Initialize ( MessageHub*, Blackboard*, Statechart* );
+		void Initialize ( Messaging::MessageHub*, Messaging::Blackboard*, Statechart* );
 
 		virtual void UserInit () = 0;
 
 	protected:
 
-		MessageHub* _com;
+		Messaging::MessageHub* _com;
 
-		Blackboard* _blk;
+		Messaging::Blackboard* _blk;
 
 		Statechart* _s;
 

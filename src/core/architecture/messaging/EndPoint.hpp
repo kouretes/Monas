@@ -18,54 +18,57 @@
 #define ENDPOINT_H
 #include <string>
 #include <vector>
-#include "msg.h"
+#include "MessageEntry.hpp"
+#include "MessageBuffer.hpp"
 #include "MessageHub.hpp"
-//MessageBuffer forward Decl
-template<typename T>class LockedBuffer;
-typedef  LockedBuffer<msgentry> MessageBuffer;
-class EndPoint
+
+namespace Messaging
 {
-public:
-	EndPoint(std::string const& name);
-	virtual ~EndPoint();
+    class EndPoint
+    {
+    public:
+        EndPoint(std::string const& name);
+        virtual ~EndPoint();
 
-	void publish(  msgentry const& msg);
-	void publish(std::vector<msgentry> const& vec);
+        void publish(  MessageEntry const& msg);
+        void publish(std::vector<MessageEntry> const& vec);
 
-	virtual void publishData(const google::protobuf::Message & msg, std::string const& topic);
-	virtual void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
-	virtual void publishState(const google::protobuf::Message &msg, std::string const& topic);
-
-
-	std::string const getEndPointName() const
-	{
-		return endpoint_name;
-	}
-
-	MessageBuffer *getWriteBuffer() const
-	{
-		return write_buf;
-	}
-
-	std::vector<msgentry> remove();
-
-	MessageBuffer *getReadBuffer() const
-	{
-		return read_buf;
-	}
-
-	void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host = msgentry::HOST_ID_LOCAL_HOST);
-	template<typename M> void attachTo(M& m)
-	{
-		read_buf = m.makeReadBuffer(endpoint_name);
-		write_buf = m.makeWriteBuffer(endpoint_name);
-	}
-
-private:
-	std::string endpoint_name;
-	MessageBuffer *write_buf, *read_buf;
+        virtual void publishData(const google::protobuf::Message & msg, std::string const& topic);
+        virtual void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
+        virtual void publishState(const google::protobuf::Message &msg, std::string const& topic);
 
 
-};
+        std::string const getEndPointName() const
+        {
+            return endpoint_name;
+        }
+
+        MessageBuffer *getWriteBuffer() const
+        {
+            return write_buf;
+        }
+
+        std::vector<MessageEntry> remove();
+
+        MessageBuffer *getReadBuffer() const
+        {
+            return read_buf;
+        }
+
+        void updateSubscription(std::string const& topic , MessageEntry::msgclass_t where, std::size_t host = MessageEntry::HOST_ID_LOCAL_HOST);
+        template<typename M> void attachTo(M& m)
+        {
+            read_buf = m.makeReadBuffer(endpoint_name);
+            write_buf = m.makeWriteBuffer(endpoint_name);
+        }
+
+    private:
+        std::string endpoint_name;
+        MessageBuffer *write_buf, *read_buf;
+
+
+    };
+
+}
 
 #endif /*ENDPOINT_H */

@@ -35,7 +35,7 @@ class Gateway:   public IProvider {
 public:
 	int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
-	Gateway (KSystem::ThreadConfig &c, MessageHub &n) :
+	Gateway (KSystem::ThreadConfig &c, Messaging::MessageHub &n) :
 		EndPoint ("Gateway"),
 		IProvider ("Gateway", c, n), _blk ("GatewayBlackboard") {
 		_blk.attachTo (n );
@@ -50,7 +50,7 @@ public:
 
 	int GetCrc32 (const std::string &my_string);
 private:
-	Blackboard _blk;
+	Messaging::Blackboard _blk;
 
 	boost::shared_ptr<const KnownHosts> h;
 	boost::shared_ptr<const GameStateMessage>  gsm;

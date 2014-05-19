@@ -7,7 +7,7 @@ std::size_t CooperationHelper::getHostByPlayerNum(std::size_t p)
 	boost::shared_ptr<const KnownHosts>  h = _blk.readState<KnownHosts>("communication");
 
 	if(!h.get() || (h && h->entrylist_size() == 0))
-		return msgentry::HOST_ID_ANY_HOST;
+		return Messaging::MessageEntry::HOST_ID_ANY_HOST;
 
 	const ::google::protobuf::RepeatedPtrField< HostEntry >& rf = h->entrylist();
 	::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
@@ -22,5 +22,5 @@ std::size_t CooperationHelper::getHostByPlayerNum(std::size_t p)
 			return (*fit).hostid();
 	}
 
-	return msgentry::HOST_ID_ANY_HOST;
+	return Messaging::MessageEntry::HOST_ID_ANY_HOST;
 };

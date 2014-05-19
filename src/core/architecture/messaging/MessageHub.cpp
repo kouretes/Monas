@@ -27,6 +27,8 @@
 
 #include "core/include/Configurator.hpp"
 
+namespace Messaging
+{
 
 
 using std::map;
@@ -161,34 +163,34 @@ void MessageHub::process_queued_msg()
 	static int msgs = 0;
 	_executions ++;
 	hubstats.StartTiming();
-	std::map<MessageBuffer *, std::vector<msgentry> > ready;
+	std::map<MessageBuffer *, std::vector<MessageEntry> > ready;
 
 	for(std::vector<MessageBuffer *>::iterator pit = toprocess.begin(); pit != toprocess.end(); ++pit)
 	{
-		std::vector<msgentry> mtp = (*pit)->remove();
+		std::vector<MessageEntry> mtp = (*pit)->remove();
 		// cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
 		const std::size_t pownerid = (*pit)->getOwnerID();
 		SystemMutex::scoped_lock pub_sub_mutexlock(pub_sub_mutex);
 
-		for(std::vector<msgentry>::iterator mit = mtp.begin(); mit != mtp.end(); ++mit)
+		for(std::vector<MessageEntry>::iterator mit = mtp.begin(); mit != mtp.end(); ++mit)
 		{
 			size_t msgtopicId = (*mit).topic;
 
 			//===== Handle subscriptions
-			if((*mit).msgclass >= msgentry::SUBSCRIBE_ON_TOPIC && (*mit).msgclass <= msgentry::SUBSCRIBE_ALL_TOPIC)
+			if((*mit).msgclass >= MessageEntry::SUBSCRIBE_ON_TOPIC && (*mit).msgclass <= MessageEntry::SUBSCRIBE_ALL_TOPIC)
 			{
 				subscribeTo(pownerid, (*mit).topic, (*mit).msgclass);
 
-				if((*mit).host != msgentry::HOST_ID_LOCAL_HOST && multicast != NULL)
+				if((*mit).host != MessageEntry::HOST_ID_LOCAL_HOST && multicast != NULL)
 					multicast->getReadBuffer()->add((*mit));
 
 				continue;
 			}
-			else if((*mit).msgclass >= msgentry::UNSUBSCRIBE_ON_TOPIC && (*mit).msgclass <= msgentry::UNSUBSCRIBE_ALL_TOPIC)
+			else if((*mit).msgclass >= MessageEntry::UNSUBSCRIBE_ON_TOPIC && (*mit).msgclass <= MessageEntry::UNSUBSCRIBE_ALL_TOPIC)
 			{
 				unsubscribeFrom(pownerid, (*mit).topic, (*mit).msgclass);
 
-				if((*mit).host != msgentry::HOST_ID_LOCAL_HOST && multicast != NULL)
+				if((*mit).host != MessageEntry::HOST_ID_LOCAL_HOST && multicast != NULL)
 					multicast->getReadBuffer()->add((*mit));
 
 				continue;
@@ -215,14 +217,14 @@ void MessageHub::process_queued_msg()
 
 		pub_sub_mutexlock.unlock();
 		/*if ( ! (_executions % 1000) ){
-			for(std::map<MessageBuffer *,std::vector<msgentry> >::iterator rit=ready.begin();rit!=ready.end();++rit)
+			for(std::map<MessageBuffer *,std::vector<MessageEntry> >::iterator rit=ready.begin();rit!=ready.end();++rit)
 			{
 				cout<<":"<<(*rit).second.size()<<endl;
 			}
 		}*/
 	}
 
-	std::map<MessageBuffer *, std::vector<msgentry> >::iterator rit = ready.end();
+	std::map<MessageBuffer *, std::vector<MessageEntry> >::iterator rit = ready.end();
 
 	while(ready.size() > 0)
 	{
@@ -231,7 +233,7 @@ void MessageHub::process_queued_msg()
 
 		if((*rit).first->tryadd((*rit).second))
 		{
-			std::map<MessageBuffer *, std::vector<msgentry> >::iterator t = rit++;
+			std::map<MessageBuffer *, std::vector<MessageEntry> >::iterator t = rit++;
 			ready.erase(t);
 		}
 		else
@@ -255,3 +257,6 @@ int MessageHub::Execute()
 	process_queued_msg();
 	return 0;
 }
+
+
+} // Namespace Messaging

@@ -34,9 +34,9 @@ void Vision::UserInit()
 	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
 	//rawImage = ext.allocateImage();
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	segbottom = NULL;
 	segtop = NULL;
 	Reset();
@@ -119,7 +119,7 @@ void Vision::fetchAndProcess()
 	vdm.Clear();
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 	KSystem::Time::TimeAbsolute oldstamp = stamp;
-	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
+	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, &stamp);
 	if(stamp <= oldstamp)
 		return ;
 
@@ -164,14 +164,14 @@ void Vision::fetchAndProcess()
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
 	//return;
-	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timeo, &stamp, Blackboard::DATA_NEAREST_NOTNEWER);
-	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp, Blackboard::DATA_NEAREST_NOTOLDER);
+	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, &timeo, &stamp, Blackboard::DATA_NEAREST_NOTNEWER);
+	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, &timen, &stamp, Blackboard::DATA_NEAREST_NOTOLDER);
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:" << KSystem::Time::to_iso_string(stamp) << endl;
 	cout << "Now:" << KSystem::Time::SystemTime::now() << endl;
 	cout << "SensorTimestamp:" << KSystem::Time::to_iso_string(timeo) << "," << KSystem::Time::to_iso_string(timen) << endl;
 	//	KSystem::Time::TimeAbsolute t;
-	//	_blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
+	//	_blk.readData<AllSensorValuesMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, &t);
 	//	cout << "Lasttimestamp:"<< KSystem::Time::to_iso_string(t) << endl;
 #endif
 

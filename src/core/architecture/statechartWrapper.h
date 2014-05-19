@@ -21,12 +21,12 @@ public:
 
 };
 
-typedef Factory < StatechartWrapper, std::string, StatechartWrapper* (*)(MessageHub*), MessageHub* >  StatechartFactory;
+typedef Factory < StatechartWrapper, std::string, StatechartWrapper* (*)(Messaging::MessageHub*), Messaging::MessageHub* >  StatechartFactory;
 
 template<class T>
 struct StatechartRegistrar
 {
-	typedef Registrar<StatechartFactory, StatechartWrapper, std::string, T, MessageHub*> Type;
+	typedef Registrar<StatechartFactory, StatechartWrapper, std::string, T, Messaging::MessageHub*> Type;
 };
 
 #endif // STATECHARTWRAPPER_H

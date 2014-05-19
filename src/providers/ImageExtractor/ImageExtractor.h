@@ -19,7 +19,7 @@ class ImageExtractor:   public IProvider
 {
 public:
 	static const unsigned camerarefreshmillisec = 1000;
-	ImageExtractor(KSystem::ThreadConfig &c, MessageHub&n):
+	ImageExtractor(KSystem::ThreadConfig &c, Messaging::MessageHub&n):
 		EndPoint("ImageExtractor"),
 		IProvider("ImageExtractor", c, n), _blk("ImageExtractorBlackboard"), imext()
 	{
@@ -40,7 +40,7 @@ public:
 private:
 	bool firstRun;
 
-	Blackboard _blk;
+	Messaging::Blackboard _blk;
 
 	KImageExtractor imext;
 

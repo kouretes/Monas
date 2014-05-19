@@ -1,8 +1,8 @@
-#ifndef MSGENTRYSERIALIZE_HPP
-#define MSGENTRYSERIALIZE_HPP
+#ifndef MessageEntrySERIALIZE_HPP
+#define MessageEntrySERIALIZE_HPP
 
 #include "ptimeserialize.hpp"
-#include "../msg.h"
+#include "core/include/MessageEntry.hpp"
 
 
 
@@ -16,7 +16,7 @@ struct serializedmsgheader
 	unsigned char msgclass;
 
 	uint16_t typeData;///Either as uinque identifier or as a length prefix for the GetTypeName() string that follows, currently the latter
-	void encodeFromMsg(msgentry const& m, uint16_t atypeData)
+	void encodeFromMsg(Messaging::MessageEntry const& m, uint16_t atypeData)
 	{
 		topicid = htonl(m.topic);
 		timestamp = serialize_ptime(m.timestamp);
@@ -24,12 +24,12 @@ struct serializedmsgheader
 		typeData = htons(atypeData);
 	}
 
-	msgentry decodeMsg() const
+	Messaging::MessageEntry decodeMsg() const
 	{
-		msgentry en;
+		Messaging::MessageEntry en;
 		en.topic = ntohl(topicid);
 		en.timestamp = deserialize_ptime(timestamp);
-		en.msgclass = (msgentry::msgclass_t)msgclass;
+		en.msgclass = (Messaging::MessageEntry::msgclass_t)msgclass;
 		return en;
 	}
 	uint16_t getTypeData() const
@@ -42,4 +42,4 @@ struct serializedmsgheader
 };
 #pragma pack(pop)
 
-#endif /*MSGENTRYSERIALIZE_H*/
+#endif /*MessageEntrySERIALIZE_H*/

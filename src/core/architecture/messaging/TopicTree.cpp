@@ -14,13 +14,13 @@
    Boston, MA 02110-1301, USA.
 */
 #include "TopicTree.hpp"
-#include "msg.h"
+#include "MessageEntry.hpp"
 
 
+namespace Messaging
+{
 
 using namespace std;
-
-
 
 
 
@@ -67,8 +67,8 @@ std::set<std::size_t>  TopicTree::iterateTopics(std::size_t  topic , int where) 
 	//cout<<"Check 2"<<endl;
 	res.insert(topic);
 
-	if(where == msgentry::SUBSCRIBE_ABOVE_TOPIC || where == msgentry::SUBSCRIBE_ALL_TOPIC ||
-	        where == msgentry::UNSUBSCRIBE_ABOVE_TOPIC || where == msgentry::UNSUBSCRIBE_ALL_TOPIC)
+	if(where == MessageEntry::SUBSCRIBE_ABOVE_TOPIC || where == MessageEntry::SUBSCRIBE_ALL_TOPIC ||
+	        where == MessageEntry::UNSUBSCRIBE_ABOVE_TOPIC || where == MessageEntry::UNSUBSCRIBE_ALL_TOPIC)
 	{
 		do
 		{
@@ -82,8 +82,8 @@ std::set<std::size_t>  TopicTree::iterateTopics(std::size_t  topic , int where) 
 		while((*tit).first != (*tit).second.parentid);
 	}
 
-	if(where == msgentry::SUBSCRIBE_BELOW_TOPIC || where == msgentry::SUBSCRIBE_ALL_TOPIC ||
-	        where == msgentry::UNSUBSCRIBE_BELOW_TOPIC || where == msgentry::UNSUBSCRIBE_ALL_TOPIC)
+	if(where == MessageEntry::SUBSCRIBE_BELOW_TOPIC || where == MessageEntry::SUBSCRIBE_ALL_TOPIC ||
+	        where == MessageEntry::UNSUBSCRIBE_BELOW_TOPIC || where == MessageEntry::UNSUBSCRIBE_ALL_TOPIC)
 		iterateTopicsBelow(res, topic);
 
 	return res;
@@ -117,3 +117,4 @@ void TopicTree::iterateTopicsBelow(std::set<std::size_t>  &res, std::size_t cons
 }
 
 
+} // namespace Messaging

@@ -76,7 +76,7 @@ public:
 	 */
 	void setIndividualEarColor(const string& device, const string& color);
 
-	inline void processBuffer( MessageBuffer  * m)
+	inline void processBuffer( Messaging::MessageBuffer  * m)
 	{
 		IdlingThread::wakeUpThread();
 	};

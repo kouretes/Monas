@@ -20,6 +20,7 @@
 #ifndef MESSAGEHUB_HPP
 #define MESSAGEHUB_HPP
 #include <string>
+#include "MessageBuffer.hpp"
 #include "core/elements/StringRegistry.hpp"
 #include <boost/bind.hpp>
 
@@ -40,13 +41,12 @@
 #define TIXML_USE_STL
 #endif
 
-struct msgentry_;
-typedef struct msgentry_ msgentry;
-template<typename T>class LockedBuffer;
 
-typedef LockedBuffer<msgentry> MessageBuffer;
-class EndPoint;
 
+namespace Messaging
+{
+
+    class EndPoint;
 /**
 MessageHub class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
@@ -79,7 +79,7 @@ public:
 	};
 private:
 	//String hasher
-	EndPoint * multicast;
+	Messaging::EndPoint * multicast;
 
 	StringRegistry pubsubRegistry;
 
@@ -102,5 +102,7 @@ private:
 	void subscribeTo(std::size_t subid, std::size_t  topic , int where);
 	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
 };
+
+}// namespace Messaging
 
 #endif // MESSAGE_HUB_H

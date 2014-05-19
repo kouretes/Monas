@@ -20,7 +20,7 @@
 namespace KNetwork
 {
 
-	class MulticastPoint : public EndPoint, private KSystem::SystemThread
+	class MulticastPoint : public Messaging::EndPoint, private KSystem::SystemThread
 	{
 	public:
 		MulticastPoint(std::string const& name, unsigned payloadsize);
@@ -69,9 +69,9 @@ namespace KNetwork
 		std::map<hostid, hostDescription> otherHosts;
 		std::set<size_t>   localsubscriptions;//Ie what I ask from messagequeue currently
 
-		void  bufferCallback(MessageBuffer *mbuf);
+		void  bufferCallback(Messaging::MessageBuffer *mbuf);
 		void processIncoming(const char * buff, size_t size);
-		void processOutGoing(msgentry m);
+		void processOutGoing(Messaging::MessageEntry m);
 
 		void cleanupLocalSubscriptions();
 

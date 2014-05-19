@@ -9,14 +9,14 @@ class CooperationHelper
 {
 
 public:
-	CooperationHelper(Blackboard &b, std::size_t t): _blk(b), team(t)
+	CooperationHelper(Messaging::Blackboard &b, std::size_t t): _blk(b), team(t)
 	{
-		_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
-		_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST);
+		_blk.updateSubscription("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 	};
 
 private:
-	Blackboard & _blk;
+	Messaging::Blackboard & _blk;
 	std::size_t team;
 
 	std::size_t getHostByPlayerNum(std::size_t p);

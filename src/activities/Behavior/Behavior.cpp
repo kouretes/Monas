@@ -30,14 +30,14 @@ Behavior::Behavior(Blackboard &b) :
  */
 void Behavior::UserInit() {
 
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST); // used for PSO synchronization
-	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("pathplanning", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("buttonevents", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, Messaging::MessageEntry::HOST_ID_ANY_HOST); // used for PSO synchronization
+	_blk.updateSubscription("communication", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -671,7 +671,7 @@ void Behavior::getPSOData() {
 	float d = 0.0f, minD = INF;
 	vector<PSOData> mappings;
 
-	gbm = _blk.readData<gBestMessage>("external", msgentry::HOST_ID_LOCAL_HOST);
+	gbm = _blk.readData<gBestMessage>("external", Messaging::MessageEntry::HOST_ID_LOCAL_HOST);
 
 	if(gbm != 0 && gbm.get() != 0) {
 		PSOData newData;

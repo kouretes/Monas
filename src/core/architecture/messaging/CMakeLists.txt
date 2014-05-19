@@ -5,7 +5,7 @@ message ( STATUS "" )
 SET(MESSAGING_SRCS
    Blackboard.hpp
    Blackboard.cpp
-   msg.h
+   MessageEntry.hpp
    TopicTree.hpp
    TopicTree.cpp
    EndPoint.hpp

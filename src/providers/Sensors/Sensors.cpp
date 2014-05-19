@@ -259,32 +259,32 @@ void Sensors::synchronisedDCMcallback()
 {
 	fetchValues();
 	//========== PUBLISH MSG ===/
-	msgentry nmsg;
+	Messaging::MessageEntry nmsg;
 	google::protobuf::Message * newptr = ASM.New();
 	newptr->CopyFrom(ASM);
 	nmsg.msg.reset(newptr);
-	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 	//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
 	nmsg.timestamp = now;
 	nmsg.topic = sensorstopicid;
 	//nmsg.publisher=Publisher::getName();
-	nmsg.msgclass = msgentry::DATA;
+	nmsg.msgclass = Messaging::MessageEntry::DATA;
 	this->publish(nmsg);
 
 	if(updateButtons())
 	{
-		msgentry nmsg;
+		Messaging::MessageEntry nmsg;
 		google::protobuf::Message * newptr = BM.New();
 		newptr->CopyFrom(BM);
 		nmsg.msg.reset(newptr);
-		nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+		nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 		//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
 		nmsg.timestamp = now;
 		nmsg.topic = buttoneventstopicid;
 		//nmsg.publisher=Publisher::getName();
-		nmsg.msgclass = msgentry::SIGNAL;
+		nmsg.msgclass = Messaging::MessageEntry::SIGNAL;
 		this->publish(nmsg);
 	}
 }
@@ -328,8 +328,8 @@ void Sensors::initialization()
 		cout << buttonValues[i] << endl;
 	}
 
-	sensorstopicid = Topics::Instance().getId("sensors");
-	buttoneventstopicid = Topics::Instance().getId("buttonevents");
+	sensorstopicid = Messaging::Topics::Instance().getId("sensors");
+	buttoneventstopicid = Messaging::Topics::Instance().getId("buttonevents");
 #endif
 	ASM.Clear();
 	RPM.Clear();

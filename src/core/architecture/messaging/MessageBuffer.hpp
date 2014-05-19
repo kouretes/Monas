@@ -18,16 +18,19 @@
 
 */
 
-#ifndef MESSAGE_BUFFER_H
-#define MESSAGE_BUFFER_H
+#ifndef MESSAGEBUFFER_HPP
+#define MESSAGEBUFFER_HPP
 
-#include "msg.h"
+#include "MessageEntry.hpp"
 #include "core/elements/buffer/LockedBuffer.hpp"
 
-typedef LockedBuffer<msgentry> MessageBuffer;
+namespace Messaging
+{
+    typedef ::LockedBuffer<MessageEntry> MessageBuffer;
+}
 
 
 
 
 
-#endif //MESSAGE_BUFFER_H
+#endif //MESSAGEBUFFER_HPP

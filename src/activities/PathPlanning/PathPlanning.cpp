@@ -29,8 +29,8 @@ PathPlanning::PathPlanning(Blackboard &b) :
 }
 
 void PathPlanning::UserInit() {
-	_blk.updateSubscription ("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription ("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription ("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription ("pathplanning", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 
 	//Setup path map
 	int radiusRings = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRingsInRadius").c_str());
@@ -88,10 +88,10 @@ int PathPlanning::Execute() {
 	//update the grid with the new sonar values
 	while(currentTime < KSystem::Time::SystemTime::now()){
 		currentTime = currentTime +KSystem::Time::milliseconds(100);
-		rpm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
+		rpm = _blk.readData<RobotPositionMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 		processOdometryData();
 		pathMap.updateCells();
-		allsm =  _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
+		allsm =  _blk.readData<AllSensorValuesMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 
 		if (updateObstacles && allsm != 0) {
 			for (int j = 0; j < KDeviceLists::US_SIZE; j++) {

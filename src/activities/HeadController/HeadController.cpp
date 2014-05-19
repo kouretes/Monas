@@ -11,10 +11,10 @@ const float HeadController::headSpeed[3] = {1.4f, 1.6f, 1.9f}; /*{SOMEDAY, SLOW,
 
 void HeadController::UserInit()
 {
-	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 
 	hmot.set_command("setHead");
 	hmot.add_parameter(0.0f);
