@@ -1,7 +1,7 @@
-#ifndef _stopWatch_h_
-#define _stopWatch_h_ 1
+#ifndef STOPWATCH_HPP
+#define STOPWATCH_HPP
 
-template<class AvgPol = StatMovingAverage>
+template<class AvgPol = KMath::StatMovingAverage>
 class StopWatch : public AvgPol
 {
 
@@ -23,4 +23,4 @@ private:
 
 };
 
-#endif // _stopWatch_h_
+#endif // STOPWATCH_HPP

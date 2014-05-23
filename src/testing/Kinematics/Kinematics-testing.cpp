@@ -1,6 +1,6 @@
 #include "core/elements/math/KMat.hpp"
-#include "hal/robot/generic_nao/NAOKinematics.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/NAOKinematics.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include <iostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 using namespace boost::posix_time;

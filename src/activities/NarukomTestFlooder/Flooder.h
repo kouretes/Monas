@@ -2,7 +2,7 @@
 #define FLOODER_H
 #include "core/include/IActivity.hpp"
 
-#include "tools/profiler.hpp"
+#include "core/architecture/time/Profiler.hpp"
 
 ACTIVITY_START
 

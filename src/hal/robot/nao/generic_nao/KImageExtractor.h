@@ -6,7 +6,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "NaoCamera.h"
 
-#include "KImage.h"
+#include "core/elements/vision/KImage.h"
 
 #define VISION_RESOLUTION VGA
 #define VISION_CSPACE YUV

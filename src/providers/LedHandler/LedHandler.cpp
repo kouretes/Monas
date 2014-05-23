@@ -1,6 +1,6 @@
 #include "LedHandler.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
-#include "hal/robot/generic_nao/kAlBroker.h"
+#include "hal/robot/nao/generic_nao/kAlBroker.h"
 #include "tools/toString.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 

@@ -88,7 +88,7 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
     //Initialize particle related parameters
     boost::uniform_real<> uniDist(0,1);
 	boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
-	augMCL.firstUpdate==true;
+	augMCL.firstUpdate=true;
     augMCL.avgLikelihood=1;
     augMCL.shortHist=1;
     augMCL.longHist=1;

@@ -22,9 +22,6 @@
 
 #include "hal/syscall.h"
 
-#ifdef NAOQI
-#include "hal/robot/generic_nao/robot_consts.h"
-#endif
 
 /**
  * The gateway that takes messages from the outer world (GUI: KMonitor) and forwards them inside Monas.

@@ -6,8 +6,8 @@
 #include "ISpecialAction.h"
 #include "KmexAction.h"
 #include "KmeAction.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "hal/robot/generic_nao/aldebaran-kme.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/aldebaran-kme.h"
 
 class KmexManager
 {

@@ -1,1 +1,1 @@
-set( ProtobufLibrary ${ConfigDir}/${TargetPlatform}/lib/libprotobuf.a)
+set( ProtobufLibrary ${ConfigDir}/robot/${TargetRobot}/lib/libprotobuf.a)

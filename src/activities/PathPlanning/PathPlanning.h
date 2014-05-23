@@ -20,11 +20,11 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Motion.pb.h"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 
 //#define KPROFILING_ENABLED
-#include "tools/profiler.hpp"
+#include "core/architecture/time/Profiler.hpp"
 
 #include "core/elements/math/Common.hpp"
 #include "core/elements/customTypes/K3DArray.hpp"
@@ -76,15 +76,15 @@ public:
 			return lhs->h > rhs->h;
 		}
 	};
-	
+
 private:
 
 	GridMap pathMap;
 	GridMap smallPathMap;
-	
+
 	GridInfo gridInfoMessage;
 	MotionWalkMessage wmot;
-	
+
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const RobotPositionMessage> rpm;
 	boost::shared_ptr<const PathPlanningRequestMessage> pprm;
@@ -97,7 +97,7 @@ private:
 	void printSonarValues();
 	void commitMovement();
 	void velocityWalk(float ix, float iy, float it, float f);
-		
+
 	mutable KProfiling::profiler vprof;
 	bool gameMode;
 	bool firstTime;

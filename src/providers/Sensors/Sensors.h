@@ -2,8 +2,8 @@
 #define SENSORS_H
 
 
-#include "hal/robot/generic_nao/aldebaran-sensors.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/aldebaran-sensors.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include <vector>
@@ -11,8 +11,8 @@
 #include <string>
 
 #include "core/include/IProvider.hpp"
-#include "tools/stat/cumulative.h"
-#include "tools/stat/kalman.h"
+#include "core/elements/math/stat/Cumulative.hpp"
+#include "core/elements/math/stat/Kalman.hpp"
 
 #define DEBOUNCE_MILLISEC 20
 #define MCLICKDISTANCE_MILLISEC   300
@@ -58,9 +58,9 @@ private:
 
 	void initialization();
 
-	sample_counter sc;
-	cumulative_central_moments<float> gyravg[KDeviceLists::GYR_SIZE];
-	cumulative_central_moments<float> accnorm;
+	KMath::SampleCounter sc;
+	KMath::CumulativeCentralMoments<float> gyravg[KDeviceLists::GYR_SIZE];
+	KMath::CumulativeCentralMoments<float> accnorm;
 
 	void fillComputedData(unsigned int timediff);
 	void fetchValues();
