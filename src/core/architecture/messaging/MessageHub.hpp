@@ -74,8 +74,8 @@ public:
 		{
 			cond_publishers.insert(m);
 			cond_publishers_queue.push_back(m);
-			cond.notify_one();
 		}
+		cond.notify_one();
 	};
 private:
 	//String hasher

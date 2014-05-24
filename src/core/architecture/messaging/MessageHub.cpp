@@ -64,7 +64,7 @@ MessageHub::MessageHub() : SystemThread(false),
 
 MessageHub::~MessageHub()
 {
-	delete multicast;
+    if(multicast) delete multicast;
 }
 /*
 void MessageHub::addTopic(std::string const& what,std::string const& under)
@@ -149,7 +149,7 @@ void MessageHub::process_queued_msg()
 	/* LOCKING */
 	SystemMutex::scoped_lock cond_lock(cond_mutex);
 
-	while(cond_publishers.size() == 0)
+	while(cond_publishers.size() == 0&&SystemThread::running==true)
 		cond.wait(cond_lock);
 
 	toprocess = cond_publishers_queue;
@@ -157,6 +157,7 @@ void MessageHub::process_queued_msg()
 	cond_publishers_queue.clear();
 	cond_lock.unlock();
 	/* LOCKING */
+	if(SystemThread::running==false) return;
 	// cout<<"Queue up!"<<endl;
 	//Mutex::scoped_lock sub_lock(sub_mutex)
 	static int _executions = 0;

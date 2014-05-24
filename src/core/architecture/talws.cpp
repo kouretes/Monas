@@ -123,23 +123,44 @@ void Talws::Start()
 void Talws::Stop()
 {
 	std::cout << "Talws: Stoping..." << std::endl; //TODO
+	std::cout << "Talws: Stoping Agents...";
+	std::cout.flush();
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->StopThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Stoping Providers...";
+    std::cout.flush();
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->StopThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Joining Agents...";
+    std::cout.flush();
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->JoinThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Joining Providers...";
+    std::cout.flush();
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->JoinThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Terminating StateCharts...";
+    std::cout.flush();
 	for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
 		(*it)->Stop();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Stopping MessageHub...";
+    std::cout.flush();
 	com.StopThread();
+	std::cout << "Done!"<<std::endl;
+	std::cout << "Talws: Wake MessageHub one last time...";
+	std::cout.flush();
 	com.requestMailMan(NULL); //Wake him
+	std::cout << "Done!"<<std::endl;
+	std::cout << "Talws: Joining MessageHub...";
+	std::cout.flush();
 	com.JoinThread();
+	std::cout << "Done!"<<std::endl;
+	std::cout<<"Bye Bye!"<<std::endl;
+	std::cout.flush();
 }
 
