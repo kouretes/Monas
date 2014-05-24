@@ -1293,7 +1293,6 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		KVecInt2 l = trcrs.p;
 		m.x = (l.x + r.x) / 2;
 		//bounds vector
-std:
 		vector<KVecFloat2> pv; //Eight points
 		//Repeat up down :)
 		trcrs = traceline(m, KVecInt2(0, 1), orange);//Smart?

@@ -37,7 +37,7 @@ int RobotController::Execute()
 	if(lastalive < now && received && gm_state.override_state() == OVERRIDE_DISABLED)
 	{
 		gm.SendAlive(conf.player_number() );
-		lastalive = now + KSystem::Time::milliseconds(ALIVEMS);
+		lastalive = now + KSystem::Time::TimeAbsolute::milliseconds(ALIVEMS);
 	}
 
 	//Check if the msg changes from the outer world

@@ -2,14 +2,22 @@
 #include "multicastpoint.hpp"
 #include "core/include/Logger.hpp"
 #include "core/architecture/time/TimeTypes.hpp"
-#include "msgentryserialize.hpp"
+#include "core/architecture/messaging/serialization/MessageEntrySerialization.hpp"
 #include <boost/functional/hash.hpp>
 #include <google/protobuf/descriptor.h>
 #include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
 
+class MessageEntrySerializationTraits
+{
+    public:
+    typedef uint8_t topic_t;
+    typedef KSystem::Time::TimeStamp timestamp_t;
+    static const bool hasTimeStamp=true;
+    static const bool hasTopic=true;
 
+};
 namespace KNetwork
 {
 	using namespace KSystem;
@@ -25,9 +33,9 @@ namespace KNetwork
 		cleanupandbeacon(10), otherHosts(), localsubscriptions(), uni(boost::mt19937(),  boost::uniform_real<>(0, 1))
 	{
 		//hash time and produce string
-		boost::hash<std::string> h;
+		boost::hash<KSystem::Time::TimeAbsolute::rep> h;
 		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
-		thishost = h(KSystem::Time::to_iso_string(now)); //Generate random hostid from current time
+		thishost = h((now).raw()); //Generate random hostid from current time
 		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
 		p.setHost(thishost );  //My host id is used to tag multicast messages
 		LogEntry(LogLevel::Info,"Multicast")<< "Multicast hostid:" <<(thishost);
@@ -100,7 +108,7 @@ namespace KNetwork
 			multireceive.set_option( boost::asio::ip::multicast::join_group(multicast_address));
 			multireceive.set_option( boost::asio::ip::multicast::hops(2));//Limit to two hop only, ie local+1
 			queue_receive();
-			timer_.expires_from_now(KSystem::Time::milliseconds(100));
+			timer_.expires_from_now(boost::posix_time::milliseconds(100));
 			timer_.async_wait(
 			    boost::bind(&MulticastPoint::handle_timeout, this,
 			                boost::asio::placeholders::error));
@@ -133,14 +141,14 @@ namespace KNetwork
 		void *b = dep.getbuffer();
 		multireceive.async_receive_from(
 		    boost::asio::buffer(b, dep.getbufferSize()), sender_endpoint_,
-		    boost::bind(&MulticastPoint::handle_receive_from, this, (const char *)b,
+		    boost::bind(&MulticastPoint::handle_receive_from, this, (const uint8_t *)b,
 		                boost::asio::placeholders::error,
 		                boost::asio::placeholders::bytes_transferred));
 	}
 
 
 
-	void MulticastPoint::handle_receive_from(const char* buffer, const boost::system::error_code& error, size_t bytes_recvd)
+	void MulticastPoint::handle_receive_from(const uint8_t* buffer, const boost::system::error_code& error, size_t bytes_recvd)
 	{
 		//std::cout<<"Receive"<<std::endl;
 		if (!error)
@@ -152,7 +160,7 @@ namespace KNetwork
 	}
 
 
-	void MulticastPoint::handle_send_to(const char* bytes, std::size_t size)
+	void MulticastPoint::handle_send_to(const uint8_t* bytes, std::size_t size)
 	{
 		// Random early detect
 		avgqueuesize = queuesize * wq + avgqueuesize * (1 - wq);
@@ -199,7 +207,7 @@ namespace KNetwork
 			{
 				//Clean old hosts first
 				std::map<hostid, hostDescription>::iterator  t, hit = otherHosts.begin();
-				KSystem::Time::TimeAbsolute oldest = now - KSystem::Time::milliseconds(cleanupandbeacon * 4);
+				KSystem::Time::TimeAbsolute oldest = now - KSystem::Time::TimeAbsolute::milliseconds(cleanupandbeacon * 4);
 
 				while(hit != otherHosts.end())
 				{
@@ -245,7 +253,7 @@ namespace KNetwork
 				m.msg.reset(hs);
 				m.topic = Messaging::Topics::Instance().getId("communication");
 				m.msgclass = Messaging::MessageEntry::STATE;
-				m.timestamp = now;
+				m.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
 				m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 				//std::cout<<"Beacon"<<std::endl;
 				processOutGoing(m);
@@ -273,12 +281,12 @@ namespace KNetwork
 				m.msg.reset(kn);
 				m.topic = Messaging::Topics::Instance().getId("communication");
 				m.msgclass = Messaging::MessageEntry::STATE;
-				m.timestamp = now;
+				m.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
 				m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 				publish(m);
 			}
-			dep.cleanOlderThan(KSystem::Time::milliseconds(cleanupandbeacon * 2));
-			timer_.expires_from_now(KSystem::Time::milliseconds(cleanupandbeacon));
+			dep.cleanOlderThan(KSystem::Time::TimeAbsolute::milliseconds(cleanupandbeacon * 2));
+			timer_.expires_from_now(boost::posix_time::milliseconds(cleanupandbeacon));
 			timer_.async_wait(
 			    boost::bind(&MulticastPoint::handle_timeout, this,
 			                boost::asio::placeholders::error));
@@ -292,6 +300,29 @@ namespace KNetwork
 
 	packet MessageEntryToBytes(Messaging::MessageEntry const& m)
 	{
+
+	    packet p;
+	    p.bytes=NULL;
+	    p.size=0;
+
+        MessageEntrySerializer<MessageEntrySerializationTraits> ser(m);
+        std::size_t s=ser.getByteSize();
+        if(s==0)
+            return p;
+        uint8_t *buff=new  uint8_t[s];
+        p.bytes=buff;
+        p.size=s;
+        if(ser.writeSerialized(buff,s)!=s)
+        {
+            delete buff;
+            p.size=0;
+            p.bytes=NULL;
+
+        }
+        return p;
+
+
+        /*char *r = new char[totalsize];
 		size_t msgbytes = m.msg->ByteSize();
 		size_t totalsize = msgbytes;
 		totalsize += m.msg->GetTypeName().size();
@@ -307,12 +338,12 @@ namespace KNetwork
 		packet p;
 		p.bytes = r;
 		p.size = totalsize;
-		return p;
+		return p;*/
 	}
 
 	bool MessageEntryFromBytes(packet const& p, Messaging::MessageEntry &m)
 	{
-		const serializedmsgheader *h = (const serializedmsgheader*)p.bytes;
+		/*const serializedmsgheader *h = (const serializedmsgheader*)p.bytes;
 		m = h->decodeMsg();
 		std::string TypeName = std::string(p.bytes + sizeof(serializedmsgheader), h->getTypeData());
 		const google::protobuf::Descriptor *d = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(TypeName);
@@ -337,7 +368,7 @@ namespace KNetwork
 		m.msg.reset(protomsg);
 		//std::cout<<m.msg.get()<<std::endl;
 		m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
-		return true;
+		return true;*/
 	}
 
 	void MulticastPoint::bufferCallback(Messaging::MessageBuffer *mbuf)
@@ -439,7 +470,7 @@ namespace KNetwork
 		//Just a little bit of headroom
 	}
 
-	void MulticastPoint::processIncoming( const char * buff, size_t size)
+	void MulticastPoint::processIncoming( const uint8_t * buff, size_t size)
 	{
 		//Gives possetion of aquired  buffer to Depacketizer
 		RawDepacketizer::depacketizer_result  r = dep.feed(buff, size);
@@ -465,11 +496,14 @@ namespace KNetwork
 
 		delete[] r.p.bytes;
 
+		//Get timestamp;
+		KSystem::Time::TimeAbsolute now =KSystem::Time::SystemTime::now();
+
 		if(m.msg->GetTypeName() == "HostSubscriptions" && r.host != thishost)
 		{
 			hostDescription &hd = otherHosts[r.host];
-			hd.lastseen = KSystem::Time::SystemTime::now();
-			hd.timecorrection = hd.lastseen - m.timestamp;
+			hd.lastseen = now;
+			hd.timecorrection = hd.lastseen - now.unwrap(m.timestamp);
 			//std::cout<<"Found host:"<<r.host<<std::endl;
 			std::vector<MessageEntry> newsubscriptions;
 			MessageEntry kh;
@@ -516,7 +550,7 @@ namespace KNetwork
 		  )
 			return;
 
-		m.timestamp += (otherHosts[r.host]).timecorrection; //Correct timestamp
+		m.timestamp = (now + (otherHosts[r.host]).timecorrection).wrapTo<KSystem::Time::TimeStamp>(); //Correct timestamp
 		m.host = r.host; //Fix Host
 		//std::cout<<"Received:"<<m.msg->GetTypeName()<<std::endl;
 		publish(m);

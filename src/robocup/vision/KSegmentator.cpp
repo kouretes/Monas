@@ -1,6 +1,7 @@
 #include "KSegmentator.hpp"
 #include "core/include/Logger.hpp"
 #include <iostream>
+#include <vector>
 
 
 using namespace std;

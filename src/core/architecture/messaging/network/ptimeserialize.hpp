@@ -1,4 +1,4 @@
-#ifndef PTIMESERIALIZE_HPP
+#ifdef PTIMESERIALIZE_HPP_GDG
 #define PTIMESERIALIZE_HPP
 
 #include "core/architecture/time/TimeTypes.hpp"

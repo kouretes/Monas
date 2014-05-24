@@ -27,6 +27,7 @@ int Drain::Execute()
 
 	if(!h.get() || (h && h->entrylist_size() == 0))
 	{
+	    std::cout<<"Drain"<<std::endl;
 		boost::shared_ptr<const TestMessage> drop = _blk.readData<TestMessage>("communication");
 
 		if(drop == NULL)
@@ -82,7 +83,7 @@ int Pipe::Execute()
 {
 	KPROF_SCOPE(p, Pipe::Execute());
 	boost::shared_ptr<const KnownHosts> h = _blk.readState<KnownHosts>("communication");
-
+    std::cout<<"Pipe"<<std::endl;
 	if(!h.get() || (h && h->entrylist_size() == 0))
 	{
 		std::cout << "Local" << std::endl;
@@ -96,6 +97,18 @@ int Pipe::Execute()
 
 		_blk.publishData(newdrop, "communication");
 		cout << "New drop to:" << newdrop.counter() << endl;
+		/*KSystem::Time::TimeAbsolute now=KSystem::Time::SystemTime::now();
+		cout<< now.toString()<<endl;
+		cout<< now.toFloat()<<endl;
+		typedef KSystem::Time::BasicTimeStamp<int16_t,1000> stst;
+		stst t=now.wrapTo<stst>();
+		cout<< t.toString()<<endl;
+		cout<< t.toFloat()<<endl;
+		cout<< now.unwrap(t).toString()<<endl;
+		cout<< now.toFloat()-now.unwrap(t).toFloat()<<endl;
+        */
+
+
 	}
 	else
 	{

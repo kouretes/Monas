@@ -147,9 +147,9 @@ void LedHandler::SetBatteryLevel()
 	}
 
 	battery_level = new_battery_level;
-	static ptime last_ledchange = KSystem::Time::SystemTime::now();
+	static TimeAbsolute last_ledchange = KSystem::Time::SystemTime::now();
 
-	if(KSystem::Time::SystemTime::now() - last_ledchange < milliseconds(2000 / (1 + battery_level)))
+	if(KSystem::Time::SystemTime::now() - last_ledchange < TimeAbsolute::milliseconds(2000 / (1 + battery_level)))
 		return ;
 
 	last_ledchange = KSystem::Time::SystemTime::now();

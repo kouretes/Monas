@@ -39,7 +39,7 @@ namespace Messaging
         static const std::size_t HOST_ID_ANY_HOST = 0;
         static const std::size_t HOST_ID_LOCAL_HOST = 1;
         boost::shared_ptr<const google::protobuf::Message > msg;
-        KSystem::Time::TimeAbsolute timestamp;
+        KSystem::Time::TimeStamp timestamp;
         //KSystem::Time::TimeAbsolute timeoutstamp;
         std::size_t topic;
         std::size_t host;
@@ -55,7 +55,7 @@ namespace Messaging
             return timestamp< b.timestamp;
         };
 
-        bool operator<(const KSystem::Time::TimeAbsolute &b) const
+        bool operator<(const KSystem::Time::TimeStamp &b) const
         {
             return timestamp< b;
         };
@@ -65,20 +65,5 @@ namespace Messaging
 
 
 }
-
-/*
-struct msgentrytimestampComparator
-{
-
-	bool operator()(const msgentry &a, const msgentry &b)
-	{
-		return a.timestamp < b.timestamp;
-	};
-	bool operator()(const msgentry &a, const KSystem::Time::TimeAbsolute &b)
-	{
-		return a.timestamp < b;
-	};
-};
-*/
 
 #endif /* MESSAGEENTRY_HPP */

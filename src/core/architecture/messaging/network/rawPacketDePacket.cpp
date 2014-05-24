@@ -62,7 +62,7 @@ namespace KNetwork
 	};
 
 
-	void RawPacketizer::assign(const char* bytes, std::size_t size)
+	void RawPacketizer::assign(const uint8_t* bytes, std::size_t size)
 	{
 		nextmid++;
 		numofpackets = ceil( ((float)size) / (MAX_UDP_PAYLOAD - sizeof(packetheader)) );
@@ -93,7 +93,7 @@ namespace KNetwork
 		hdr.number = htons(numofpackets - currentpacket - 1); //<---------------- networkbyteorder
 		hdr.mid = nextmid;
 		hdr.flags = (currentpacket == 0) ? PACKETFLAG_FRISTPACKET : 0;
-		char *destpointer = buff;
+		uint8_t *destpointer = buff;
 		memcpy(destpointer, &hdr, sizeof(packetheader));
 		destpointer += sizeof(packetheader); //Advance to data;
 		memcpy(destpointer, nextbyte, payloadlength);
@@ -123,12 +123,12 @@ namespace KNetwork
 		};
 	}
 
-	RawDepacketizer::depacketizer_result RawDepacketizer::feed(std::string const& s)
+	/*RawDepacketizer::depacketizer_result RawDepacketizer::feed(std::string const& s)
 	{
 		return feed(s.data(), s.size());
-	};
+	};*/
 
-	RawDepacketizer::depacketizer_result RawDepacketizer::feed(const char *const bytes, std::size_t size)
+	RawDepacketizer::depacketizer_result RawDepacketizer::feed(const uint8_t *const bytes, std::size_t size)
 	{
 		static const int hsize = sizeof(packetheader);
 		packetheader ph = *((const packetheader *)bytes);
@@ -167,12 +167,12 @@ namespace KNetwork
 				reservesize += pm.packets[pm.totalpackets - i - 1].size - hsize;
 
 			res.p.size = reservesize;
-			char *p = new char[reservesize];
+			uint8_t *p = new uint8_t[reservesize];
 			res.p.bytes = p;
 
 			for(sequenceid i = 0; i < pm.totalpackets; i++)
 			{
-				memcpy(p, (char *)pm.packets[pm.totalpackets - i - 1].bytes + hsize, pm.packets[pm.totalpackets - i - 1].size - hsize);
+				memcpy(p, (uint8_t *)pm.packets[pm.totalpackets - i - 1].bytes + hsize, pm.packets[pm.totalpackets - i - 1].size - hsize);
 				p += pm.packets[pm.totalpackets - i - 1].size - hsize;
 			}
 

@@ -90,9 +90,9 @@ void Behavior::UserInit() {
 	dispTimer = KSystem::Time::SystemTime::now();
     scanKickTime = KSystem::Time::SystemTime::now();
     lastBumperPressed = KSystem::Time::SystemTime::now();
-	lastGoToCenter = KSystem::Time::SystemTime::now()- seconds(10);
-	lastBallFound = KSystem::Time::SystemTime::now() - seconds(20);
-	lastScan = KSystem::Time::SystemTime::now() + seconds(3);
+	lastGoToCenter = KSystem::Time::SystemTime::now()- KSystem::Time::TimeAbsolute::seconds(10);
+	lastBallFound = KSystem::Time::SystemTime::now() - KSystem::Time::TimeAbsolute::seconds(20);
+	lastScan = KSystem::Time::SystemTime::now() +  KSystem::Time::TimeAbsolute::seconds(3);
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 }
@@ -219,7 +219,7 @@ int Behavior::Execute() {
 		if(prevGameState == PLAYER_PENALISED) {
 			lastPenalised =KSystem::Time::SystemTime::now();
 			// Check if the penalized was a wrong decision
-			if(KSystem::Time::SystemTime::now() - penalisedStarted > seconds(10) || !gameMode){
+			if(KSystem::Time::SystemTime::now() - penalisedStarted >  KSystem::Time::TimeAbsolute::seconds(10) || !gameMode){
 				direction = 1;
 				locReset.set_type(LocalizationResetMessage::PENALISED);
 				locReset.set_kickoff(kickOff);
@@ -247,7 +247,7 @@ int Behavior::Execute() {
 		if(sharedBallFound == true && !penaltyMode) {
 		LogEntry(LogLevel::Info, GetName()) << "SHARED BALL";
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
-				(lastFormation + seconds(20) < KSystem::Time::SystemTime::now()) ||
+				(lastFormation +  KSystem::Time::TimeAbsolute::seconds(20) < KSystem::Time::SystemTime::now()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
 
 				coordinationCycle++;
@@ -295,14 +295,14 @@ int Behavior::Execute() {
 			}
 		}
 
-		if (lastPenalised + seconds(4) > KSystem::Time::SystemTime::now()) {
+		if (lastPenalised +  KSystem::Time::TimeAbsolute::seconds(4) > KSystem::Time::SystemTime::now()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
 			return 0;
 		}
 
         if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
-            if (scanKickTime + seconds(2) < KSystem::Time::SystemTime::now())
+            if (scanKickTime +  KSystem::Time::TimeAbsolute::seconds(2) < KSystem::Time::SystemTime::now())
 			    scanAfterKick = false;
 
             stopRobot();
@@ -360,7 +360,7 @@ int Behavior::Execute() {
 					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY))
 						&& oppgb < M_PI_4
 						&& oppgb > -M_PI_4
-						&& lastBumperPressed + milliseconds(700) < KSystem::Time::SystemTime::now()){
+						&& lastBumperPressed +  KSystem::Time::TimeAbsolute::milliseconds(700) < KSystem::Time::SystemTime::now()){
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -382,14 +382,14 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL NOT FOUND";
 
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
-					if(lastPenalised + seconds(20) > KSystem::Time::SystemTime::now()) {
+					if(lastPenalised +  KSystem::Time::TimeAbsolute::seconds(20) > KSystem::Time::SystemTime::now()) {
                     	pathPlanningRequest(3.0, 0.0, 0.0, false);
 					}
 					else {
 		            	if(sharedBallFound == true)
 		                	goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
 						else {
-							if(lastGoToCenter + seconds(10) > KSystem::Time::SystemTime::now()) {
+							if(lastGoToCenter +  KSystem::Time::TimeAbsolute::seconds(10) > KSystem::Time::SystemTime::now()) {
 		                            if(robotX < 0.0)
 		                                goToPosition(-fGen.Field.MaxX/2.0f, 0.0, 0.0);
 		                            else
@@ -401,7 +401,7 @@ int Behavior::Execute() {
 		                            searchFlag = false;
 		                        }
 
-		                        if (lastBallFound + seconds(20) > KSystem::Time::SystemTime::now())
+		                        if (lastBallFound +  KSystem::Time::TimeAbsolute::seconds(20) > KSystem::Time::SystemTime::now())
 		                            littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 		                        else{
 		                            lastGoToCenter = KSystem::Time::SystemTime::now();
@@ -422,7 +422,7 @@ int Behavior::Execute() {
 					else
 						goToPositionFlag = true;
 				}
-				else if(lastPenalised + seconds(20) > KSystem::Time::SystemTime::now()) {
+				else if(lastPenalised +  KSystem::Time::TimeAbsolute::seconds(20) > KSystem::Time::SystemTime::now()) {
                     	pathPlanningRequest(3.0, 0.0, 0.0, false);
 				}
 				else if(ballFound == 1) {
@@ -453,11 +453,12 @@ int Behavior::Execute() {
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 
-					if(lastScan + seconds(3) < KSystem::Time::SystemTime::now() && lastScan + seconds(8) > KSystem::Time::SystemTime::now()) {
+					if(lastScan +  KSystem::Time::TimeAbsolute::seconds(3) < KSystem::Time::SystemTime::now() &&
+					   lastScan +  KSystem::Time::TimeAbsolute::seconds(8) > KSystem::Time::SystemTime::now()) {
 						littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 						return 0;
 					}
-					else if(lastScan + seconds(8) < KSystem::Time::SystemTime::now()) {
+					else if(lastScan +  KSystem::Time::TimeAbsolute::seconds(8) < KSystem::Time::SystemTime::now()) {
 						lastScan = KSystem::Time::SystemTime::now();
 					}
 
@@ -716,7 +717,7 @@ void Behavior::getPSOData() {
 	for(unsigned int r = 0 ; r < mappings.size() ; r++) {
 		if(r+1 < mappings.size()) {
 			if(/*mappings[r].stamp - mappings[r+1].stamp).total_seconds() > 5*/ mappings[r].cycle != mappings[r+1].cycle
-				&& lastFormation + seconds(4) > KSystem::Time::SystemTime::now()) {
+				&& lastFormation +  KSystem::Time::TimeAbsolute::seconds(4) > KSystem::Time::SystemTime::now()) {
 				synchronization = false;
 				break;
 			}
@@ -919,7 +920,7 @@ void Behavior::updateOrientation() {
 
 void Behavior::kick() {
 
-	if(kickOff && (KSystem::Time::SystemTime::now() <= lastPlay + seconds(0) ) ) {
+	if(kickOff && (KSystem::Time::SystemTime::now() <= lastPlay +  KSystem::Time::TimeAbsolute::seconds(0) ) ) {
 		if(side == 1)
             amot.set_command(config.kicks.KickSideLeft);
         else
@@ -974,7 +975,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 		ct = 0.0;
 	}
 	else {
-		if( lastWalk + milliseconds(200) > KSystem::Time::SystemTime::now() )
+		if( lastWalk + KSystem::Time::TimeAbsolute:: milliseconds(200) > KSystem::Time::SystemTime::now() )
 			return;
 
 		x = (x > +1.0) ? +1.0 : x;

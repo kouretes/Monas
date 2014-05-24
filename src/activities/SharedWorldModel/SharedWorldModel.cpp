@@ -128,7 +128,7 @@ int SharedWorldModel::Execute()
 
 	now = KSystem::Time::SystemTime::now();
     duration = now - last_ball_update_time;
-    dtBall = duration.total_microseconds() / 1000000.0f;
+    dtBall = duration.toFloat();
 
 	if(State(dim-2)>fieldMinX-ballOffset && State(dim-2)<fieldMaxX+ballOffset && State(dim-1)>fieldMinY-ballOffset && State(dim-1)<fieldMaxY+ballOffset && dtBall<3.0f){
         GlobalBall gb;
@@ -209,7 +209,7 @@ void SharedWorldModel::predict()
     now = KSystem::Time::SystemTime::now();
     duration = now - last_filter_time;
     last_filter_time = now;
-    dt = duration.total_microseconds() / 1000000.0f;
+    dt = duration.toFloat();
     dtsqrd = dt*dt;
 
     for(int i = 0; i < numOfRobots*3; i++)

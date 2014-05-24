@@ -164,7 +164,7 @@ int LocalWorldState::Execute()
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
 
-            if ((KSystem::Time::SystemTime::now() > debugMessageTime + seconds(4)) || lrm != 0){
+            if ((KSystem::Time::SystemTime::now() > debugMessageTime + KSystem::Time::TimeAbsolute::seconds(4)) || lrm != 0){
                 for (int i = 0; i < ekfLocalization.numberOfModels - 1 ; i++)
 	            {
 		            if(ekfMHypothesis.kmodel_size() < (int)(i+1))
@@ -195,7 +195,7 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 	KSystem::Time::TimeDuration duration;
 	KSystem::Time::TimeAbsolute observationTime;
 
-	float dt;
+	//float dt;
     float dx,dy,gx,gy;
 	bool ballseen = false;
 
@@ -232,17 +232,16 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
                 //cout << " Ball exists.. Predict + update " << endl;
 			    duration = observationTime - lastObservationTime;
 			    lastObservationTime = now;
-			    dt = duration.total_microseconds() / 1000000.0f;
 
-			    if (dt > MAX_TIME_TO_RESET)
+			    if (duration > KSystem::Time::TimeAbsolute::seconds(MAX_TIME_TO_RESET))
 			    {
 				    myBall.reset(aball.dist(), 0, aball.bearing(), 0);
 			    }
                 else{
                     duration = observationTime - lastFilterTime;
-			        dt = duration.total_microseconds() / 1000000.0f;
+			       // dt = duration.total_microseconds() / 1000000.0f;
 			        myBall.update(aball.dist(), 0.25 , aball.bearing(), 0.03);
-                    myBall.predict(dt,robotModel);
+                    myBall.predict(duration.toFloat(),robotModel);
                 }
 		    }
 
@@ -262,9 +261,9 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 	{
         //cout << " ball is not being seen " << endl;
 		duration = now - lastObservationTime;
-		dt = duration.total_microseconds() / 1000000.0f;
+		//dt = duration.total_microseconds() / 1000000.0f;
 
-		if (dt > ballTimeReset)
+		if (duration.toFloat() > ballTimeReset)
 		{
 			if (MyWorld.balls_size() > 0){
                 ballTimeReset = 0;
@@ -275,11 +274,11 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 		} else
 		{
             duration = now - lastFilterTime;
-		    dt = duration.total_microseconds() / 1000000.0f;
+		    //dt = duration.total_microseconds() / 1000000.0f;
 
             if (MyWorld.balls_size() > 0){
                 //cout << " ball is not being seen .. predict movement" << endl;
-	            myBall.predict(dt,robotModel);
+	            myBall.predict(duration.toFloat(),robotModel);
                 MyWorld.mutable_balls(0)->set_relativex(myBall.state(0,0));
                 MyWorld.mutable_balls(0)->set_relativey(myBall.state(1,0));
             	MyWorld.mutable_balls(0)->set_relativexspeed(myBall.state(2,0));
@@ -315,7 +314,7 @@ void LocalWorldState::ProcessMessages()
 	if (obsm != 0)
 	{
 		Localization::KObservationModel tmpOM;
-		observation_time =KSystem::Time::from_iso_string(obsm->image_timestamp());
+		observation_time.fromString(obsm->image_timestamp());
 
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
@@ -409,7 +408,7 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 	TrackPoint.y += sin(TrackPoint.phi + robot_dir) * robot_dist;
 	TrackPoint.phi += DR;
 
-    if (KSystem::Time::SystemTime::now() > odometryMessageTime + seconds(5) ){
+    if (KSystem::Time::SystemTime::now() > odometryMessageTime +KSystem::Time::TimeAbsolute::seconds(5) ){
         odometryInfoM.set_trackpointx(TrackPoint.x);
         odometryInfoM.set_trackpointy(TrackPoint.y);
         odometryInfoM.set_trackpointphi(TrackPoint.phi);
@@ -586,7 +585,7 @@ void LocalWorldState::InputOutputLogger(){
 	}
 	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.phi);
 	LogEntry(LogLevel::ExtraExtraInfo,"LocalWorldStateLogger")
-			<<(currentExecute) << " " << RobotMovement << " "
+			<<(currentExecute).toString() << " " << RobotMovement << " "
 			<<  Yellow << " " << YellowLeft  << " " <<  YellowRight
 			<< " " <<  RobotPosition;
 }

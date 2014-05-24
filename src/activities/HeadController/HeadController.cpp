@@ -224,7 +224,7 @@ void HeadController::HeadScanStepHigh(float yawLimit, float pitch, int speed, in
 			sleepTime = KSystem::Time::SystemTime::now();
 			stay = false;
 		}
-		if(KSystem::Time::SystemTime::now() - sleepTime < KSystem::Time::milliseconds(millesecStay)){
+		if(KSystem::Time::SystemTime::now() - sleepTime < KSystem::Time::TimeAbsolute::milliseconds(millesecStay)){
 			return;
 		}
 		if(goalScanState == GOALMIDDLE1)
@@ -436,7 +436,7 @@ bool HeadController::reachedTargetHead()
 		forceStopMotion = false;
 		return true;
 	}
-	return  KSystem::Time::SystemTime::now() - actionStarted > KSystem::Time::milliseconds(millisecondsToWait) ||
+	return  KSystem::Time::SystemTime::now() - actionStarted > KSystem::Time::TimeAbsolute::milliseconds(millisecondsToWait) ||
 			previousCommand != currentCommand ||
 			((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
 			fabs(currentHeadYaw)>YAWMAX ||

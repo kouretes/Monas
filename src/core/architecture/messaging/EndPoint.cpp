@@ -24,6 +24,7 @@ namespace Messaging
 {
 
     using namespace std;
+    using namespace KSystem;
 
     EndPoint::EndPoint(const std::string& sb_name): endpoint_name(sb_name), write_buf(NULL), read_buf(NULL)
     {
@@ -82,7 +83,7 @@ namespace Messaging
         //cout<<"In:"<<&msg;
         //cout<<"Copy:"<<nmsg.msg<<endl;
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
-        KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+        Time::TimeStamp now = Time::SystemTime::now().wrapTo<Time::TimeStamp>();
         //nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
         nmsg.timestamp = now;
         nmsg.topic = Topics::Instance().getId(topic);
@@ -100,7 +101,7 @@ namespace Messaging
         //cout<<"In:"<<&msg;
         //cout<<"Copy:"<<nmsg.msg<<endl;
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
-        KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+        Time::TimeStamp now = Time::SystemTime::now().wrapTo<Time::TimeStamp>();
         //nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
         nmsg.timestamp = now;
         nmsg.topic = Topics::Instance().getId(topic);
@@ -118,7 +119,7 @@ namespace Messaging
         //cout<<"In:"<<&msg;
         //cout<<"Copy:"<<nmsg.msg<<endl;
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
-        KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+        Time::TimeStamp now = Time::SystemTime::now().wrapTo<Time::TimeStamp>();
         //nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
         nmsg.timestamp = now;
         nmsg.topic = Topics::Instance().getId(topic);

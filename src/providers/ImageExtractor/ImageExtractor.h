@@ -24,7 +24,7 @@ public:
 		IProvider("ImageExtractor", c, n), _blk("ImageExtractorBlackboard"), imext()
 	{
 		_blk.attachTo(n);
-		lastrefresh = KSystem::Time::SystemTime::now() - KSystem::Time::microseconds(camerarefreshmillisec + 10);
+		lastrefresh = KSystem::Time::SystemTime::now() -  KSystem::Time::TimeAbsolute::microseconds(camerarefreshmillisec + 10);
 		UserInit();
 	};
 	int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();

@@ -87,7 +87,7 @@ int PathPlanning::Execute() {
 
 	//update the grid with the new sonar values
 	while(currentTime < KSystem::Time::SystemTime::now()){
-		currentTime = currentTime +KSystem::Time::milliseconds(100);
+		currentTime = currentTime + KSystem::Time::TimeAbsolute::milliseconds(100);
 		rpm = _blk.readData<RobotPositionMessage> ("sensors", Messaging::MessageEntry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 		processOdometryData();
 		pathMap.updateCells();

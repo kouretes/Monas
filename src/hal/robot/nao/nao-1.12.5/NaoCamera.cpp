@@ -126,7 +126,7 @@ bool NaoCamera::captureNew()
 
 	// dequeue a frame buffer (this call blocks when there is no new image available) */
 	assert (ioctl (fd, VIDIOC_DQBUF, buf) != -1);
-	timeStamp = KSystem::Time::SystemTime::now();
+	timeStamp = KSystem::Time::SystemTime::now();//.wrapTo<KSystem::Time::TimeStamp>();
 	assert (buf->bytesused == SIZE);
 	currentBuf = buf;
 	static bool shout = true;
@@ -134,7 +134,7 @@ bool NaoCamera::captureNew()
 	if (shout)
 	{
 		shout = false;
-		LogEntry(LogLevel::ExtraInfo,"NaoCamera") <<  "Camera is working " << (timeStamp);
+		LogEntry(LogLevel::ExtraInfo,"NaoCamera") <<  "Camera is working " << (timeStamp.toFloat());
 	}
 
 	return true;

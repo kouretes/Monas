@@ -266,7 +266,7 @@ void Sensors::synchronisedDCMcallback()
 	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 	//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
-	nmsg.timestamp = now;
+	nmsg.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
 	nmsg.topic = sensorstopicid;
 	//nmsg.publisher=Publisher::getName();
 	nmsg.msgclass = Messaging::MessageEntry::DATA;
@@ -281,7 +281,7 @@ void Sensors::synchronisedDCMcallback()
 		nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 		//nmsg.timeoutstamp=now+KSystem::Time::millisec(50);
-		nmsg.timestamp = now;
+		nmsg.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
 		nmsg.topic = buttoneventstopicid;
 		//nmsg.publisher=Publisher::getName();
 		nmsg.msgclass = Messaging::MessageEntry::SIGNAL;
@@ -375,8 +375,8 @@ bool Sensors::updateButtons()
 	bool dispachevent = false;
 	KSystem::Time::TimeAbsolute now, d, t;
 	now = KSystem::Time::SystemTime::now();
-	d = now - KSystem::Time::milliseconds(DEBOUNCE_MILLISEC);
-	t = now - KSystem::Time::milliseconds(MCLICKDISTANCE_MILLISEC);
+	d = now - KSystem::Time::TimeAbsolute::milliseconds(DEBOUNCE_MILLISEC);
+	t = now - KSystem::Time::TimeAbsolute::milliseconds(MCLICKDISTANCE_MILLISEC);
 
 	for(unsigned i = 0; i < buttonValues.size(); ++i)
 	{

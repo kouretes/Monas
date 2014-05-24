@@ -35,7 +35,7 @@ namespace Messaging
             //std::cout<<"Incoming region:"<<i.hid<<" "<<i.tid<<"<size:"<<allrecords.size()<<std::endl;
             disjoint_region &r = allrecords[i];
             nrec.msg = (*it).msg;
-            nrec.timestamp = (*it).timestamp;
+            nrec.timestamp =SystemTime::unwrap((*it).timestamp);
 
             switch ((*it).msgclass)
             {
@@ -79,7 +79,7 @@ namespace Messaging
     int Blackboard::cleanup()
     {
         regions::iterator rit = allrecords.begin();
-        KSystem::Time::TimeDuration t;
+        //KSystem::Time::TimeDuration t;
         KSystem::Time::TimeAbsolute now = SystemTime::now();
 
         for(; rit != allrecords.end(); ++rit)
@@ -105,6 +105,8 @@ namespace Messaging
 
                     //cout<<i<<endl;
                     //q.clear();
+                    std::cout<<(*qit).timestamp.toString()<<std::endl;
+                    std::cout<<(*qit).msg->GetTypeName()<<std::endl;
                     if(qit == q.end() && q.size() > 0)--qit;
 
                     q.erase(q.begin(), qit);
@@ -150,10 +152,11 @@ namespace Messaging
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
         TimeAbsolute now =SystemTime::now();
         //nmsg.timeoutstamp=now+KSystem::Time::millisec(timeout);
-        nmsg.timestamp = now;
+        nmsg.timestamp = now.wrapTo<TimeStamp>();
         nrec.timestamp = now;
         nmsg.topic = Topics::Instance().getId(topic);
         //nmsg.publisher=Publisher::getName();
+        //std::cout<<"Blacboard publish data:"<<msg.GetTypeName()<<std::endl;
         nmsg.msgclass = MessageEntry::DATA;
         type_t newtypeid = typeRegistry.registerNew(msg.GetTypeName());
         region_index i;
@@ -185,8 +188,8 @@ namespace Messaging
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
         TimeAbsolute now =SystemTime::now();
         //nmsg.timeoutstamp=now;//Signal, no timeout
-        nmsg.timestamp = now;
-        nrec.timestamp = now;
+        nmsg.timestamp = now.wrapTo<TimeStamp>();
+        nrec.timestamp =  now;
         nmsg.topic = Topics::Instance().getId(topic);
         //nmsg.publisher=Publisher::getName();
         nmsg.msgclass = MessageEntry::SIGNAL;
@@ -217,8 +220,8 @@ namespace Messaging
         nmsg.host = MessageEntry::HOST_ID_LOCAL_HOST;
         TimeAbsolute now =SystemTime::now();
         //nmsg.timeoutstamp=now;//State, no timeout :)
-        nmsg.timestamp = now;
-        nrec.timestamp = now;
+        nmsg.timestamp = now.wrapTo<TimeStamp>();
+        nrec.timestamp =  now;
         nmsg.topic = Topics::Instance().getId(topic);
         //nmsg.publisher=Publisher::getName();
         nmsg.msgclass = MessageEntry::STATE;

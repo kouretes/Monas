@@ -193,7 +193,7 @@ Localization::belief KLocalization::LocalizationStepSIR(Localization::KMotionMod
 void KLocalization::windowObservationsUpdate(){
 	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 
-    if (windowObservations.size()>0 && windowObservations.front().observationTime < now - seconds(augMCL.winDuration))
+    if (windowObservations.size()>0 && windowObservations.front().observationTime < now - KSystem::Time::TimeAbsolute::seconds(augMCL.winDuration))
         windowObservations.clear();
 }
 

@@ -28,7 +28,7 @@ using namespace KDeviceLists;
 
 MotionController::MotionController(Blackboard &b) : IActivity(b)
 {
-	waitfor = KSystem::Time::SystemTime::now() - hours(1);
+	waitfor = KSystem::Time::SystemTime::now() - KSystem::Time::TimeAbsolute::hours(1);
 }
 
 void MotionController::UserInit()
@@ -226,7 +226,7 @@ int MotionController::Execute()
 			_blk.publishState(sm, "worldstate");
 		}
 
-		waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::milliseconds(350);
+		waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::TimeAbsolute::milliseconds(350);
 		return 0;
 	}
 
@@ -251,7 +251,7 @@ int MotionController::Execute()
 				LogEntry(LogLevel::ExtraInfo,GetName()) <<"Robot falling: Stiffness off";
 				timeLapsed = KSystem::Time::SystemTime::now();
 
-				if(timeLapsed - standUpStartTime >= KSystem::Time::seconds(3.5))
+				if(timeLapsed - standUpStartTime >= KSystem::Time::TimeAbsolute::seconds(3.5))
 				{
 					if(currentstate == PLAYER_PLAYING || currentstate == PLAYER_READY)
 					{
@@ -265,7 +265,7 @@ int MotionController::Execute()
 					sm.set_type(MotionStateMessage::FALL);
 					sm.set_detail("");
 					_blk.publishState(sm, "worldstate");
-					waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::milliseconds(350);
+					waitfor = KSystem::Time::SystemTime::now() + KSystem::Time::TimeAbsolute::milliseconds(350);
 					return 0;
 				}
 			}

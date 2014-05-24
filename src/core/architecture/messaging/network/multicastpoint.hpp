@@ -29,9 +29,9 @@ namespace KNetwork
 		void setCleanupAndBeacon(unsigned i);
 	private:
 		int Execute();
-		void handle_receive_from(const char *buffer, const boost::system::error_code& error, size_t bytes_recvd);
+		void handle_receive_from(const uint8_t *buffer, const boost::system::error_code& error, size_t bytes_recvd);
 
-		void handle_send_to(const char *buffer, std::size_t size); //Executed by sio service in sendthread context;
+		void handle_send_to(const uint8_t *buffer, std::size_t size); //Executed by sio service in sendthread context;
 		void handle_timeout(const boost::system::error_code& error);
 
 		void queue_receive();
@@ -56,7 +56,7 @@ namespace KNetwork
 		{
 			//hostid h;
 			std::string hostname;
-			KSystem::Time::TimeDuration timecorrection;
+			KSystem::Time::TimeAbsolute timecorrection;
 			KSystem::Time::TimeAbsolute lastseen;
 			std::set<size_t> needsTopics;//Ie what I broadcast because this host needs it
 			std::set<size_t> providesTopics;//Ie what I receive from this host
@@ -70,7 +70,7 @@ namespace KNetwork
 		std::set<size_t>   localsubscriptions;//Ie what I ask from messagequeue currently
 
 		void  bufferCallback(Messaging::MessageBuffer *mbuf);
-		void processIncoming(const char * buff, size_t size);
+		void processIncoming(const uint8_t * buff, size_t size);
 		void processOutGoing(Messaging::MessageEntry m);
 
 		void cleanupLocalSubscriptions();

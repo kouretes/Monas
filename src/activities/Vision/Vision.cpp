@@ -130,11 +130,11 @@ void Vision::fetchAndProcess()
 	//Remove constness, tricky stuff :/
 	rawImage.copyFrom(img->image_rawdata().data(),
 	                  img->width(), img->height(), img->bytes_per_pix());
-	obs.set_image_timestamp(KSystem::Time::to_iso_string(stamp));
-	vdm.set_image_timestamp(KSystem::Time::to_iso_string(stamp));
+	obs.set_image_timestamp(stamp.toString());
+	vdm.set_image_timestamp(stamp.toString());
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
-	stamp += KSystem::Time::millisec(config.sensordelay);
+	stamp += KSystem::Time::TimeAbsolute::milliseconds(config.sensordelay);
 
 	if (img->active_camera() == KRawImage::BOTTOM)//bottom cam
 	{
@@ -181,7 +181,7 @@ void Vision::fetchAndProcess()
 		return;
 	}
 
-	float imcomp = ( (float ) ((stamp - timeo).total_nanoseconds()) ) / 1000000000.0;
+	float imcomp = ( (float ) ((stamp - timeo).raw()) ) / KSystem::Time::TimeAbsolute::TPS;
 	assert(imcomp >= 0);
 	//each value is (n-o)*(stamp-timeo) +o
 	p.yaw = asvmo->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();

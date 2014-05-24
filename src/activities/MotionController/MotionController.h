@@ -60,7 +60,7 @@ private:
 
 	float AccZvalue, AccXvalue, AccYvalue;
 	float accnorm, angX, angY, VangX, VangY;
-	ptime waitfor;
+	KSystem::Time::TimeAbsolute waitfor;
 	int gameState;
 	int currentstate;
 

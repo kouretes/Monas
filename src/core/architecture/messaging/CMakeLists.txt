@@ -26,6 +26,10 @@ set(NETWORK_SRCS
 	network/msgentryserialize.hpp
 )
 
+
+set(SERIALIZATION_SRCS
+	serialization/MessageEntrySerialization.hpp
+)
 #setting default module path for cmake finding .cmake files
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 #Setting the configuration Directory where all the .cmake are stored it's the same as CMAKE_MODULE_PATH
@@ -44,7 +48,7 @@ include_directories( ${NarukomDir}
 		     ${ProtobufIncludeDir}
 		     ${BoostIncludeDir}
 		     )
-add_library(messaging ${LibBuildType}   ${MESSAGING_SRCS}   ${NETWORK_SRCS} ) # ${NARUKOM_SYSTEM_SRCS}  ${SRCS}  ${NETWORK_SRCS} 
+add_library(messaging ${LibBuildType}   ${MESSAGING_SRCS}   ${NETWORK_SRCS} ${SERIALIZATION_SRCS}) # ${NARUKOM_SYSTEM_SRCS}  ${SRCS}  ${NETWORK_SRCS} 
 
 install ( TARGETS messaging
 RUNTIME DESTINATION   bin

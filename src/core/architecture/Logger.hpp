@@ -2,9 +2,10 @@
 #define LOGGER_HPP
 
 #include <iostream>
-//#include <sstream>
+#include <sstream>
 #include <fstream>
 #include <set>
+#include <map>
 //#include <cstdio>
 #include <core/architecture/time/SystemTime.hpp>
 
@@ -34,7 +35,7 @@ public:
 	template<class T>
 	void WriteMsg ( std::string name, const T & msg, LogLevel::LogType type )
 	{
-		if ( lastConfRead + KSystem::Time::seconds(reparsingPeriod)
+		if ( lastConfRead + KSystem::Time::TimeAbsolute::seconds(reparsingPeriod)
 		        < KSystem::Time::SystemTime::now() )
 			ReadConfiguration();
 

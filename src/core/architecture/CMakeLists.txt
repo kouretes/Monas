@@ -36,6 +36,7 @@ add_library ( MonasCore ${LibBuildType}
 			time/IClock.hpp
 			time/TimeTypes.hpp
 			time/Timer.hpp
+			time/BasicTimeStamp.hpp
 			talws.h
 			talws.cpp
 			statechartWrapper.h

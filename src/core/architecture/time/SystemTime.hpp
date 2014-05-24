@@ -4,18 +4,24 @@
 
 namespace KSystem
 {
-	
+
 	namespace Time
 	{
-		
+
 		namespace SystemTime
 		{
 
-			TimeAbsolute now() ; 
+			TimeAbsolute now();
+			//TimeStamp timestamp(){return SystemTime::now().wrapTo<TimeStamp>();};
+			template<typename T>
+            TimeAbsolute unwrap(T const& a)
+            {
+                return now().unwrap(a);
+            }
 		}
-		
+
 	}
-	
+
 }
 
 #endif //SYSTEMTIME_HPP

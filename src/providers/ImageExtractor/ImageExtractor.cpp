@@ -24,7 +24,7 @@ int ImageExtractor::Execute()
 
 	if(!firstRun){
 		float scale = imext.calibrateCamera(1500, 10);
-		lastrefresh = KSystem::Time::SystemTime::now() - KSystem::Time::microseconds(camerarefreshmillisec + 10);
+		lastrefresh = KSystem::Time::SystemTime::now() - KSystem::Time::TimeAbsolute::microseconds(camerarefreshmillisec + 10);
 		firstRun = true;
 	}
 
@@ -39,7 +39,7 @@ int ImageExtractor::Execute()
 	KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 	KSystem::Time::TimeAbsolute  timestamp;
 
-	if(lastrefresh + KSystem::Time::millisec(camerarefreshmillisec) < now)
+	if(lastrefresh + KSystem::Time::TimeAbsolute::milliseconds(camerarefreshmillisec) < now)
 	{
 		imext.refreshValues();//Reload
 		imext.setNewUserPrefs();
@@ -76,7 +76,7 @@ int ImageExtractor::Execute()
 	newptr->CopyFrom(outmsg);
 	nmsg.msg.reset(newptr);
 	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
-	nmsg.timestamp = timestamp;
+	nmsg.timestamp = timestamp.wrapTo<KSystem::Time::TimeStamp>();
 	nmsg.topic = Messaging::Topics::Instance().getId("image");
 	nmsg.msgclass = Messaging::MessageEntry::DATA;
 	this->publish(nmsg);

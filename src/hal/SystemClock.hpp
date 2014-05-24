@@ -35,12 +35,12 @@ namespace KSystem
                     //std::cout<<"ClockNow:"<<clk_id<<" "<<(clk_id==CLOCK_THREAD_CPUTIME_ID)<<std::endl;
                     //std::cout<<"ClockNowSec:"<<clk.tv_sec<<std::endl;
                     //std::cout<<"ClockNowNSec:"<<clk.tv_nsec<<std::endl;
-                    cv.p=clk.tv_sec*ClockValue::CVTPS;
+                    cv.p=clk.tv_sec*ClockValue::TPS;
                     //std::cout<<"SecondsOnly:"<<cv.p<<std::endl;
-                    if(ClockValue::CVTPS>NSECPERSEC )
-                        cv.p+=clk.tv_nsec*(ClockValue::CVTPS/NSECPERSEC);
-                    else if(ClockValue::CVTPS<NSECPERSEC )
-                        cv.p+=clk.tv_nsec/(NSECPERSEC/ClockValue::CVTPS);
+                    if(ClockValue::TPS>NSECPERSEC )
+                        cv.p+=clk.tv_nsec*(ClockValue::TPS/NSECPERSEC);
+                    else if(ClockValue::TPS<NSECPERSEC )
+                        cv.p+=clk.tv_nsec/(NSECPERSEC/ClockValue::TPS);
                     else
                         cv.p+=clk.tv_nsec;
                     //std::cout<<"Full:"<<cv.p<<std::endl;

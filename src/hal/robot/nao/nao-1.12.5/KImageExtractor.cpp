@@ -4,7 +4,7 @@
 #include "core/include/Logger.hpp"
 
 using KSystem::Time::TimeAbsolute;
-static const  KSystem::Time::TimeAbsolute time_t_epoch( boost::gregorian::date(1970, 1, 1));
+
 
 using namespace AL;
 using namespace std;

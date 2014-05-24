@@ -104,7 +104,7 @@ KSystem::Time::TimeAbsolute KmeAction::ExecuteDCM()
 	}
 
 	float max_time = actionTimes[0][(actionTimes[0].getSize()) - 1];
-	return KSystem::Time::SystemTime::now() + KSystem::Time::seconds(max_time);
+	return KSystem::Time::SystemTime::now() + KSystem::Time::TimeAbsolute::seconds(max_time);
 }
 
 KSystem::Time::TimeAbsolute KmeAction::ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd)
@@ -161,7 +161,7 @@ KSystem::Time::TimeAbsolute KmeAction::ExecuteFrameDCM(unsigned int frameStart, 
 		LogEntry(LogLevel::FatalError, "KMEAction") << "Error when creating Alias";
 	}
 
-	return KSystem::Time::SystemTime::now() + KSystem::Time::seconds(max_time);
+	return KSystem::Time::SystemTime::now() + KSystem::Time::TimeAbsolute::seconds(max_time);
 }
 
 
