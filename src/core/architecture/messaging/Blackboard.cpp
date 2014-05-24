@@ -105,8 +105,8 @@ namespace Messaging
 
                     //cout<<i<<endl;
                     //q.clear();
-                    std::cout<<(*qit).timestamp.toString()<<std::endl;
-                    std::cout<<(*qit).msg->GetTypeName()<<std::endl;
+                    //std::cout<<(*qit).timestamp.toString()<<std::endl;
+                    //std::cout<<(*qit).msg->GetTypeName()<<std::endl;
                     if(qit == q.end() && q.size() > 0)--qit;
 
                     q.erase(q.begin(), qit);

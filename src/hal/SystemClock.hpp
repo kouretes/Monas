@@ -1,6 +1,7 @@
 #ifndef SYSTEMCLOCK_HPP
 #define SYSTEMCLOCK_HPP
 #include "core/architecture/time/IClock.hpp"
+#include <iostream>
 
 #if defined(__GNUC__ )  && (defined(linux) || defined(__linux) || defined(__linux__))
 
@@ -21,7 +22,7 @@ namespace KSystem
             {
                 private:
                 typedef struct timespec Syclktype;
-                static const long NSECPERSEC = 1000000000L;
+                static const long long NSECPERSEC = 1000000000uL;
                 clockid_t clk_id;
                 public:
 
@@ -35,7 +36,7 @@ namespace KSystem
                     //std::cout<<"ClockNow:"<<clk_id<<" "<<(clk_id==CLOCK_THREAD_CPUTIME_ID)<<std::endl;
                     //std::cout<<"ClockNowSec:"<<clk.tv_sec<<std::endl;
                     //std::cout<<"ClockNowNSec:"<<clk.tv_nsec<<std::endl;
-                    cv.p=clk.tv_sec*ClockValue::TPS;
+                    cv.p=((ClockValue::rep)clk.tv_sec)*ClockValue::TPS;
                     //std::cout<<"SecondsOnly:"<<cv.p<<std::endl;
                     if(ClockValue::TPS>NSECPERSEC )
                         cv.p+=clk.tv_nsec*(ClockValue::TPS/NSECPERSEC);

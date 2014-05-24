@@ -22,7 +22,6 @@ set(NETWORK_SRCS
 	network/multicastpoint.cpp
 	network/rawPacketDePacket.h
 	network/rawPacketDePacket.cpp
-	network/ptimeserialize.hpp
 	network/msgentryserialize.hpp
 )
 

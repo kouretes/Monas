@@ -45,6 +45,10 @@ namespace KSystem
                     //std::cout<<"End:"<<endt.p<<std::endl;
                     return (endt-start).toFloat();
                 }
+                ClockValue duration() const
+                {
+                    return clk->now()-start;
+                }
         };
 
     }

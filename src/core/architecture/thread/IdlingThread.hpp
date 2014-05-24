@@ -22,7 +22,7 @@ namespace KSystem
 		void StartThread()
 		{
 			running = true;
-			bThread = boost::thread( &IdlingThread::startHelper , this);
+			PeriodicThread::StartThread();
 		}
 
 		void wakeUpThread()

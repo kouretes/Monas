@@ -51,9 +51,11 @@ namespace KSystem
 		}
 
 	protected:
+
+
 		volatile bool running;
 
-		boost::thread bThread;
+
 
 		virtual void startHelper ()
 		{
@@ -61,7 +63,8 @@ namespace KSystem
 				this->Execute();
 		}
 
-
+    private:
+        boost::thread bThread;
 
 
 	};

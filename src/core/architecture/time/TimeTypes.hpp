@@ -11,10 +11,10 @@ namespace KSystem
 
     namespace Time
     {
-        typedef BasicTimeStamp<int32_t,1000000L> TimeStamp;
-        typedef BasicTimeStamp<int64_t,1000000L> TimeAbsolute;
+        typedef BasicTimeStamp<int32_t,1000000uL> TimeStamp;
+        typedef BasicTimeStamp<int64_t,1000000uL> TimeAbsolute;
         typedef TimeAbsolute TimeDuration;
-        typedef BasicTimeStamp<int64_t,1000000000L> ClockValue;
+        typedef BasicTimeStamp<int64_t,1000000000uL> ClockValue;
         template<typename C,typename R>
         R wrap(C const& k){        return k.wrapTo();       };
     }

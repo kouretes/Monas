@@ -86,6 +86,13 @@ namespace KSystem
                 r/=Denominator;
                 return r;
             }
+            static BasicTimeStamp fromFloat(float d)
+            {
+                BasicTimeStamp res;
+                res.p=d*Denominator;
+                return res;
+
+            }
             static BasicTimeStamp hours(long h)
             {
                 return seconds(h*60);
