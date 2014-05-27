@@ -14,7 +14,7 @@ namespace KSystem
 		{
 			T r;
 			r=r&0;
-			unsigned char* p=&d;
+			uint8_t * p=&d;
 			for(unsigned i=0;i<sizeof(T);i++)
 			{
 				r=(d[sizeof(T)-i-1]<<(8*i))|r;
@@ -24,9 +24,9 @@ namespace KSystem
 		template<typename T>
 		T serialize(T const&d)
 		{
-			T r;
-			r=r&0;
-			unsigned char* p=&r;
+			T r=static_cast<T>(0);
+			//r=(T)(r&0);
+			uint8_t* p=( uint8_t*)&r;
 			for(unsigned i=0;i<sizeof(T);i++)
 			{
 				p[i]=(d>>(8*i))&0xFF;

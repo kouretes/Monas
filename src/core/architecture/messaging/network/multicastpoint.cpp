@@ -14,6 +14,7 @@ class MessageEntrySerializationTraits
     public:
     typedef uint8_t topic_t;
     typedef KSystem::Time::TimeStamp timestamp_t;
+    typedef uint8_t typename_t;
     static const bool hasTimeStamp=true;
     static const bool hasTopic=true;
 

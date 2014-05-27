@@ -28,8 +28,10 @@
                 if(Traits::hasTimeStamp==true)
                     r+=sizeof(typename Traits::timestamp_t);  //TimeStamp
 
+                r+=sizeof(typename Traits::typename_t);
                 if(m->msg) // Not null
                 {
+
                     r+=m->msg->GetTypeName().size();
                     r+=m->msg->ByteSize();
 
@@ -49,18 +51,47 @@
                     if(len<getByteSize()) return 0;
                 }
                 uint8_t*c=buf;
-                c=writeChunk<typename Traits::topic_t>(c,(typename Traits::topic_t)m->topic);
+
+                if(Traits::hasTopic==true)
+                    c=writeChunk<typename Traits::topic_t>(c,(typename Traits::topic_t)m->topic);
+
+                c=writeChunk<MessageEntry::msgclass_t>(c,(MessageEntry::msgclass_t)m->msgclass);
+
+                 if(Traits::hasTimeStamp==true)
+                 {
+                    KSystem::Time::TimeAbsolute ts=KSystem::Time::SystemTime::unwrap(m->timestamp);
+                    c=writeChunk<typename Traits::timestamp_t::rep>(c,ts.wrapTo<typename Traits::timestamp_t>().raw());
+                 }
+                 typename Traits::typename_t type=0;
+                 if(m->msg) type=m->msg->GetTypeName().size();
+                 c=writeChunk<typename Traits::typename_t>(c,type);
+                 if(m->msg)
+                 {
+
+                    c=writeBytes(c,(const uint8_t*)m->msg->GetTypeName().data(),type);
+                    std::size_t msgbytes=m->msg->ByteSize();
+                    m->msg->SerializePartialToArray(c, msgbytes);
+                    c+=msgbytes;
+                 }
+                 return c-buf;
+
+
 			}
 			private:
 			template<typename TYPE>
-			uint8_t* writeChunk(uint8_t*b,TYPE const&t)
+			static uint8_t* writeChunk(uint8_t*b,TYPE const&t)
 			{
 			    TYPE *typeval=(TYPE *)b;
                 (*typeval)=BasicSerialization::serialize(t);
                 b+=sizeof(TYPE);
                 return b;
 			}
-
+            static uint8_t* writeBytes(uint8_t*b, const uint8_t*bytes,std::size_t size)
+			{
+			    memcpy(b, bytes, size);
+		        b += size;
+		        return b;
+			}
 
 
 
