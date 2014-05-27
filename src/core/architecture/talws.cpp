@@ -32,7 +32,19 @@ Talws::Talws ()
 	{
 		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Enable").c_str()) == 1){
 			std::string AgentName = Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".name");
+			//Clear naming conflicts
 
+
+
+            for(unsigned k=0;k<Agents.size();k++)
+            {
+                if(AgentName.compare(Agents[k]->GetName())==0)
+                {
+                    LogEntry(LogLevel::Warning,"Talws")  << "Agent name: " << AgentName << " exists! mangling name to resolve conflict";
+                    AgentName+="_mangling";
+                    k=0;
+                }
+            }
 			int numOfActivities = Configurator::Instance().numberOfNodesForKey(agentFile + ".agent~" + _toString(i) + ".activity");
 			std::vector<std::string> activities;
 
