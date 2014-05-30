@@ -42,6 +42,7 @@ add_library ( MonasCore ${LibBuildType}
 			statechartWrapper.h
 			Logger.hpp
 			Logger.cpp
+			RandomHostid.hpp
 )
 
 target_link_libraries ( MonasCore M_tinyxml z )

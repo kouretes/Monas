@@ -3,10 +3,10 @@
 #include "core/include/Logger.hpp"
 #include "core/architecture/time/TimeTypes.hpp"
 #include "core/architecture/messaging/serialization/MessageEntrySerialization.hpp"
-#include <boost/functional/hash.hpp>
 #include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
+#include "core/architecture/RandomHostid.hpp"
 
 class MessageEntrySerializationTraits
 {
@@ -34,9 +34,8 @@ namespace KNetwork
 		cleanupandbeacon(10), otherHosts(), localsubscriptions(), uni(boost::mt19937(),  boost::uniform_real<>(0, 1))
 	{
 		//hash time and produce string
-		boost::hash<KSystem::Time::TimeAbsolute::rep> h;
 		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
-		thishost = h((now).raw()); //Generate random hostid from current time
+		thishost = KSystem::getRandomizedHostID(); //Generate random hostid from current time
 		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
 		p.setHost(thishost );  //My host id is used to tag multicast messages
 		LogEntry(LogLevel::Info,"Multicast")<< "Multicast hostid:" <<(thishost);
@@ -478,7 +477,7 @@ namespace KNetwork
 		}
 
 		delete[] r.p.bytes;
-		std::cout<<"Received : "<<m.msg->GetTypeName()<<" type: "<<(int)m.msgclass<< "size:"<<r.p.size<<std::endl;
+		//std::cout<<"Received : "<<m.msg->GetTypeName()<<" type: "<<(int)m.msgclass<< "size:"<<r.p.size<<std::endl;
 
 		//Get timestamp;
 		KSystem::Time::TimeAbsolute now =KSystem::Time::SystemTime::now();
