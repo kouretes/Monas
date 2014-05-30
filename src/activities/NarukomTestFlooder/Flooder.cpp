@@ -40,6 +40,7 @@ int Drain::Execute()
 	}
 	else
 	{
+	    std::cout<<"Drain Net"<<std::endl;
 		const ::google::protobuf::RepeatedPtrField< HostEntry >& rf = h->entrylist();
 		::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
 
@@ -57,7 +58,7 @@ int Drain::Execute()
 
 			TestMessage newdrop;//.CopyFrom(drop);
 			newdrop.set_counter(drop->counter() - 1);
-			_blk.publishData(newdrop, "communication");
+			//_blk.publishData(newdrop, "communication");
 			cout << "Drop reduced to:" << newdrop.counter() << endl;
 		}
 
@@ -87,7 +88,7 @@ int Pipe::Execute()
 	if(!h.get() || (h && h->entrylist_size() == 0))
 	{
 		std::cout << "Local" << std::endl;
-		boost::shared_ptr<const TestMessage> drop = _blk.readData<TestMessage>("communication");
+		boost::shared_ptr<const TestMessage> drop = _blk.readSignal<TestMessage>("communication");
 		TestMessage newdrop;//.CopyFrom(drop);
 
 		if(drop != NULL)
@@ -95,9 +96,9 @@ int Pipe::Execute()
 		else
 			newdrop.set_counter(1);
 
-		_blk.publishData(newdrop, "communication");
+		_blk.publishSignal(newdrop, "communication");
 		cout << "New drop to:" << newdrop.counter() << endl;
-		/*KSystem::Time::TimeAbsolute now=KSystem::Time::SystemTime::now();
+		KSystem::Time::TimeAbsolute now=KSystem::Time::SystemTime::now();
 		cout<< now.toString()<<endl;
 		cout<< now.toFloat()<<endl;
 		typedef KSystem::Time::BasicTimeStamp<int16_t,1000> stst;
@@ -105,8 +106,8 @@ int Pipe::Execute()
 		cout<< t.toString()<<endl;
 		cout<< t.toFloat()<<endl;
 		cout<< now.unwrap(t).toString()<<endl;
-		cout<< now.toFloat()-now.unwrap(t).toFloat()<<endl;
-        */
+		cout<< (now-now.unwrap(t)).toFloat()<<endl;
+
 
 
 	}
@@ -118,7 +119,7 @@ int Pipe::Execute()
 		for(fit = rf.begin(); fit != rf.end(); ++fit)
 		{
 			std::cout << "Readingfromhost:" << (*fit).hostid() << std::endl;
-			boost::shared_ptr<const TestMessage> drop = _blk.readData<TestMessage>("communication", (*fit).hostid());
+			boost::shared_ptr<const TestMessage> drop = _blk.readSignal<TestMessage>("communication", (*fit).hostid());
 			TestMessage newdrop;//.CopyFrom(drop);
 
 			if(drop != NULL)
@@ -126,7 +127,7 @@ int Pipe::Execute()
 			else
 				newdrop.set_counter(1);
 
-			_blk.publishData(newdrop, "communication");
+			_blk.publishSignal(newdrop, "communication");
 			cout << "New drop to:" << newdrop.counter() << endl;
 		}
 	}

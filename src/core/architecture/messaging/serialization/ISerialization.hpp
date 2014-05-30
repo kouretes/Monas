@@ -64,7 +64,7 @@ namespace KSystem
         {
             std::size_t l;
             l=t.readCoded(b,len);
-            std::cout<<"Length:"<<l<<std::endl;
+            //std::cout<<"Length:"<<l<<std::endl;
             b+=l;
             return b;
         }

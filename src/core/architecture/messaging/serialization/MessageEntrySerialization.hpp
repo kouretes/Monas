@@ -151,7 +151,7 @@
                     //std::cout<<"MESSAGE:------"<<std::endl;
                     //std::cout<<serialized<<std::endl;
                     //std::cout<<"MESSAGEEND:------"<<std::endl;
-                    std::cout<<"True message size:"<<(len-(c-buf))<<std::endl;
+                    //std::cout<<"True message size:"<<(len-(c-buf))<<std::endl;
                     c+=len- (c-buf);
                     m.msg.reset(proto);
 
