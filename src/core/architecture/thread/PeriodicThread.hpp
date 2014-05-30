@@ -32,7 +32,7 @@ namespace KSystem
 		{
 			running = true;
 			overhead=KSystem::Time::ClockValue::seconds(0);
-
+            SystemThread::setThreadName(GetName());
 			SystemThread::StartThread();
 		}
 

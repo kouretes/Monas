@@ -13,7 +13,7 @@ namespace KSystem
 
 	public:
 
-		SystemThread ( bool start = false ) : running(false)
+		SystemThread ( bool start = false ) : running(false), hasname(false)
 		{
 			if ( start )
 				StartThread();
@@ -33,6 +33,7 @@ namespace KSystem
 		{
 			running = true;
 			bThread = boost::thread( &SystemThread::startHelper , this);
+			if(hasname) enforceName();
 		}
 
 		virtual void StopThread()
@@ -49,7 +50,7 @@ namespace KSystem
 		{
 			bThread.join();
 		}
-
+        void setThreadName(std::string newname){ hasname=true; name=newname;};
 	protected:
 
 
@@ -64,7 +65,11 @@ namespace KSystem
 		}
 
     private:
+
+        void enforceName();
         boost::thread bThread;
+        bool hasname;
+        std::string name;
 
 
 	};

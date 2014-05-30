@@ -42,6 +42,7 @@ namespace KNetwork
 		//std::cout<<"Multicast hostid:"<<thishost<<std::endl;
 		//Initialize anyhost record;
 		otherHosts[anyhost].lastseen = now;
+		SystemThread::setThreadName(name);
 	};
 
 	MulticastPoint::~MulticastPoint()
@@ -116,6 +117,7 @@ namespace KNetwork
 			queuesize = 0;
 			canWarn = true; //Enable send error warnings
 			sendthread = boost::thread(boost::bind(&boost::asio::io_service::run, &sio)); //Start Send
+
 			this->StartThread(); //Start receive
 
 			//Attach callbackfunction to incoming messages buffer
