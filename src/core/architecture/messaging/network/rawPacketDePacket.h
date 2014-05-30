@@ -29,7 +29,7 @@ namespace KNetwork
 #pragma pack(pop)
 	struct packet
 	{
-		int size;
+		std::size_t size;
 		const uint8_t *bytes;
 	};
 

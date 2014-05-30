@@ -59,8 +59,11 @@ namespace Messaging
         {
             return timestamp< b;
         };
-
     };
+
+
+    google::protobuf::Message * getFromFactory(std::string const&str);
+
 
 
 

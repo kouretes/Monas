@@ -6,6 +6,7 @@ SET(MESSAGING_SRCS
    Blackboard.hpp
    Blackboard.cpp
    MessageEntry.hpp
+   MessageEntry.cpp
    TopicTree.hpp
    TopicTree.cpp
    EndPoint.hpp
@@ -28,6 +29,7 @@ set(NETWORK_SRCS
 
 set(SERIALIZATION_SRCS
 	serialization/MessageEntrySerialization.hpp
+	serialization/ISerialization.hpp
 )
 #setting default module path for cmake finding .cmake files
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})

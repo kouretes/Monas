@@ -20,6 +20,8 @@ namespace KSystem
             typedef Rep rep;
             enum constnts_e{TPS=Denominator};
             rep p;
+            BasicTimeStamp(): p(0){  };
+            BasicTimeStamp(rep const& r): p(r) { };
 
 
 

@@ -4,7 +4,6 @@
 #include "core/architecture/time/TimeTypes.hpp"
 #include "core/architecture/messaging/serialization/MessageEntrySerialization.hpp"
 #include <boost/functional/hash.hpp>
-#include <google/protobuf/descriptor.h>
 #include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
@@ -12,12 +11,13 @@
 class MessageEntrySerializationTraits
 {
     public:
-    typedef uint8_t topic_t;
     typedef KSystem::Time::TimeStamp timestamp_t;
-    typedef uint8_t typename_t;
     static const bool hasTimeStamp=true;
     static const bool hasTopic=true;
-
+    static const bool codedTimeStamp=true;
+    static const bool codedTypeName=true;
+    static const bool codedTopic=true;
+    static const bool codedMsgClass=true;
 };
 namespace KNetwork
 {
@@ -306,7 +306,7 @@ namespace KNetwork
 	    p.bytes=NULL;
 	    p.size=0;
 
-        MessageEntrySerializer<MessageEntrySerializationTraits> ser(m);
+        MessageEntryBlockSerializer<MessageEntrySerializationTraits> ser(m);
         std::size_t s=ser.getByteSize();
         if(s==0)
             return p;
@@ -315,6 +315,7 @@ namespace KNetwork
         p.size=s;
         if(ser.writeSerialized(buff,s)!=s)
         {
+            LogEntry(LogLevel::Error,"Multicast")<< "Serialization Error"<< std::endl;
             delete buff;
             p.size=0;
             p.bytes=NULL;
@@ -344,32 +345,12 @@ namespace KNetwork
 
 	bool MessageEntryFromBytes(packet const& p, Messaging::MessageEntry &m)
 	{
-		/*const serializedmsgheader *h = (const serializedmsgheader*)p.bytes;
-		m = h->decodeMsg();
-		std::string TypeName = std::string(p.bytes + sizeof(serializedmsgheader), h->getTypeData());
-		const google::protobuf::Descriptor *d = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(TypeName);
 
-		if(!d)
-		{
-			std::cout << "Could Not Find Descriptor for:" << TypeName << std::endl;
-			return false;
-		}
-
-		google::protobuf::Message *protomsg = google::protobuf::MessageFactory::generated_factory()->GetPrototype(d)->New();
-
-		if( !protomsg->ParsePartialFromArray(
-		            p.bytes + sizeof(serializedmsgheader) + h->getTypeData(),
-		            p.size - (sizeof(serializedmsgheader) + h->getTypeData())
-		        ) )
-		{
-			std::cout << "Cannot Parse Message of type :" << TypeName << std::endl;
-			return false;
-		}
-
-		m.msg.reset(protomsg);
-		//std::cout<<m.msg.get()<<std::endl;
-		m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
-		return true;*/
+	    MessageEntryBlockDeserializer<MessageEntrySerializationTraits> deser;
+	    if(deser.readSerialized(p.bytes,p.size)!=p.size)
+	        return false;
+        m=deser.getMessageEntry();
+        return true;
 	}
 
 	void MulticastPoint::bufferCallback(Messaging::MessageBuffer *mbuf)
@@ -489,6 +470,7 @@ namespace KNetwork
 
 		if(!MessageEntryFromBytes(r.p, m))
 		{
+		    std::cout<<"Decoding failed"<<std::endl;
 			if(r.p.bytes != NULL)
 				delete[] r.p.bytes;
 
@@ -496,6 +478,7 @@ namespace KNetwork
 		}
 
 		delete[] r.p.bytes;
+		std::cout<<"Received : "<<m.msg->GetTypeName()<<" type: "<<(int)m.msgclass<< "size:"<<r.p.size<<std::endl;
 
 		//Get timestamp;
 		KSystem::Time::TimeAbsolute now =KSystem::Time::SystemTime::now();
