@@ -1,5 +1,6 @@
 
 set ( ActivityName LowLevelPlanner )
+#SET(CMAKE_BUILD_TYPE Debug)
 
 set ( ActivitySrcs	LowLevelPlanner.cpp 
 			LowLevelPlanner.h
@@ -18,6 +19,7 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			Dynamics.h
 			Dynamics.cpp
 			matlog.cpp
+			pi2.cpp
 			)
 
 include ( ../activTemplate.cmake )

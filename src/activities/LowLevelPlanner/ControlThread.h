@@ -32,6 +32,8 @@
 
 #include "Kalman.h"
 #include "Dynamics.h"
+#include "pi2.h"
+//#include "pi2.h"
 #define PreviewWindow 121
 #define CONST_SKIP 0
 #define CONST_SIZE 50
@@ -71,13 +73,14 @@ class LIPMPreviewController{
     void solveConstrainedMPC();
 
 	mutable KProfiling::profiler walkprof;
-
+    pi2 pi2Balance;
  	public:
  	    RobotParameters &OurRobot;
  	    Kalman KalmanX,KalmanY;
  	    Dynamics DynamicsX,DynamicsY;
 		LIPMPreviewController(RobotParameters&);
-		void LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer,float CoMmeasuredX,float CoMmeasuredY,float ZMPMeasuredX,float ZMPMeasuredY);
+		void LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer,float CoMmeasuredX,float CoMmeasuredY,float ZMPMeasuredX,float ZMPMeasuredY, int balance=0);
+		void LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer,float CoMmeasuredX,float CoMmeasuredY,float ZMPMeasuredX,float ZMPMeasuredY);
 		void DMPC();
         float DeltauX,DeltauY,uX,uY;
 		float predictedErrorX,predictedErrorY;

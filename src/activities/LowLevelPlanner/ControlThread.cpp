@@ -14,7 +14,7 @@
 #define BASISM 3.0
 #define BASISD 3.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"),pi2Balance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,80)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -22,6 +22,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
 
     /** Compute Gains Kx, Ky **/
     DMPC();
+    pi2Balance.init_pi2();
 
     //Initializing Variables
     DeltauX=0.000;
@@ -30,20 +31,101 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     uY=0.000;
     flog.insert("ZMPx",0);
     flog.insert("ZMPy",0);
-    flog.insert("refZMPx",0);
-    flog.insert("refZMPy",0);
+    //flog.insert("refZMPx",0);
+    //flog.insert("refZMPy",0);
     flog.insert("COMx",0);
     flog.insert("COMy",0);
+    flog.insert("COMxdot",0);
+    flog.insert("COMydot",0);
+    flog.insert("COMxddot",0);
+    flog.insert("COMyddot",0);
     flog.insert("Ux",0);
     flog.insert("Uy",0);
     flog.insert("Bx",0);
     flog.insert("By",0);
+    flog.insert("MUx",0);
+    flog.insert("MUy",0);
+
+}
+
+
+void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY )
+{
+    KalmanX.Filter(ZMPMeasuredX,CoMMeasuredX);
+
+    KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
+
+
+
+
+
+      /**define Laguerre Coefficients **/
+
+	 //std::cout<<"==============="<<std::endl;
+     // solveConstrainedMPC();
+      //walkprof.generate_report(1000);
+      /** Optimal Preview Control **/
+
+      //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
+     //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
+
+
+      //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
+
+
+      KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
+      KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
+      //errorX.prettyPrint();
+     // errorY.prettyPrint();
+      //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
+      //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
+
+
+
+      //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
+      //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
+      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
+      pi2Balance.pi2prof.generate_report(500);
+//      uX*=20;
+//      uY*=20;
+      flog.insert("ZMPx",DynamicsX.zmpstateNew);
+      flog.insert("ZMPy",DynamicsY.zmpstateNew);
+      //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
+      DynamicsX.Update(uX,errorX);
+      DynamicsY.Update(uY,errorY);
+
+
+        KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
+        //KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
+        KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
+        //KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
+
+         //Estimated COM position
+        COM(0)=DynamicsX.State(0);
+        COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+        predictedErrorX=DynamicsX.predictedError;
+        predictedErrorY=DynamicsY.predictedError;
+
+
+        flog.insert("COMx",DynamicsX.State(0));
+        flog.insert("COMy",DynamicsY.State(0));
+        flog.insert("COMxdot",DynamicsX.State(1));
+        flog.insert("COMydot",DynamicsY.State(1));
+        flog.insert("COMxddot",DynamicsX.State(2));
+        flog.insert("COMyddot",DynamicsY.State(2));
+        flog.insert("Ux",0);
+        flog.insert("Uy",0);
+        flog.insert("MUx",uX);
+        flog.insert("MUy",uY);
+        flog.insert("Bx",DynamicsX.State(3));
+        flog.insert("By",DynamicsY.State(3));
+        flog.periodic_save();
 
 }
 
 
 
-void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY )
+void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY,int balance )
 {
     KalmanX.Filter(ZMPMeasuredX,CoMMeasuredX);
 
@@ -64,6 +146,10 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 			ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
+	float muX,muY;
+	  pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+	  pi2Balance.pi2prof.generate_report(500);
+
 
 
       DynamicsX.AugmentState();
@@ -98,8 +184,20 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
       //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
 
       //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
-      DynamicsX.Update(uX,errorX);
-      DynamicsY.Update(uY,errorY);
+
+      if(balance<=0){
+		  DynamicsX.Update(uX,errorX);
+		  DynamicsY.Update(uY,errorY);
+      }else if(balance < 100){
+    	  float p = (100-balance)/100.0;
+
+    	  DynamicsX.Update(uX*p+(1-p)*muX,errorX);
+    	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
+      }else
+      {
+    	  DynamicsX.Update(muX,errorX);
+    	  DynamicsY.Update(muY,errorY);
+      }
 
 
         KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
@@ -113,17 +211,23 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         predictedErrorX=DynamicsX.predictedError;
         predictedErrorY=DynamicsY.predictedError;
 
-        /*flog.insert("ZMPx",DynamicsX.zmpstate);
-        flog.insert("ZMPy",DynamicsY.zmpstate);
-        flog.insert("refZMPx",ZmpBuffer[0](0));
-        flog.insert("refZMPy",ZmpBuffer[0](1));
+       flog.insert("ZMPx",DynamicsX.zmpstate);
+       flog.insert("ZMPy",DynamicsY.zmpstate);
+//        flog.insert("refZMPx",ZmpBuffer[0](0));
+//        flog.insert("refZMPy",ZmpBuffer[0](1));
+        flog.insert("MUx",muX);
+       	flog.insert("MUy",muY);
         flog.insert("COMx",DynamicsX.State(0));
         flog.insert("COMy",DynamicsY.State(0));
+        flog.insert("COMxdot",DynamicsX.State(1));
+        flog.insert("COMydot",DynamicsY.State(1));
+        flog.insert("COMxddot",DynamicsX.State(2));
+        flog.insert("COMyddot",DynamicsY.State(2));
         flog.insert("Ux",uX);
         flog.insert("Uy",uY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
-        flog.periodic_save();*/
+        flog.periodic_save();
 
 }
 
@@ -147,10 +251,11 @@ void LIPMPreviewController::solveConstrainedMPC()
 
 	httaX=(Ky*(Phitransp*pX*2));
 	httaY=(Ky*(Phitransp*pY*2));
+
 	/*std::cout<<httaX(0)<<std::endl;
 	std::cout<<httaY(0)<<std::endl;*/
 	htta.zero();
-	//return;
+	return;
 	for(unsigned i=0;i<LagN;i++)
 	{
 		htta(i)=httaX(i);
@@ -641,8 +746,8 @@ void LIPMPreviewController::DMPC()
 		Li=Al*Li;
 	}
 
-	Tau.prettyPrint();
-	Phi.prettyPrint();
+	//Tau.prettyPrint();
+	//Phi.prettyPrint();
 
 	Tres=(Phi.transp()*Phi+R_l);
 	//FIX H for constrained
@@ -654,14 +759,14 @@ void LIPMPreviewController::DMPC()
 			H(i+LagN,j+LagN)=Tres(i,j);
 
 		}
-	std::cout<<"EDW?"<<std::endl;
+	//std::cout<<"EDW?"<<std::endl;
 
-	Tres.prettyPrint();
+	//Tres.prettyPrint();
 	Ky=Tres+Tres.transp();
 	Ky.fast_invert();
 	Ky+=Ky.transp();
 	Ky.scalar_mult(0.5);
-	H.prettyPrint();
+	//H.prettyPrint();
 	H=H+H.transp();
 	H.scalar_mult(0.5);
 	Hinv=H+H.transp();

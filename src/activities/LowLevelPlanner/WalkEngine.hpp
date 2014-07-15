@@ -8,6 +8,9 @@
 #include "RobotParameters.h"
 #include "KWalkMat.h"
 #include "core/elements/math/Common.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
+using namespace boost::posix_time;
+
 class WalkInstruction
 {
 	public:
@@ -44,8 +47,12 @@ public:
 	void addInit();
 
 	KMath::KMat::GenMatrix<double,4,1> armangles;
-
+	void force_write_log(){
+			NaoLIPM.flog.save();
+		};
 private:
+	ptime Now;
+	int balance;
 	void feed();
 
 		/** Computation of the Target Center of Mass wrt the inertial frame **/

@@ -117,7 +117,7 @@ int mat_log::save() {
 	else if (type == MAT)
 		ret = this->saveMatTo(log_name + _toString(log_files_counter++));
 #endif
-
+	rawfile.flush();
 	return ret;
 }
 
@@ -149,7 +149,7 @@ int mat_log::saveRawTo(string filename) {
 	}
 	for (map<string, num_type *>::iterator it = data.begin(); it != data.end();
 			++it) {
-		std::cout << it->second[0] << std::endl;
+		//std::cout << it->second[0] << std::endl;
 		//std::cout <<typeid(float).name() << typeid(int).name() << std::endl;
 		//Write per variable (autosave_period) blocks
 		rawfile.write(reinterpret_cast<char*>(it->second), autosave_period * sizeof(num_type));

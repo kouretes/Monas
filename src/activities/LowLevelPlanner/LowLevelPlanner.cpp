@@ -51,7 +51,7 @@ void LowLevelPlanner::UserInit()
 	/**
 	 Set Body Stiffness
 	 **/
-	setStiffness(0.5f);
+	//setStiffness(0.0f);
 	state = DO_NOTHING;
 	dcm_state = DCM_STOP;
 
@@ -63,7 +63,15 @@ void LowLevelPlanner::UserInit()
 void LowLevelPlanner::Reset()
 {
 
-	setStiffness(0.8f);
+	float f =0;
+	for(int i=0; i<=10; i++)
+	{
+		f=0.8f*(i/10.0);
+		cout << " Stiffness: " << f;
+		usleep(350);
+		setStiffness(f);
+	}
+	//	setStiffness(0.8f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -169,9 +177,9 @@ int LowLevelPlanner::Execute()
 					engine->walkbuffer.add(NaoPlanner.inst.front());
 					NaoPlanner.inst.pop();
 			}
-			NaoPlanner.oneStep(std::vector<float>(3,0));
-			NaoPlanner.oneStep(std::vector<float>(3,0));
-			NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
 			//NaoPlanner.oneStep(std::vector<float>(3,0));
 			while(NaoPlanner.inst.size()>0)
 			{
@@ -262,8 +270,10 @@ int LowLevelPlanner::DCMcallback()
 
 	if (joints_action.size() != 12)
 	{
-		//std::cerr << "Not enough joint values" << std::endl;
 
+		engine->force_write_log();
+		std::cerr << "Not enough joint values" << std::endl;
+		usleep(200);
 			int *test;
 			test=0;
 			*test=5;
@@ -514,16 +524,44 @@ void LowLevelPlanner::createHardnessActuatorAlias()
 
 void LowLevelPlanner::setStiffnessDCM(const float &stiffnessValue)
 {
-	AL::ALValue stiffnessCommands;
 	int DCMtime;
+	/** Read Values of joints **/
+	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+		alljoints[j] = *jointPtr[i];
+
+	int l=0;
+	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::L_LEG + j];
+	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::R_LEG + j];
+	for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::L_ARM + j];
+	for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::R_ARM + j];
+
+	try
+	{
+		/// Get time in 0 ms
+		DCMtime = dcm->getTime(10);
+		commands[4][0] = DCMtime;
+		dcm->setAlias(commands);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("DcmStiffness", "execute_action", "Error when sending command to DCM : " + e.toString());
+	}
+
+
+
+	AL::ALValue stiffnessCommands;
+
 	// increase stiffness with the "jointStiffness" Alias created at initialisation
 	try
 	{
 		// Get time : return the time in 1 seconde
-		DCMtime = dcm->getTime(1000);
+		DCMtime = dcm->getTime(200);
 	} catch (const AL::ALError &e)
 	{
-		throw ALERROR(GetName(), "setStiffness()", "Error on DCM getTime : " + e.toString());
+		throw ALERROR("DcmStiffness", "setStiffness()", "Error on DCM getTime : " + e.toString());
 	}
 
 	// Prepare one dcm command:
