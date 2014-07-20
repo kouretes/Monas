@@ -272,7 +272,9 @@ int LowLevelPlanner::DCMcallback()
 	{
 
 		engine->force_write_log();
+		setStiffness(0.0);
 		std::cerr << "Not enough joint values" << std::endl;
+
 		usleep(200);
 			int *test;
 			test=0;
@@ -384,18 +386,15 @@ void LowLevelPlanner::initialise_devices()
 
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
 	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++)
-	{
 		sensorPtr[i] = (float *) memory->getDataPtr(sensorKeys[i]);
-	}
+
 
 	jointPtr.resize(KDeviceLists::NUMOFJOINTS);
 	for (int i = 0; i < KDeviceLists::NUMOFJOINTS; i++)
 	{
-
 		jointPtr[i] = (float *) memory->getDataPtr(jointKeys[i]);
 		//std::cout << jointKeys[i] << i << " " << jointPtr[i] << std::endl;
 		//sleep(1);
-
 	}
 
 	//std::cout << " Number of position joints " << jointPtr.size() << std::endl;

@@ -43,16 +43,16 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
    //-1.0010   -0.0352
   //-34.4651   -2.2820
    //-0.0873    0.0288
- /*  L(0,0) =0.044452;
+   L(0,0) =0.044452;
    L(0,1) =0.037499;
    L(1,0) =-0.22693;
    L(1,1) =-0.14403;
    L(2,0) =-3.0241;
    L(2,1) =-13.5139;
    L(3,0) =-0.048684;
-   L(3,1) =0.060181; */
-/*
-    L(0,0)=0.0009;
+   L(3,1) =0.060181;
+
+ /*   L(0,0)=0.0009;
     L(0,1)=0.0015;
     L(1,0)=-0.0051;
     L(1,1)=-0.0074;
@@ -84,7 +84,7 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
     L(3,0)= -0.1623;
     L(3,1)=0.0557;
    // L.scalar_mult(0.0005);*/
-    L(0,0) =1.359;
+ /*   L(0,0) =1.359;
     L(0,1) =-0.21697;
     L(1,0) =42.9735;
     L(1,1) =-11.1412;
@@ -92,8 +92,8 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
     L(2,1) =-31.9651;
     L(3,0) =2.6378;
     L(3,1) =-0.30555;
-    L.scalar_mult(0.0005);
-
+    L.scalar_mult(0.09);
+*/
     State.zero();
 	Stateold.zero();
 	State_e.zero();
@@ -126,9 +126,9 @@ void Dynamics::Update(float u,KVecFloat2 error)
 		startup++;
 	}
 	//error.scalar_mult(0.05);
-	error.zero();
+	//error.zero();
 	//error(0)*=0;
-	//error.scalar_mult(0.1);
+	error.scalar_mult(0.02);
 	//error(1)*=2;//.scalar_mult(2);
 	//error(0)*=0.5;//.scalar_mult(0.99);
     //error.scalar_mult(0.2);

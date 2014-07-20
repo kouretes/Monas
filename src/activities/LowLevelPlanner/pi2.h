@@ -7,9 +7,9 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define PI2_N  10
+#define PI2_N  14
 #define PI2_M  3
-#define PI2_K  30
+#define PI2_K  25
 #define PI2_S  3
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
