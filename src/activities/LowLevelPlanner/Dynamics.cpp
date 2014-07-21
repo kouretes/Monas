@@ -131,7 +131,7 @@ void Dynamics::Update(float u,KVecFloat2 error)
 	//error.scalar_mult(0.02);
 	//error(1)*=2;//.scalar_mult(2);
 	//error(0)*=0.5;//.scalar_mult(0.99);
-    error.scalar_mult(0.04);
+    //error.scalar_mult(0.5);
     //std::cout<<"ERROR:"<<std::endl;
     //error.prettyPrint();
     Stateold=State;
@@ -140,6 +140,7 @@ void Dynamics::Update(float u,KVecFloat2 error)
     temp.scalar_mult(u);
     State+=temp;
     State+=L*error;
+    //State(3)=0;
     //State.prettyPrint();
     predictedError=0.000;//Cd(0)*State(0)+Cd(2)*State(2)-ZMPReference(1);
     zmpstateNew=(Cd(0)*State(0)+Cd(2)*State(2));

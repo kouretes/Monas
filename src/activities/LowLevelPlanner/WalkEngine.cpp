@@ -273,11 +273,11 @@ void WalkEngine::Calculate_Desired_COM()
 	if(balance>SWITCH_STEPS){
 		//cout << "full balance " << endl;
 		NaoLIPM.LIPMComPI2(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(14000))
+		/*if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(14000))
 		{
 			balance=0;
 			Now=microsec_clock::universal_time();
-		}
+		}*/
 	}else {
 		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(10000)){
 			//Now=microsec_clock::universal_time();

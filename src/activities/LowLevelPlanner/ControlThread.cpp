@@ -55,7 +55,7 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
     KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
 
-
+    //std::cout << "Only LIPMComPI2" << std::endl;
 
 
 
@@ -71,6 +71,11 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
 
       //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
+      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
+      pi2Balance.pi2prof.generate_report(500);
+
+        DynamicsX.AugmentState();
+     	DynamicsY.AugmentState();
 
 
       KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
@@ -84,8 +89,6 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
       //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
       //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
-      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
-      pi2Balance.pi2prof.generate_report(500);
 
       //uX=0;
       //uY=0;
@@ -96,16 +99,16 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
       DynamicsY.Update(uY,errorY);
 
 
-        KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
-        //KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
-        KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
-        //KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
+	KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
+	//KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
+	KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
+	//KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
 
-         //Estimated COM position
-        COM(0)=DynamicsX.State(0);
-        COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
-        predictedErrorX=DynamicsX.predictedError;
-        predictedErrorY=DynamicsY.predictedError;
+	 //Estimated COM position
+	COM(0)=DynamicsX.State(0);
+	COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+	predictedErrorX=DynamicsX.predictedError;
+	predictedErrorY=DynamicsY.predictedError;
 
 
         flog.insert("COMx",DynamicsX.State(0));
@@ -149,6 +152,16 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	}
 	float muX,muY;
 	pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+    /*KMath::KMat::GenMatrix<float,4,1> gain;
+    gain.zero();
+    gain(0)=1.0e+04 * 3.2000;
+    gain(1)=1.0e+04 * 0.4080;
+    gain(2)=1.0e+04 * 0.0109;
+    gain(3)=0;
+	muX=gain.transp()*DynamicsX.State;
+	muX=-muX;
+	muY=gain.transp()*DynamicsY.State;
+	muY=-muY;*/
 	pi2Balance.pi2prof.generate_report(500);
 
 	DynamicsX.AugmentState();
@@ -190,6 +203,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
 	}else
 	{
+	std::cout << "Only Pi2" << std::endl;
 	  DynamicsX.Update(muX,errorX);
 	  DynamicsY.Update(muY,errorY);
 	}

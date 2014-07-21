@@ -37,6 +37,13 @@ pi2::~pi2() {
 void pi2::init_pi2() {
 	ZMPReferenceX.zero();
 	ZMPReferenceY.zero();
+    KMath::KMat::GenMatrix<float,4,1> LQRgain;
+    LQRgain.zero();
+    LQRgain(0)=1.0e+04 * 3.2000;
+    LQRgain(1)=1.0e+04 * 0.4080;
+    LQRgain(2)=1.0e+04 * 0.0109;
+    LQRgain(3)=0;
+    LQRgain.scalar_mult(-1);
 
 	for (int i = 0; i < 2; i++) {
 		//Decay rate of the exploration noise
@@ -44,12 +51,13 @@ void pi2::init_pi2() {
 		//Variance of the exploration noise
 		pi2config[i].sigme_e = 5;
 		//Control cost matrix
-		pi2config[i].R = 1e-5;
+		pi2config[i].R = 1e-8;
 		pi2config[i].control_cost.identity();
 		pi2config[i].control_cost.scalar_mult(pi2config[i].R);//*eye(pi2config.M);
 		pi2config[i].inv_control_cost.identity();
 		pi2config[i].inv_control_cost.scalar_mult(1.0/pi2config[i].R);
-		pi2config[i].theta.zero();
+		pi2config[i].theta=LQRgain;//.zero();
+
 
 	}
 	//initial parameter matrix
@@ -199,8 +207,8 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 				fS1 = (sys.State(1))*(sys.State(1));
 				fS0 = (sys.State(0))*(sys.State(0));
 				q(k, t)=0.000000001;
-			
-				q(k,t) += ZmpE2 + 10e-10*fS1+10e-10*fS2+10e5*fS1;
+
+				q(k,t) += 10e3*ZmpE2 + 10e-10*fS1+10e-10*fS2+10e2*fS0;
 				//q(k,t)*=100;
 				if(fZmpE>0.05)
 					q(k,t) += (ZmpE2*ZmpE2)/0.00000625;
@@ -328,7 +336,7 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 	KPROF_SCOPE(pi2prof,"pi2");
 	GKxN_t q;
 	q.zero();
-	float expl_sigma = 10;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
+	float expl_sigma = 5;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
 
 
     //Setting the Reference Signal
@@ -355,7 +363,7 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 		run_rollouts(Me, q, pi2config[1].theta, Dy.State, rolloutSys, ZMPReferenceY, expl_sigma );
 		pi2config[1].theta += pi2_update(Me, q, pi2config[1].theta);
 
-		expl_sigma=pow(expl_sigma,rr);
+		expl_sigma=expl_sigma*pi2config[0].gama;
 	}
 
 	Gst[0](0)=Dx.State(0); //print and check
@@ -363,11 +371,14 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 	Gst[0](2)=Dx.State(2);
 	Gst[0](3)=10e-5;
 	ux = pi2config[0].theta.transp() * Gst[0];
+	pi2config[0].theta.prettyPrint();
 	Gst[0](0)=Dy.State(0); //print and check
 	Gst[0](1)=Dy.State(1);
 	Gst[0](2)=Dy.State(2);
 	Gst[0](3)=10e-5;
 	uy = pi2config[1].theta.transp() * Gst[0];
+	pi2config[1].theta.prettyPrint();
+
 }
 
 //returns the vector for all the basis functions

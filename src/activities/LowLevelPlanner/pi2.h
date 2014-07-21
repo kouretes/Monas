@@ -9,7 +9,7 @@
 
 #define PI2_N  14
 #define PI2_M  4
-#define PI2_K  5
+#define PI2_K  2
 #define PI2_S  3
 #define PI2_R  2
 #include <boost/random/mersenne_twister.hpp>
