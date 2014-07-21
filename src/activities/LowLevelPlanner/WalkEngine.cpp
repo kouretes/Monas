@@ -270,18 +270,23 @@ void WalkEngine::Calculate_Desired_COM()
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
 	NaoLIPM.isDoubleSupport=double_support;
-//	if(balance>100){
-//		cout << "full balance " << endl;
-	NaoLIPM.LIPMComPI2(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-//
-//	}else {
-//		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(10000)){
-//			std::cout << "Balance "<< balance << std::endl;
-//			NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1),++balance);
-//		}else{
-//		 NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-//		}
-//	}
+	if(balance>SWITCH_STEPS){
+		//cout << "full balance " << endl;
+		NaoLIPM.LIPMComPI2(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
+		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(14000))
+		{
+			balance=0;
+			Now=microsec_clock::universal_time();
+		}
+	}else {
+		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(10000)){
+			//Now=microsec_clock::universal_time();
+			std::cout << "Balance "<< balance << std::endl;
+			NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1),++balance);
+		}else{
+		 NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
+		}
+	}
 	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);

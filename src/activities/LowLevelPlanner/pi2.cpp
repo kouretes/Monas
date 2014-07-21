@@ -40,13 +40,15 @@ void pi2::init_pi2() {
 
 	for (int i = 0; i < 2; i++) {
 		//Decay rate of the exploration noise
-		pi2config[i].gama = 0.99;
+		pi2config[i].gama = 0.9;
 		//Variance of the exploration noise
 		pi2config[i].sigme_e = 5;
 		//Control cost matrix
-		pi2config[i].R = 10e-10;
+		pi2config[i].R = 1e-5;
 		pi2config[i].control_cost.identity();
 		pi2config[i].control_cost.scalar_mult(pi2config[i].R);//*eye(pi2config.M);
+		pi2config[i].inv_control_cost.identity();
+		pi2config[i].inv_control_cost.scalar_mult(1.0/pi2config[i].R);
 		pi2config[i].theta.zero();
 
 	}
@@ -64,11 +66,15 @@ void pi2::init_pi2() {
 	Rinv.identity();
 
 	//Rinv = pi2config[0].control_cost; //.invert_square_matrix(pi2config.control_cost);
-	//Rinv.prettyPrint();
-	Rinv.scalar_mult(1/pi2config[0].R);
+	//
+	Rinv.scalar_mult(1.0/pi2config[0].R);
+	Rinv.prettyPrint();
 	//Rinv=Rinv.invert_square_matrix(Rinv);
 	GMx1_t gt;
 	gt.zero();
+	Gst.resize(PI2_N,gt);
+	for(int t=0;t<PI2_N; t++)
+		Gst[t].zero();
 
 	GMxM_t Mt;
 	Mt.zero();
@@ -112,6 +118,14 @@ void pi2::init_pi2() {
 		   cout<< "Me[" << k << "][" << t << "]:" ;
 		   Me[k][t].prettyPrint();
 		}
+	float sumd=0;
+	int t;
+	for (t = 0; t < PI2_N; t++){
+		denom[t]=PI2_N-1-t;
+		sumd+=denom[t];
+	}
+	for (t = 0; t < PI2_N; t++)
+		denom[t]/=sumd;
 
 
 	//(Me[2][3]).prettyPrint();
@@ -124,63 +138,79 @@ float pi2::Gaussian(float t, float cm, float sm) {
 	return exp(-(t - cm) * (t - cm) / (2.0 * sm * sm));
 }
 
+//void pi2::basis(GSx1_t & state, GMx1_t & Gst){
+//	Gst(0) = state(0);
+//	Gst(1) = state(1);
+//	Gst(2) = state(2);
+//	Gst(3) = state(0)*state(0)*state(0);
+//	Gst(4) = 10e-5;
+//}
 //output Me = kxNxM q[KxN], theta Mx1, state 1xS, noise, Mx1
 void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 		GSx1_t init_state, Dynamics & sys, GNx1_t Zref,float expl_sigma) {
-	float u,fS0,fS1,ZmpE2;
+	float u,fS0,fS1,fS2,ZmpE2,fZmpE;
 	int k,t, m;
 	GMx1_t theta_k, e;
 	GSx1_t State_old;
+	GMxM_t Mtk;
 	theta_k.zero();
 	e.zero();
 	State_old.zero();
+	Mtk.zero();
 	State_old = init_state;
-
+	float gRg;
 	//cout << expl_sigma;
 	for (k = 0; k < PI2_K; k++) {
 		for (m = 0; m < PI2_M; m++)
 			e(m) = gen() * expl_sigma + 0.000001; //e= randn(PI2_K,1)*expl_sigma;
 
 		theta_k = theta + e; //Add parameter noise
-
+		//cout << " error e: " ;
+		//e.prettyPrint();
 		//Initialize Dynamics with incoming state
 		sys.State = init_state;
 		for (t = 0; t < PI2_N; t++) {
-			Me[k][t] = M[t] * e;
+			//Set bassis functions
+ 			Gst[t](0)=sys.State(0); //print and check
+ 			Gst[t](1)=sys.State(1);
+ 			Gst[t](2)=sys.State(2);
+ 			Gst[t](3)=1e-5;
+ 			//That 0 is not good ...
+ 			//cout << " Gst[" << t << "]:";
+ 			//Gst[t].prettyPrint();
+ 			Mtk = pi2config[0].inv_control_cost*(Gst[t]*Gst[t].transp());
+ 			//cout << " Mtk pre:";
+ 			//Mtk.prettyPrint();
+ 			//pi2config[0].inv_control_cost.prettyPrint();
+ 			gRg = Gst[t].transp()*pi2config[0].inv_control_cost*Gst[t];
+ 			//cout << " gRg: " << gRg << endl;
+ 			Mtk.scalar_mult(1/gRg);
+ 			//cout << " Mtk final:";
+ 			//Mtk.prettyPrint();
+ 			Me[k][t] = Mtk*e;
+ 			//cout << " Me[" << k << "][" << t << "]:";
+ 			//Me[k][t].prettyPrint();
+			//Me[k][t] = M[t] * e;
 		    //calculate cost
 			{
-				ZmpE2 = ( 0*Zref(t)-sys.zmpstateNew)*( 0*Zref(t)-sys.zmpstateNew);
+				fZmpE=fabs(0*Zref(t)-sys.zmpstateNew);
+				ZmpE2 =fZmpE*fZmpE;
+				fS2 = (sys.State(2))*(sys.State(2));
 				fS1 = (sys.State(1))*(sys.State(1));
 				fS0 = (sys.State(0))*(sys.State(0));
 				q(k, t)=0.000000001;
-//				if (ZmpE2 > 0.01)
-//					q(k, t) += 9.0 *(ZmpE2 - 0.01 +1.0)*(t+1);
-//				if (fS0 > 0.009)
-//					q(k, t) += 6.0 *(fS0 - 0.009 +1.0)*(t+1);
-//				q(k,t) += 35*(Zref(t)-sys.zmpstateNew)*(Zref(t)-sys.zmpstateNew);
-//				q(k,t) += 45*(50*fS0)*(50*fS0);
-//				q(k,t) += 0.09*(sys.State(2))*(sys.State(2));
-//				q_2(j)=(50*x(1)).^2;
-//			    q(j)= 35*q_1(j)*j+ 15*(q_2(j))*j+0.08*(x(3)^2);%
-
-//				if (fS0 > 0.02)
-//					q(k, t) += 900.0 * (fS0 - 0.02 +1)*t;
-//				 q_1(j)=abs(zmpy(j)- 0*ZMPY(j));
-//				    q_2(j)=(x(2)).^2;
-//				    q_3(j)=(x(1)- zmpy(j))^2;
-//				%     %q_2(j)=abs(x(1)-xold(1)).^2;
-//				%
-//				    q(j) = 0.3*q_1(j) +8*q_1(j).^2 + 10*q_2(j) + 0.9*q_3(j);%+x(2)^2;%+ q_1(j)*200*(x(2)^2)+0.3*(x(3)^2)*q_1(j) + 0.002 *(x(3)^2);%; +2.5*q_2(j) + 0.5*q_3(j);%+2.9*(x(2)^2);%+ q_3(j)*0.05;% + 2*((x(2))^2)+ 2*q_3(j);%  +2*(x(3)-xold(3))^2  ;%+0.0001*abs(x(3));%(x-xold)'*(model.Q)*(x-xold);
-//				%     q(j)=q(j)*j;
-//				%
-				q(k,t) += 16.0*ZmpE2 + 18*fS1+2*fS0;
-				q(k,t)*=(t+1);
+			
+				q(k,t) += ZmpE2 + 10e-10*fS1+10e-10*fS2+10e5*fS1;
+				//q(k,t)*=100;
+				if(fZmpE>0.05)
+					q(k,t) += (ZmpE2*ZmpE2)/0.00000625;
 			}
 			//calculate action
 			if(t==PI2_N)
 				break;
 			State_old=sys.State;
-			u = Gt[t].transp() * theta_k; //theta*gt
+			u = Gst[t].transp() * theta_k; //theta*gt
+			//std::cout << "U : " << u << std::endl;
 			//run simulation
 			sys.RolloutUpdate(u);//get next_state
 		}
@@ -202,8 +232,8 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 
 	for (t=0; t<PI2_N; t++)
 	{
-		minS(t)=INT_MAX/2.0;
-		maxS(t)=-INT_MAX/2.0;
+		minS(t)=INT_MAX;
+		maxS(t)=-INT_MAX;
 	}
 
     for (k = 0; k < PI2_K; k++) { //for all rollouts
@@ -220,10 +250,10 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 
 		for (t--; t >= 0; t--) {
 
-//			theta_hat_temp = theta + Me[k][t + 1];
-//
-//			thRth =theta_hat_temp.transp() * pi2config[0].control_cost * theta_hat_temp; //Check if nan;
-//			control_cost_cum += thRth;
+			theta_hat_temp = theta + Me[k][t + 1];
+
+			thRth =theta_hat_temp.transp() * pi2config[0].control_cost * theta_hat_temp; //Check if nan;
+			control_cost_cum += thRth;
 			state_cost_cum += q(k, t);
 			S(k, t) = state_cost_cum + control_cost_cum / 2.0 + terminal_cost;
 			if (S(k, t) > maxS(t))
@@ -232,12 +262,7 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 				minS(t) = (float)S(k, t);
 		}
 	}
-	//cout<<" S: ";
-	//S.prettyPrint();
-//	cout<<"After\nMin:" ;
-//	minS.prettyPrint();
-//	cout<<"Max:" ;
-//	maxS.prettyPrint();
+
 	GKxN_t P;
 	P.zero();
 	GNx1_t expsum;
@@ -252,21 +277,12 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 		//cout << " dif: " << max_min;
 		for (k = 0; k < PI2_K; k++) {    //exp
 			float res = -h * (S(k, t) - minS(t));
-			//cout << " res: " << res << " div " << res/max_min ;
-			P(k, t) =exp(res/max_min);
+
+			P(k, t) = exp(res/max_min);
 			expsum(t) += P(k, t);
 		}
 		for (k = 0; k < PI2_K; k++)
 			P(k, t) = P(k, t) / (float) expsum(t);
-		//P.prettyPrint();
-//			try {
-//				cout << "P(" << k << "," << t << "):" << endl;
-//				cout << "  expsum " << expsum(t) << endl;
-//				cout << " P(k, t) " << P(k, t);
-//				P(k, t) = P(k, t) / (float) expsum(t);
-//			} catch (exception ex) {
-//				std::cout << " Pexpsum  " << ex.what() << std::endl;
-//			}
 	}
 
 	vector<GMx1_t> dtheta;
@@ -283,23 +299,28 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 	 end
 	 end
 
-	 for m=1:pi2config.M
-	 dtheta_t(m) =  (Globalgt(1:end-1,m)'*dtheta(m,1:end-1)')/sum(Globalgt(1:end-1,1));
-	 end
-	 r=r+1;
-	 %disp([' **************** New Theta  ' num2str(r)] );
-	 theta(:,r) = theta(:,r-1) + dtheta_t;
+      denom=sum(pi2config.N:-1:1);
+        for m=1:pi2config.M
+            dtheta_t(m)=sum(dtheta(m,1:end-1).*[pi2config.N-1:-1:1])./denom;
+        end
 	 */
 	for (k = 0; k < PI2_K; k++)
 		for (t = 0; t < PI2_N; t++)
-			dtheta[t] = dtheta[t] + (Me[k][t])*(P(k, t));
+			dtheta[t] = dtheta[t] + (Me[k][t]).scalar_mult(P(k, t));
 
+// for (m = 0; m < PI2_M; m++) {
+// 		dtheta_t(m) = 0;
+// 		for (t = 0; t < PI2_N - 1; t++)
+// 			dtheta_t(m) = dtheta_t(m) + Gt[t](m) * dtheta[t](m);
+// 		dtheta_t(m) /= sumGt[m];
+// 	}
+	//here denom[t] =  t/sum(denom)
 	for (m = 0; m < PI2_M; m++) {
 		dtheta_t(m) = 0;
 		for (t = 0; t < PI2_N - 1; t++)
-			dtheta_t(m) = dtheta_t(m) + Gt[t](m) * dtheta[t](m);
-		dtheta_t(m) /= sumGt[m];
+			dtheta_t(m) = dtheta_t(m) + dtheta[t](m)*denom[t];
 	}
+
 	return dtheta_t;
 }
 
@@ -307,7 +328,7 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 	KPROF_SCOPE(pi2prof,"pi2");
 	GKxN_t q;
 	q.zero();
-	float expl_sigma = 15;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
+	float expl_sigma = 10;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
 
 
     //Setting the Reference Signal
@@ -325,22 +346,28 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 			//ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
+	for(int rr=1;rr<=PI2_R;rr++){
+		//expl_sigma = 5*fabs(Dx.State(1))+2+5*fabs(Dx.State(2));
+		//cout << "Xaxis  " << rr << endl;
+		run_rollouts(Me, q, pi2config[0].theta, Dx.State, rolloutSys, ZMPReferenceX, expl_sigma );
+		pi2config[0].theta += pi2_update(Me, q, pi2config[0].theta);
+		//cout << "Yaxis  " << rr << endl;
+		run_rollouts(Me, q, pi2config[1].theta, Dy.State, rolloutSys, ZMPReferenceY, expl_sigma );
+		pi2config[1].theta += pi2_update(Me, q, pi2config[1].theta);
 
-    expl_sigma = 5*fabs(Dx.State(1))+2+5*fabs(Dx.State(2));
+		expl_sigma=pow(expl_sigma,rr);
+	}
 
-	run_rollouts(Me, q, pi2config[0].theta, Dx.State, rolloutSys,ZMPReferenceX, expl_sigma );
-	pi2config[0].theta += pi2_update(Me, q, pi2config[0].theta);
-//	cout << "Theta 0 : ";
-//	pi2config[0].theta.prettyPrint();
-//
-	//expl_sigma =0.1;// 50.0*fabs(Dy.State(0)) + 5.0*fabs(Dy.State(1))+ 6.0*fabs(Dy.State(2))+0.000005;;
-	run_rollouts(Me, q, pi2config[1].theta, Dy.State, rolloutSys, ZMPReferenceY, expl_sigma );
-	pi2config[1].theta += pi2_update(Me, q, pi2config[1].theta);
-//	cout << "Theta 1 : ";
-//	pi2config[1].theta.prettyPrint();
-
-	ux = pi2config[0].theta.transp() * Gt[0];
-	uy = pi2config[1].theta.transp() * Gt[0];
+	Gst[0](0)=Dx.State(0); //print and check
+	Gst[0](1)=Dx.State(1);
+	Gst[0](2)=Dx.State(2);
+	Gst[0](3)=10e-5;
+	ux = pi2config[0].theta.transp() * Gst[0];
+	Gst[0](0)=Dy.State(0); //print and check
+	Gst[0](1)=Dy.State(1);
+	Gst[0](2)=Dy.State(2);
+	Gst[0](3)=10e-5;
+	uy = pi2config[1].theta.transp() * Gst[0];
 }
 
 //returns the vector for all the basis functions
