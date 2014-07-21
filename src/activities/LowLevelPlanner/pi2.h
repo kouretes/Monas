@@ -7,7 +7,7 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define PI2_N  14
+#define PI2_N  15
 #define PI2_M  4
 #define PI2_K  2
 #define PI2_S  3

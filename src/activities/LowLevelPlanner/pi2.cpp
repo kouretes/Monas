@@ -40,7 +40,7 @@ void pi2::init_pi2() {
     KMath::KMat::GenMatrix<float,4,1> LQRgain;
     LQRgain.zero();
     LQRgain(0)=1.0e+04 * 3.2000;
-    LQRgain(1)=1.0e+04 * 0.4080;
+    LQRgain(1)=1.0e+04 * 0.2080;
     LQRgain(2)=1.0e+04 * 0.0109;
     LQRgain(3)=0;
     LQRgain.scalar_mult(-1);
@@ -170,7 +170,7 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 	//cout << expl_sigma;
 	for (k = 0; k < PI2_K; k++) {
 		for (m = 0; m < PI2_M; m++)
-			e(m) = gen() * expl_sigma + 0.000001; //e= randn(PI2_K,1)*expl_sigma;
+			e(m) = gen() *sqrt(fabs(theta(m))*0.05)* expl_sigma + 0.1; //e= randn(PI2_K,1)*expl_sigma;
 
 		theta_k = theta + e; //Add parameter noise
 		//cout << " error e: " ;
@@ -208,7 +208,7 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 				fS0 = (sys.State(0))*(sys.State(0));
 				q(k, t)=0.000000001;
 
-				q(k,t) += 10e3*ZmpE2 + 10e-10*fS1+10e-10*fS2+10e2*fS0;
+				q(k,t) += 10e3*ZmpE2 + 1*fS1+10e-2*fS2+fS0;
 				//q(k,t)*=100;
 				if(fZmpE>0.05)
 					q(k,t) += (ZmpE2*ZmpE2)/0.00000625;
@@ -222,7 +222,9 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 			//run simulation
 			sys.RolloutUpdate(u);//get next_state
 		}
+
 	}
+
 }
 //Get new dtheta
 GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
@@ -240,35 +242,43 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 
 	for (t=0; t<PI2_N; t++)
 	{
-		minS(t)=INT_MAX;
-		maxS(t)=-INT_MAX;
+		minS(t)=std::numeric_limits<float>::max();
+		maxS(t)=std::numeric_limits<float>::min();
 	}
+	std::cout<<"Update!--------------------------"<<std::endl;
 
     for (k = 0; k < PI2_K; k++) { //for all rollouts
 		control_cost_cum = 0;
 		state_cost_cum = 0;
 
-		t = PI2_N - 1;
-		terminal_cost=q(k, t)*2;
-		S(k, t)=terminal_cost;
-		if (S(k, t) > maxS(t))
-			maxS(t) =(float)S(k, t);
-		if (S(k, t) < minS(t))
-			minS(t) =(float)S(k, t);
 
-		for (t--; t >= 0; t--) {
+		terminal_cost=q(k, PI2_N - 1);
+		S(k,  PI2_N - 1)=terminal_cost;
 
-			theta_hat_temp = theta + Me[k][t + 1];
+
+		for (t=PI2_N -1 -1;t>= 0; t--) {
+
+            state_cost_cum += q(k, t);
+			S(k, t) = state_cost_cum + control_cost_cum / 2.0 + terminal_cost;
+
+
+			theta_hat_temp = theta + Me[k][t+1];
+			//theta_hat_temp.prettyPrint();
 
 			thRth =theta_hat_temp.transp() * pi2config[0].control_cost * theta_hat_temp; //Check if nan;
 			control_cost_cum += thRth;
-			state_cost_cum += q(k, t);
-			S(k, t) = state_cost_cum + control_cost_cum / 2.0 + terminal_cost;
-			if (S(k, t) > maxS(t))
-				maxS(t) = (float)S(k, t);
-			if (S(k, t) < minS(t))
-				minS(t) = (float)S(k, t);
+
 		}
+	}
+
+	for (t = 0; t < PI2_N;t++) {
+	   for (k = 0; k < PI2_K; k++)
+	   {
+            if (S(k, t) > maxS(t))
+                maxS(t) =(float)S(k, t);
+            if (S(k, t) < minS(t))
+                minS(t) =(float)S(k, t);
+        }
 	}
 
 	GKxN_t P;
@@ -279,9 +289,16 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 
 	 % the probabilty of a trajectory
 	 P = expS./(sum(expS,2)*ones(1,pi2config.K));*/
-
+    /*maxS.prettyPrint();
+    minS.prettyPrint();
+    (maxS-minS).prettyPrint();
+    q.prettyPrint();
+    S.prettyPrint();
+    std::cout<< setw(15) << setprecision(10) <<S(0,0)<< std::endl;
+    std::cout<< setw(15) << setprecision(10) <<S(1,0)<< std::endl;*/
 	for (t = 0; t < PI2_N; t++) {
-		float max_min =  maxS(t) - minS(t)+0.00000032;
+		float max_min =  maxS(t) - minS(t);
+		if(max_min<1e-10)max_min=1e-10;
 		//cout << " dif: " << max_min;
 		for (k = 0; k < PI2_K; k++) {    //exp
 			float res = -h * (S(k, t) - minS(t));
@@ -292,6 +309,7 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 		for (k = 0; k < PI2_K; k++)
 			P(k, t) = P(k, t) / (float) expsum(t);
 	}
+	//P.prettyPrint();
 
 	vector<GMx1_t> dtheta;
 	GMx1_t dtheta_t;
@@ -314,7 +332,7 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 	 */
 	for (k = 0; k < PI2_K; k++)
 		for (t = 0; t < PI2_N; t++)
-			dtheta[t] = dtheta[t] + (Me[k][t]).scalar_mult(P(k, t));
+			dtheta[t] = dtheta[t] + (Me[k][t])*(P(k, t));
 
 // for (m = 0; m < PI2_M; m++) {
 // 		dtheta_t(m) = 0;
@@ -325,8 +343,18 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 	//here denom[t] =  t/sum(denom)
 	for (m = 0; m < PI2_M; m++) {
 		dtheta_t(m) = 0;
+        GNx1_t w;
+        float denom=0;
+        for (t = 0; t < PI2_N - 1; t++)
+        {
+            w(t)=0;
+            for(unsigned k=0;k<PI2_K;k++)
+                w(t)+=q(k,t);
+            w(t)=1./(w(t)+1);
+            denom+=1.0*(PI2_N-t)*w(t);
+        }
 		for (t = 0; t < PI2_N - 1; t++)
-			dtheta_t(m) = dtheta_t(m) + dtheta[t](m)*denom[t];
+			dtheta_t(m) = dtheta_t(m) + (dtheta[t](m)*w(t)*(PI2_N-t))/denom;
 	}
 
 	return dtheta_t;
@@ -336,8 +364,8 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 	KPROF_SCOPE(pi2prof,"pi2");
 	GKxN_t q;
 	q.zero();
-	float expl_sigma = 5;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
-
+	float expl_sigma = 1;// 50.0 * fabs(Dx.State(0)) + 5.0 * fabs(Dx.State(1))	+ 0.5 * fabs(Dx.State(2))+0.0000001;
+    Dx.State.prettyPrint();
 
     //Setting the Reference Signal
 	for (int i = 1; i < PI2_N; i++)
@@ -358,7 +386,10 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 		//expl_sigma = 5*fabs(Dx.State(1))+2+5*fabs(Dx.State(2));
 		//cout << "Xaxis  " << rr << endl;
 		run_rollouts(Me, q, pi2config[0].theta, Dx.State, rolloutSys, ZMPReferenceX, expl_sigma );
-		pi2config[0].theta += pi2_update(Me, q, pi2config[0].theta);
+		GMx1_t c;
+		c = pi2_update(Me, q, pi2config[0].theta);
+		//c.prettyPrint();
+		pi2config[0].theta += c;
 		//cout << "Yaxis  " << rr << endl;
 		run_rollouts(Me, q, pi2config[1].theta, Dy.State, rolloutSys, ZMPReferenceY, expl_sigma );
 		pi2config[1].theta += pi2_update(Me, q, pi2config[1].theta);
