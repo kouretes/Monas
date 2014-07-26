@@ -23,7 +23,6 @@ endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
 add_subdirectory (./core/) #Monas Core
 add_subdirectory ( ./messages/ )
-add_subdirectory ( ./robocup/ )
 #User components
 add_subdirectory ( ./activities/ )
 add_subdirectory ( ./providers/ )

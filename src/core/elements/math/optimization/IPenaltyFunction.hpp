@@ -11,6 +11,7 @@ namespace KMath
   public:
 		void setT(T at) {t=at;};
 		virtual void processConstraintsAt(KMat::GenMatrix<T,S,1> &x ) =0;
+		virtual bool allSatisfied()=0;
   protected:
 		IPenaltyFunction() : t(1){};
 		T t;

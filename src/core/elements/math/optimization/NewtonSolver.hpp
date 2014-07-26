@@ -9,7 +9,7 @@ namespace KMath {
   class NewtonSolver
   {
   public:
-    NewtonSolver() : threshold(1e-4), beta(0.05), alpha(0.001)
+    NewtonSolver() : threshold(1e-5), beta(0.1), alpha(0.001)
     {
       cost.clear();
     }
@@ -41,7 +41,7 @@ namespace KMath {
           hess+=cost[i]->getHessian();
         }
 
-		try
+		/*try
         {
 		  //KMat::GenMatrix<float,S,S> h=hess;
           //hess.fast_invert();
@@ -55,7 +55,10 @@ namespace KMath {
 
         }
 
-        dx=hess*(jacob.transp());
+        dx=hess*(jacob.transp());*/
+		dx.zero();
+        KMat::solveSystemGaussSeidel(hess,jacob.transp(),dx,(float)1e-1);
+
         dx.scalar_mult(-1); //Descent duh
         //std::cout<<"Dx:"<<std::endl;
         //dx.prettyPrint();
