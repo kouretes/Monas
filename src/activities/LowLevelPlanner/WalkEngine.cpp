@@ -16,7 +16,7 @@ WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(P
 
 void WalkEngine::Reset()
 {
-	comzmeasured=0;
+	comzintegral=0;
 
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	currentstep=0;
@@ -97,21 +97,21 @@ std::vector<float> WalkEngine::Calculate_IK()
 	t.p=Tilerror.getTranslation();
 	t.a=Tilerror.getEulerAngles();
 
-	t.p.scalar_mult(0.1);
+	t.p.scalar_mult(0.05);
 	if(t.p(2)<0)
 		t.p(2)=0;
-	t.a.scalar_mult(0.1);
+	t.a.scalar_mult(0.05);
 
 	Tilerror=NAOKinematics::getTransformation(t);
 
 	t.p=Tirerror.getTranslation();
 	t.a=Tirerror.getEulerAngles();
 
-	t.p.scalar_mult(0.1);
+	t.p.scalar_mult(0.05);
 	if(t.p(2)<0)
 		t.p(2)=0;
 
-	t.a.scalar_mult(0.1);
+	t.a.scalar_mult(0.05);
 
     Tirerror=NAOKinematics::getTransformation(t);
 
@@ -171,18 +171,24 @@ std::vector<float> WalkEngine::Calculate_IK()
 	{
 
 	    ret.clear();
-
-		KVecDouble3 measured = nkin.calculateCenterOfMass();
+        if(double_support)
+		    measuredcom = nkin.calculateCenterOfMass();
 		//measured.prettyPrint();
-		if(double_support)
-			comzmeasured=comzmeasured*0.991+measured(2)*0.009;
-		measured(2)=comzmeasured;
+
+		//if(double_support)
+		//	comzmeasured=comzmeasured*0.991+measured(2)*0.009;
+		//measured(2)=comzmeasured;
 		//measured.prettyPrint();
 		com_error=desired;
-		com_error-=Tipprime.transform(measured);
+		com_error-=Tipprime.transform(measuredcom);
 		//com_error.prettyPrint();
-		if(com_error(2)>5)
-			com_error(2)=5;
+		comzintegral=com_error(2)*0.05 +comzintegral*0.95;
+        if(double_support)
+                com_error(2)=0.2*com_error(2)+0.1*comzintegral;
+            else
+                com_error(2)=1*com_error(2)+0.5*comzintegral+0.05;
+		//if(com_error(2)>5)
+		//	com_error(2)=5;
 		//com_error(0)*=softstand;
 		//com_error(1)*=softstand;
 //		com_error.prettyPrint();

@@ -88,7 +88,8 @@ private:
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
 
-	float comzmeasured;
+	float comzintegral;
+	KVecDouble3 measuredcom;
 
 
 

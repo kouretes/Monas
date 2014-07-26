@@ -150,7 +150,7 @@ void LIPMPreviewController::solveConstrainedMPC()
 	/*std::cout<<httaX(0)<<std::endl;
 	std::cout<<httaY(0)<<std::endl;*/
 	htta.zero();
-	//return;
+	return;
 	for(unsigned i=0;i<LagN;i++)
 	{
 		htta(i)=httaX(i);
