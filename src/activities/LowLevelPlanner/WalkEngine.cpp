@@ -134,14 +134,14 @@ std::vector<float> WalkEngine::Calculate_IK()
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
-    dl(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
+    dl(0)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
 
-    dl(1)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
+    dl(1)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
 
     dl(2)=startL(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,ldiff,1.0);
 
-    dr(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
-    dr(1)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startR(1),dr(1),1.0);
+    dr(0)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
+    dr(1)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startR(1),dr(1),1.0);
     dr(2)=startR(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,rdiff,1.0);
 
     float zl=0,zr=0;
@@ -434,8 +434,8 @@ void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 			newpoint.zero();
 			float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
 
-			newpoint(0)=interp.trigIntegInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
-			newpoint(1)=interp.trigIntegInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
+			newpoint(0)=interp.LinearInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
+			newpoint(1)=interp.LinearInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
 			newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/steps,0,adiff,1.0);
 			Zbuffer.cbPush(newpoint);
 

@@ -32,13 +32,13 @@ class RobotParameters
 			WalkParameters[StepY] = 0.085;
 			WalkParameters[StepZ] = 0.015;
 			WalkParameters[H0] = 0.05;
-			WalkParameters[HX] = -0.02;//225
+			WalkParameters[HX] = -0.015;//225
 			WalkParameters[ComZ] = 0.265;
 			WalkParameters[CoMZModelError] = 1.25;
-			WalkParameters[Tstep] = 0.45;//0.28
+			WalkParameters[Tstep] = 0.38;//0.28
             WalkParameters[Tinit]= 0.50;
-			WalkParameters[Tds] = 0.40;// ceil(0.25 * WalkParameters[Tstep]/WalkParameters[Ts])*WalkParameters[Ts];//0.35
-			WalkParameters[Tss] = 0.60; //WalkParameters[Tstep]-WalkParameters[Tds];
+			WalkParameters[Tds] = 0.3;// ceil(0.25 * WalkParameters[Tstep]/WalkParameters[Ts])*WalkParameters[Ts];//0.35
+			WalkParameters[Tss] = 0.7; //WalkParameters[Tstep]-WalkParameters[Tds];
 			WalkParameters[MaxStepX] = 0.0400;
 			WalkParameters[MaxStepY] = 0.0400;
 			WalkParameters[MaxStepTheta] = 0.6980;

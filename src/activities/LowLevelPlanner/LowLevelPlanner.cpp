@@ -160,7 +160,7 @@ int LowLevelPlanner::Execute()
     if(chest>1)
     {
         if(chest==3)
-            speed[0]=3;
+            speed[0]=4.0;
         else
             speed[0]=0;
         state=DO_STEPS;
