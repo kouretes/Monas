@@ -1,5 +1,5 @@
 #include "IActivity.hpp"
 
-IActivity::IActivity ( Blackboard & b) :  _blk(b)
+IActivity::IActivity ( Messaging::Blackboard & b) :  _blk(b)
 {
 }

@@ -1,26 +1,38 @@
 #ifndef STOPWATCH_HPP
 #define STOPWATCH_HPP
-
-template<class AvgPol = KMath::StatMovingAverage>
-class StopWatch : public AvgPol
+#include "SystemClockProvider.hpp"
+#include "Timer.hpp"
+namespace KSystem
 {
+    namespace Time
+    {
 
-public:
+        template<class AvgPol = KMath::StatMovingAverage>
+        class StopWatch : public AvgPol
+        {
 
-	void StartTiming ()
-	{
-		execStart = SysCall::_GetCurrentTimeInUSec();
-	}
+        public:
+            StopWatch( ) : t(SystemClockProvider::getThreadClock()) {};
+            void StartTiming ()
+            {
+                t.restart();
+            }
 
-	double StopTiming ()
-	{
-		return this->AddElement( SysCall::_GetCurrentTimeInUSec() - execStart );
-	}
+            double StopTiming ()
+            {
+                //std::cout<<t.elapsed()<<std::endl;
+                return this->AddElement( t.elapsed() );
+            }
 
-private:
+        private:
+             Timer t;
+        };
 
-	unsigned long execStart;
 
-};
+    }
+
+
+}
+
 
 #endif // STOPWATCH_HPP

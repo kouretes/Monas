@@ -5,7 +5,8 @@ message ( STATUS "" )
 SET(MESSAGING_SRCS
    Blackboard.hpp
    Blackboard.cpp
-   msg.h
+   MessageEntry.hpp
+   MessageEntry.cpp
    TopicTree.hpp
    TopicTree.cpp
    EndPoint.hpp
@@ -22,12 +23,16 @@ set(NETWORK_SRCS
 	network/multicastpoint.cpp
 	network/rawPacketDePacket.h
 	network/rawPacketDePacket.cpp
-	network/ptimeserialize.hpp
 	network/msgentryserialize.hpp
 )
 
+
+set(SERIALIZATION_SRCS
+	serialization/MessageEntrySerialization.hpp
+	serialization/ISerialization.hpp
+)
 #setting default module path for cmake finding .cmake files
-set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake {CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 #Setting the configuration Directory where all the .cmake are stored it's the same as CMAKE_MODULE_PATH
 set (ConfigDir ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(cmake/external_dependencies.cmake)
@@ -44,7 +49,7 @@ include_directories( ${NarukomDir}
 		     ${ProtobufIncludeDir}
 		     ${BoostIncludeDir}
 		     )
-add_library(messaging ${LibBuildType}   ${MESSAGING_SRCS}   ${NETWORK_SRCS} ) # ${NARUKOM_SYSTEM_SRCS}  ${SRCS}  ${NETWORK_SRCS} 
+add_library(messaging ${LibBuildType}   ${MESSAGING_SRCS}   ${NETWORK_SRCS} ${SERIALIZATION_SRCS}) # ${NARUKOM_SYSTEM_SRCS}  ${SRCS}  ${NETWORK_SRCS} 
 
 install ( TARGETS messaging
 RUNTIME DESTINATION   bin

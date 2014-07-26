@@ -20,7 +20,7 @@
 
 #ifndef LOCKEDBUFFER_HPP
 #define LOCKEDBUFFER_HPP
-#include "hal/Mutex.hpp"
+#include "hal/SystemMutex.hpp"
 #include <boost/function.hpp>
 #include <vector>
 #include <list>
@@ -39,7 +39,7 @@ public:
 	bool tryadd( std::vector<T> const & tuples);
 	std::size_t size()
 	{
-		KSystem::Mutex::scoped_lock data_lock(mutex);
+		KSystem::SystemMutex::scoped_lock data_lock(mutex);
 		return msg_buf.size();
 
 	}
@@ -57,19 +57,19 @@ public:
 	//MessageQueue & getQueue() {return  mq;};
 	void setNotifier(NotifierFncPtr an)
 	{
-		KSystem::Mutex::scoped_lock data_lock(mutex);
+		KSystem::SystemMutex::scoped_lock data_lock(mutex);
 		n = an;
 	};
 	void setCleanUp(NotifierFncPtr ac)
 	{
-		KSystem::Mutex::scoped_lock ata_lock(mutex);
+		KSystem::SystemMutex::scoped_lock ata_lock(mutex);
 		c = ac;
 	};
 private:
 
 	std::vector<T> msg_buf;
 	std::size_t ownerId;
-	KSystem::Mutex  mutex;
+	KSystem::SystemMutex  mutex;
 	NotifierFncPtr n;
 	NotifierFncPtr c;
 };
@@ -85,7 +85,7 @@ LockedBuffer<T>::LockedBuffer(std::size_t nid):
 template<typename T>
 LockedBuffer<T>::~LockedBuffer()
 {
-	Mutex::scoped_lock data_lock(mutex);
+	SystemMutex::scoped_lock data_lock(mutex);
 
 	if(c != NULL)
 		c(this);
@@ -96,7 +96,7 @@ LockedBuffer<T>::~LockedBuffer()
 template<typename T>
 void LockedBuffer<T>::add( std::vector<T> const & tuples)
 {
-	Mutex::scoped_lock  data_lock(mutex);
+	SystemMutex::scoped_lock  data_lock(mutex);
 	msg_buf.reserve(msg_buf.size() + tuples.size());
 	msg_buf.insert(msg_buf.end(), tuples.begin(), tuples.end());
 	data_lock.unlock();
@@ -130,7 +130,7 @@ bool LockedBuffer<T>::tryadd( std::vector<T> const & tuples)
 template<typename T>
 void LockedBuffer<T>::add(const T & t)
 {
-	Mutex::scoped_lock data_lock(mutex);
+	SystemMutex::scoped_lock data_lock(mutex);
 	msg_buf.push_back(t);
 	data_lock.unlock();
 
@@ -143,7 +143,7 @@ void LockedBuffer<T>::add(const T & t)
 template<typename T>
 std::vector<T> LockedBuffer<T>::remove()
 {
-	Mutex::scoped_lock data_lock(mutex);
+	SystemMutex::scoped_lock data_lock(mutex);
 	std::vector<T> oldtupples = msg_buf;
 	msg_buf.clear();
 	return oldtupples;
@@ -152,7 +152,7 @@ std::vector<T> LockedBuffer<T>::remove()
 template<typename T>
 T LockedBuffer<T>::readOne()
 {
-	Mutex::scoped_lock data_lock(mutex);
+	SystemMutex::scoped_lock data_lock(mutex);
 	T t= msg_buf.front();
 	return t;
 }
@@ -160,7 +160,7 @@ T LockedBuffer<T>::readOne()
 template<typename T>
 T LockedBuffer<T>::removeOne()
 {
-	Mutex::scoped_lock data_lock(mutex);
+	SystemMutex::scoped_lock data_lock(mutex);
 	T t= msg_buf.front();
 	std::vector<T> oldtupples = msg_buf;
 	msg_buf.clear();

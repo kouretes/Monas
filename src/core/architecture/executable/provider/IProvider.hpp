@@ -23,18 +23,18 @@
 #define PROVIDER_VISIBLE
 #endif
 
-#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, MessageHub&n): \
+#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, Messaging::MessageHub&n): \
                                 EndPoint(GetName()),IProvider(GetName(),c,n){ UserInit();  }
 
 #define PROVIDER_REGISTER(x) namespace { 	PROVIDER_VISIBLE ProviderRegistrar<x>::Type temp##x(#x);  }
 
 
 
-class IProvider : virtual public EndPoint , public KSystem::IdlingThread
+class IProvider : virtual public Messaging::EndPoint , public KSystem::IdlingThread
 {
 
 public:
-	IProvider(const std::string &, KSystem::ThreadConfig &c, MessageHub&);
+	IProvider(const std::string &, KSystem::ThreadConfig &c, Messaging::MessageHub&);
 	virtual ~IProvider() {};
 	virtual void UserInit () = 0;
 
@@ -43,19 +43,19 @@ public:
 protected:
 	void notify();
 
-	MessageHub & _com;
+	Messaging::MessageHub & _com;
 
 
 };
 
 typedef Factory < IProvider, std::string,
-        IProvider* (*)(KSystem::ThreadConfig &, MessageHub&),
-        KSystem::ThreadConfig &, MessageHub& >  ProviderFactory;
+        IProvider* (*)(KSystem::ThreadConfig &, Messaging::MessageHub&),
+        KSystem::ThreadConfig &, Messaging::MessageHub& >  ProviderFactory;
 
 template<class T>
 struct ProviderRegistrar
 {
-	typedef Registrar<ProviderFactory, IProvider, std::string, T, KSystem::ThreadConfig &, MessageHub&> Type;
+	typedef Registrar<ProviderFactory, IProvider, std::string, T, KSystem::ThreadConfig &, Messaging::MessageHub&> Type;
 };
 
 #endif /* _IPROVIDER_H_ */

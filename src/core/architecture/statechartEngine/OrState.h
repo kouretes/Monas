@@ -23,7 +23,7 @@ namespace statechart_engine
 
 		void SetStartState ( State* );
 
-		virtual Blackboard* AddChild ( State* );
+		virtual Messaging::Blackboard* AddChild ( State* );
 
 	protected:
 

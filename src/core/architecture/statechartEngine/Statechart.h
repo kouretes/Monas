@@ -4,28 +4,28 @@
 #include "OrState.h"
 #include "core/include/MessageHub.hpp"
 #include "core/include/Blackboard.hpp"
-#include "hal/Thread.hpp"
-#include "hal/threadPool.h"
+#include "hal/SystemThread.hpp"
+#include "hal/SystemThreadPool.hpp"
 
 #include <boost/thread/condition_variable.hpp>
 
 namespace statechart_engine
 {
 
-	class Statechart:  public statechart_engine::OrState, private KSystem::Thread
+	class Statechart:  public statechart_engine::OrState, private KSystem::SystemThread
 	{
 
 	public:
 
-		Statechart ( std::string name, MessageHub* com );
+		Statechart ( std::string name, Messaging::MessageHub* com );
 
 		virtual ~Statechart ();
 
 		int Activate();
 
-		ThreadPool* GetThreadPool ();
+		SystemThreadPool* GetThreadPool ();
 
-		ThreadPool* GetTimeoutThreadPool ();
+		SystemThreadPool* GetTimeoutThreadPool ();
 
 		void Start ();
 
@@ -37,16 +37,16 @@ namespace statechart_engine
 
 	private:
 
-		MessageHub* _narukom;
+		Messaging::MessageHub* _narukom;
 
-		Blackboard _blackboard;
+		Messaging::Blackboard _blackboard;
 
-		ThreadPool _tp;
+		SystemThreadPool _tp;
 
-		ThreadPool _timeoutpool;
+		SystemThreadPool _timeoutpool;
 
 		boost::condition_variable cond;
-		KSystem::Mutex mut;
+		KSystem::SystemMutex mut;
 		bool notified;
 
 

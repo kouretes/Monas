@@ -57,35 +57,6 @@ namespace KMath
 		return mask.sum()<1;
 	}
 
-	int getViolatedConstraint(KMat::GenMatrix<T,S,1> const& ax,T const& tol)
-	{
-		f.setX(ax);
-		LVec v=f.evaluate();
-		//v.prettyPrint();
-
-		for(unsigned i=0; i<L; i++)
-			if(v(i)>tol)
-			{
-				//std::cout<<"v(i):"<<v(i)<<std::endl;
-				return i;
-			}
-
-
-
-		return -1;
-	}
-	KMat::GenMatrix<T,S,1> getConstraint(unsigned i,T &bi)
-	{
-		KMat::GenMatrix<T,S,1> Ai;
-		Ai.zero();
-		bi=f.getb()(i);
-		KMat::GenMatrix<T,L,S> A=f.getA();
-		for(unsigned j=0;j<S;j++)
-		{
-			Ai(j)=A(i,j);
-		}
-		return Ai;
-	}
     void processConstraints()
     {
 	  LVec v=f.evaluate();
@@ -100,16 +71,17 @@ namespace KMath
         }
       AtP=(f.getA().column_mult(Pvec)).transp();
     }
-    void replaceConstraint(unsigned i, T t)
+    void replaceConstraintsAt(KMat::GenMatrix<T,S,1>& x)
     {
-	  //LVec v=f.evaluate();
-      //mask.zero();
+	  f.setX(x);
+	  LVec v=f.evaluate();
+      mask.zero();
       //P.zero();
-      //for(unsigned i=0; i<L; i++)
-        //if(v(i)>1e-4) //THIS EQUAL SIGN IS EVIL DO NOT TOUCH
+      for(unsigned i=0; i<L; i++)
+        if(v(i)>1e-8) //THIS EQUAL SIGN IS EVIL DO NOT TOUCH
         {
           mask(i)=1;
-          Pvec(i)=t;
+          Pvec(i)=this->t;
 
         }
       AtP=(f.getA().column_mult(Pvec)).transp();
@@ -124,6 +96,7 @@ namespace KMath
       t1=AtP*(A*this->x-b);
       t1.scalar_mult(2);
       return t1.transp();
+
 
 
     };

@@ -50,11 +50,11 @@ namespace statechart_engine
 
 		State* GetParent () const;
 
-		virtual Blackboard* AddChild ( State* ); //TODO
+		virtual Messaging::Blackboard* AddChild ( State* ); //TODO
 
-		MessageHub* GetCom () const; //TODO add const
+		Messaging::MessageHub* GetCom () const; //TODO add const
 
-		Blackboard* GetBlackboard () const; //TODO add const
+		Messaging::Blackboard* GetBlackboard () const; //TODO add const
 
 		virtual volatile int* GetIsRunningRef () const;
 
@@ -78,9 +78,9 @@ namespace statechart_engine
 
 		TransitionsCont _transitions;
 
-		MessageHub* _com;
+		Messaging::MessageHub* _com;
 
-		Blackboard* _blk;
+		Messaging::Blackboard* _blk;
 
 	};
 

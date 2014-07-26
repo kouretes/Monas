@@ -23,6 +23,9 @@
 #include <string>
 #include "core/elements/Singleton.hpp"
 
+namespace Messaging
+{
+
 class TopicTree: public StringRegistry
 {
 
@@ -47,5 +50,7 @@ private:
 typedef Singleton<const TopicTree> Topics;
 
 
+} // namespace Messaging
 
-#endif /* TOPICTREE_H */
+
+#endif /* TOPICTREE_HPP */

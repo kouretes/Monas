@@ -6,7 +6,7 @@
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
 
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include "core/elements/factory/Factory.hpp"
 #include "core/elements/factory/Registrar.hpp"
@@ -29,12 +29,12 @@
 
 #define ACTIVITY_REGISTER(x) namespace { 	ACTIVITY_VISIBLE ActivityRegistrar<x>::Type temp##x(#x);  }
 
-
+using Messaging::Blackboard;
 class IActivity : public IExecutable
 {
 
 public:
-	IActivity  ( Blackboard &);
+	IActivity  ( Messaging::Blackboard &);
 	virtual ~IActivity() {};
 
 	virtual void UserInit () {};
@@ -44,16 +44,16 @@ public:
 
 protected:
 
-	Blackboard &  _blk;
+	Messaging::Blackboard &  _blk;
 
 };
 
-typedef Factory < IActivity, std::string , IActivity* (*)(Blackboard&), Blackboard&>  ActivityFactory;
+typedef Factory < IActivity, std::string , IActivity* (*)(Messaging::Blackboard&), Messaging::Blackboard&>  ActivityFactory;
 
 template<class T>
 struct ActivityRegistrar
 {
-	typedef Registrar<ActivityFactory, IActivity, std::string, T, Blackboard&> Type;
+	typedef Registrar<ActivityFactory, IActivity, std::string, T, Messaging::Blackboard&> Type;
 };
 
 

@@ -20,6 +20,7 @@
 #ifndef MESSAGEHUB_HPP
 #define MESSAGEHUB_HPP
 #include <string>
+#include "MessageBuffer.hpp"
 #include "core/elements/StringRegistry.hpp"
 #include <boost/bind.hpp>
 
@@ -27,9 +28,9 @@
 #include <vector>
 #include <set>
 
-#include "hal/Mutex.hpp"
-#include "hal/CondVar.hpp"
-#include "hal/Thread.hpp"
+#include "hal/SystemMutex.hpp"
+#include "hal/SystemCondVar.hpp"
+#include "hal/SystemThread.hpp"
 #include "hal/syscall.h"
 
 
@@ -40,19 +41,18 @@
 #define TIXML_USE_STL
 #endif
 
-struct msgentry_;
-typedef struct msgentry_ msgentry;
-template<typename T>class LockedBuffer;
 
-typedef LockedBuffer<msgentry> MessageBuffer;
-class EndPoint;
 
+namespace Messaging
+{
+
+    class EndPoint;
 /**
 MessageHub class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
 
 */
-class MessageHub : public KSystem::Thread
+class MessageHub : public KSystem::SystemThread
 {
 
 public:
@@ -68,23 +68,23 @@ public:
 	virtual int Execute();
 	inline void requestMailMan( MessageBuffer  * m)
 	{
-		KSystem::Mutex::scoped_lock cvlock(cond_mutex);
+		KSystem::SystemMutex::scoped_lock cvlock(cond_mutex);
 
 		if(m!=NULL && cond_publishers.find(m) == cond_publishers.end())
 		{
 			cond_publishers.insert(m);
 			cond_publishers_queue.push_back(m);
-			cond.notify_one();
 		}
+		cond.notify_one();
 	};
 private:
 	//String hasher
-	EndPoint * multicast;
+	Messaging::EndPoint * multicast;
 
 	StringRegistry pubsubRegistry;
 
 
-	KSystem::Mutex pub_sub_mutex;
+	KSystem::SystemMutex pub_sub_mutex;
 	//Locked by pub_sub_mutex;
 	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
 	std::vector<std::set<MessageBuffer*> > publisherbuffers, subscriberBuffers; //Maps pubsubregistry ids to Buffers
@@ -92,17 +92,17 @@ private:
 
 
 	//Waking up stuff
-	KSystem::Mutex  cond_mutex;
+	KSystem::SystemMutex  cond_mutex;
 	std::set<MessageBuffer*> cond_publishers;
 	std::vector<MessageBuffer*> cond_publishers_queue;
-	KSystem::CondVar cond;
+	KSystem::SystemCondVar cond;
 
-	StopWatch<> agentStats;
+	KSystem::Time::StopWatch<> hubstats;
 
 	void subscribeTo(std::size_t subid, std::size_t  topic , int where);
 	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
-
-	//Recursive call, UNLOCKED
 };
+
+}// namespace Messaging
 
 #endif // MESSAGE_HUB_H

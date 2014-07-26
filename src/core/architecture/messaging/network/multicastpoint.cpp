@@ -1,39 +1,48 @@
 
 #include "multicastpoint.hpp"
 #include "core/include/Logger.hpp"
-
-#include "msgentryserialize.hpp"
-#include <boost/functional/hash.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <google/protobuf/descriptor.h>
+#include "core/architecture/time/TimeTypes.hpp"
+#include "core/architecture/messaging/serialization/MessageEntrySerialization.hpp"
 #include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
+#include "core/architecture/RandomHostid.hpp"
 
-
+class MessageEntrySerializationTraits
+{
+    public:
+    typedef KSystem::Time::TimeStamp timestamp_t;
+    static const bool hasTimeStamp=true;
+    static const bool hasTopic=true;
+    static const bool codedTimeStamp=true;
+    static const bool codedTypeName=true;
+    static const bool codedTopic=true;
+    static const bool codedMsgClass=true;
+};
 namespace KNetwork
 {
 	using namespace KSystem;
+	using namespace Messaging;
 
-	static const hostid anyhost = msgentry::HOST_ID_ANY_HOST;
+	static const hostid anyhost = Messaging::MessageEntry::HOST_ID_ANY_HOST;
 
 
 	MulticastPoint::MulticastPoint(std::string const& name, unsigned payloadsize) :
-		EndPoint(name), Thread(false) ,
+		EndPoint(name), SystemThread(false) ,
 		rio(), sio(), senderwork(sio), multireceive(rio),
 		multisend(sio), timer_(rio), payloadsize_(payloadsize),
 		cleanupandbeacon(10), otherHosts(), localsubscriptions(), uni(boost::mt19937(),  boost::uniform_real<>(0, 1))
 	{
 		//hash time and produce string
-		boost::hash<std::string> h;
-		boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-		thishost = h(boost::posix_time::to_iso_string(now)); //Generate random hostid from current time
+		KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
+		thishost = KSystem::getRandomizedHostID(); //Generate random hostid from current time
 		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
 		p.setHost(thishost );  //My host id is used to tag multicast messages
 		LogEntry(LogLevel::Info,"Multicast")<< "Multicast hostid:" <<(thishost);
 		//std::cout<<"Multicast hostid:"<<thishost<<std::endl;
 		//Initialize anyhost record;
 		otherHosts[anyhost].lastseen = now;
+		SystemThread::setThreadName(name);
 	};
 
 	MulticastPoint::~MulticastPoint()
@@ -65,10 +74,10 @@ namespace KNetwork
 		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
 			localsubscriptions.erase(*sit);
 
-		std::vector<msgentry> newsubscriptions;
-		msgentry kh;
-		kh.msgclass = msgentry::UNSUBSCRIBE_ON_TOPIC;
-		kh.host = msgentry::HOST_ID_LOCAL_HOST;
+		std::vector<Messaging::MessageEntry> newsubscriptions;
+		Messaging::MessageEntry kh;
+		kh.msgclass = Messaging::MessageEntry::UNSUBSCRIBE_ON_TOPIC;
+		kh.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 
 		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
 		{
@@ -108,6 +117,7 @@ namespace KNetwork
 			queuesize = 0;
 			canWarn = true; //Enable send error warnings
 			sendthread = boost::thread(boost::bind(&boost::asio::io_service::run, &sio)); //Start Send
+
 			this->StartThread(); //Start receive
 
 			//Attach callbackfunction to incoming messages buffer
@@ -133,14 +143,14 @@ namespace KNetwork
 		void *b = dep.getbuffer();
 		multireceive.async_receive_from(
 		    boost::asio::buffer(b, dep.getbufferSize()), sender_endpoint_,
-		    boost::bind(&MulticastPoint::handle_receive_from, this, (const char *)b,
+		    boost::bind(&MulticastPoint::handle_receive_from, this, (const uint8_t *)b,
 		                boost::asio::placeholders::error,
 		                boost::asio::placeholders::bytes_transferred));
 	}
 
 
 
-	void MulticastPoint::handle_receive_from(const char* buffer, const boost::system::error_code& error, size_t bytes_recvd)
+	void MulticastPoint::handle_receive_from(const uint8_t* buffer, const boost::system::error_code& error, size_t bytes_recvd)
 	{
 		//std::cout<<"Receive"<<std::endl;
 		if (!error)
@@ -152,7 +162,7 @@ namespace KNetwork
 	}
 
 
-	void MulticastPoint::handle_send_to(const char* bytes, std::size_t size)
+	void MulticastPoint::handle_send_to(const uint8_t* bytes, std::size_t size)
 	{
 		// Random early detect
 		avgqueuesize = queuesize * wq + avgqueuesize * (1 - wq);
@@ -178,7 +188,7 @@ namespace KNetwork
 		}
 
 		{
-			Mutex::scoped_lock data_lock(mut);
+			SystemMutex::scoped_lock data_lock(mut);
 			queuesize--;
 		}
 
@@ -195,15 +205,15 @@ namespace KNetwork
 		{
 			//std::cout<<"timeout"<<std::endl;
 			canWarn = true; //Re enable send error warnings
-			boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+			KSystem::Time::TimeAbsolute now = KSystem::Time::SystemTime::now();
 			{
 				//Clean old hosts first
 				std::map<hostid, hostDescription>::iterator  t, hit = otherHosts.begin();
-				boost::posix_time::ptime oldest = now - boost::posix_time::milliseconds(cleanupandbeacon * 4);
+				KSystem::Time::TimeAbsolute oldest = now - KSystem::Time::TimeAbsolute::milliseconds(cleanupandbeacon * 4);
 
 				while(hit != otherHosts.end())
 				{
-					if((*hit).first == msgentry::HOST_ID_ANY_HOST) //Do not cleanup ANYHOST
+					if((*hit).first == Messaging::MessageEntry::HOST_ID_ANY_HOST) //Do not cleanup ANYHOST
 					{
 						++hit;
 						continue;
@@ -241,12 +251,12 @@ namespace KNetwork
 					}
 				}
 
-				msgentry m;
+				Messaging::MessageEntry m;
 				m.msg.reset(hs);
-				m.topic = Topics::Instance().getId("communication");
-				m.msgclass = msgentry::STATE;
-				m.timestamp = now;
-				m.host = msgentry::HOST_ID_LOCAL_HOST;
+				m.topic = Messaging::Topics::Instance().getId("communication");
+				m.msgclass = Messaging::MessageEntry::STATE;
+				m.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
+				m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 				//std::cout<<"Beacon"<<std::endl;
 				processOutGoing(m);
 			}
@@ -261,7 +271,7 @@ namespace KNetwork
 
 				for(; kit != otherHosts.end(); ++kit)
 				{
-					if((*kit).first == msgentry::HOST_ID_ANY_HOST) //Do not report ANYHOST
+					if((*kit).first == Messaging::MessageEntry::HOST_ID_ANY_HOST) //Do not report ANYHOST
 						continue;
 
 					HostEntry *e = kn->add_entrylist();
@@ -269,15 +279,15 @@ namespace KNetwork
 					e->set_hostname((*kit).second.hostname);
 				}
 
-				msgentry m;
+				Messaging::MessageEntry m;
 				m.msg.reset(kn);
-				m.topic = Topics::Instance().getId("communication");
-				m.msgclass = msgentry::STATE;
-				m.timestamp = now;
-				m.host = msgentry::HOST_ID_LOCAL_HOST;
+				m.topic = Messaging::Topics::Instance().getId("communication");
+				m.msgclass = Messaging::MessageEntry::STATE;
+				m.timestamp = now.wrapTo<KSystem::Time::TimeStamp>();
+				m.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
 				publish(m);
 			}
-			dep.cleanOlderThan(boost::posix_time::milliseconds(cleanupandbeacon * 2));
+			dep.cleanOlderThan(KSystem::Time::TimeAbsolute::milliseconds(cleanupandbeacon * 2));
 			timer_.expires_from_now(boost::posix_time::milliseconds(cleanupandbeacon));
 			timer_.async_wait(
 			    boost::bind(&MulticastPoint::handle_timeout, this,
@@ -290,8 +300,32 @@ namespace KNetwork
 		rio.run_one();
 	}
 
-	packet msgentryToBytes(msgentry const& m)
+	packet MessageEntryToBytes(Messaging::MessageEntry const& m)
 	{
+
+	    packet p;
+	    p.bytes=NULL;
+	    p.size=0;
+
+        MessageEntryBlockSerializer<MessageEntrySerializationTraits> ser(m);
+        std::size_t s=ser.getByteSize();
+        if(s==0)
+            return p;
+        uint8_t *buff=new  uint8_t[s];
+        p.bytes=buff;
+        p.size=s;
+        if(ser.writeSerialized(buff,s)!=s)
+        {
+            LogEntry(LogLevel::Error,"Multicast")<< "Serialization Error"<< std::endl;
+            delete buff;
+            p.size=0;
+            p.bytes=NULL;
+
+        }
+        return p;
+
+
+        /*char *r = new char[totalsize];
 		size_t msgbytes = m.msg->ByteSize();
 		size_t totalsize = msgbytes;
 		totalsize += m.msg->GetTypeName().size();
@@ -307,67 +341,47 @@ namespace KNetwork
 		packet p;
 		p.bytes = r;
 		p.size = totalsize;
-		return p;
+		return p;*/
 	}
 
-	bool msgentryFromBytes(packet const& p, msgentry &m)
+	bool MessageEntryFromBytes(packet const& p, Messaging::MessageEntry &m)
 	{
-		const serializedmsgheader *h = (const serializedmsgheader*)p.bytes;
-		m = h->decodeMsg();
-		std::string TypeName = std::string(p.bytes + sizeof(serializedmsgheader), h->getTypeData());
-		const google::protobuf::Descriptor *d = google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(TypeName);
 
-		if(!d)
-		{
-			std::cout << "Could Not Find Descriptor for:" << TypeName << std::endl;
-			return false;
-		}
-
-		google::protobuf::Message *protomsg = google::protobuf::MessageFactory::generated_factory()->GetPrototype(d)->New();
-
-		if( !protomsg->ParsePartialFromArray(
-		            p.bytes + sizeof(serializedmsgheader) + h->getTypeData(),
-		            p.size - (sizeof(serializedmsgheader) + h->getTypeData())
-		        ) )
-		{
-			std::cout << "Cannot Parse Message of type :" << TypeName << std::endl;
-			return false;
-		}
-
-		m.msg.reset(protomsg);
-		//std::cout<<m.msg.get()<<std::endl;
-		m.host = msgentry::HOST_ID_LOCAL_HOST;
-		return true;
+	    MessageEntryBlockDeserializer<MessageEntrySerializationTraits> deser;
+	    if(deser.readSerialized(p.bytes,p.size)!=p.size)
+	        return false;
+        m=deser.getMessageEntry();
+        return true;
 	}
 
-	void MulticastPoint::bufferCallback(MessageBuffer *mbuf)
+	void MulticastPoint::bufferCallback(Messaging::MessageBuffer *mbuf)
 	{
-		std::vector<msgentry> v = remove();
+		std::vector<Messaging::MessageEntry> v = remove();
 
 		for(unsigned i = 0; i < v.size(); i++)
 		{
 			rio.post(boost::bind(&MulticastPoint::processOutGoing, this, v[i]) );
 		}
 	}
-	void MulticastPoint::processOutGoing(msgentry m)
+	void MulticastPoint::processOutGoing(MessageEntry m)
 	{
-		if(m.msgclass >= msgentry::SUBSCRIBE_ON_TOPIC && m.msgclass <= msgentry::UNSUBSCRIBE_ALL_TOPIC)
+		if(m.msgclass >= MessageEntry::SUBSCRIBE_ON_TOPIC && m.msgclass <= MessageEntry::UNSUBSCRIBE_ALL_TOPIC)
 		{
-			bool actionadd = m.msgclass >= msgentry::SUBSCRIBE_ON_TOPIC && m.msgclass <= msgentry::SUBSCRIBE_ALL_TOPIC;
+			bool actionadd = m.msgclass >= MessageEntry::SUBSCRIBE_ON_TOPIC && m.msgclass <= MessageEntry::SUBSCRIBE_ALL_TOPIC;
 
-			if(m.host == msgentry::HOST_ID_LOCAL_HOST || m.host == thishost)
+			if(m.host == MessageEntry::HOST_ID_LOCAL_HOST || m.host == thishost)
 				return;
 
 			//Unkown Host, reject
 
-			if(m.host != msgentry::HOST_ID_ANY_HOST && otherHosts.find(m.host) == otherHosts.end())
+			if(m.host != MessageEntry::HOST_ID_ANY_HOST && otherHosts.find(m.host) == otherHosts.end())
 				return;
 
 			std::set<std::size_t> topics = Topics::Instance().iterateTopics(m.topic, m.msgclass);
 
 			if(actionadd)
 				otherHosts[m.host].providesTopics.insert(topics.begin(), topics.end());
-			else if(m.host==msgentry::HOST_ID_ANY_HOST) //Unubscribe from ALL hosts
+			else if(m.host==MessageEntry::HOST_ID_ANY_HOST) //Unubscribe from ALL hosts
 			{
 
 				std::set<size_t>::iterator sit;
@@ -423,10 +437,10 @@ namespace KNetwork
 			}
 		}
 
-		packet pack = msgentryToBytes(m); //Serialize msgentry
+		packet pack = MessageEntryToBytes(m); //Serialize MessageEntry
 		//std::cout<<"New set"<<std::endl;
 		{
-			Mutex::scoped_lock data_lock(mut);
+			SystemMutex::scoped_lock data_lock(mut);
 			queuesize++;
 		}
 		//std::cout<<"Pending:"<<queuesize<<std::endl;
@@ -439,7 +453,7 @@ namespace KNetwork
 		//Just a little bit of headroom
 	}
 
-	void MulticastPoint::processIncoming( const char * buff, size_t size)
+	void MulticastPoint::processIncoming( const uint8_t * buff, size_t size)
 	{
 		//Gives possetion of aquired  buffer to Depacketizer
 		RawDepacketizer::depacketizer_result  r = dep.feed(buff, size);
@@ -453,10 +467,11 @@ namespace KNetwork
 		}
 
 		//std::cout<<"host:"<<r.host<<std::endl;
-		msgentry m;
+		MessageEntry m;
 
-		if(!msgentryFromBytes(r.p, m))
+		if(!MessageEntryFromBytes(r.p, m))
 		{
+		    std::cout<<"Decoding failed"<<std::endl;
 			if(r.p.bytes != NULL)
 				delete[] r.p.bytes;
 
@@ -464,17 +479,21 @@ namespace KNetwork
 		}
 
 		delete[] r.p.bytes;
+		//std::cout<<"Received : "<<m.msg->GetTypeName()<<" type: "<<(int)m.msgclass<< "size:"<<r.p.size<<std::endl;
+
+		//Get timestamp;
+		KSystem::Time::TimeAbsolute now =KSystem::Time::SystemTime::now();
 
 		if(m.msg->GetTypeName() == "HostSubscriptions" && r.host != thishost)
 		{
 			hostDescription &hd = otherHosts[r.host];
-			hd.lastseen = boost::posix_time::microsec_clock::universal_time();
-			hd.timecorrection = hd.lastseen - m.timestamp;
+			hd.lastseen = now;
+			hd.timecorrection = hd.lastseen - now.unwrap(m.timestamp);
 			//std::cout<<"Found host:"<<r.host<<std::endl;
-			std::vector<msgentry> newsubscriptions;
-			msgentry kh;
-			kh.msgclass = msgentry::SUBSCRIBE_ON_TOPIC;
-			kh.host = msgentry::HOST_ID_LOCAL_HOST;
+			std::vector<MessageEntry> newsubscriptions;
+			MessageEntry kh;
+			kh.msgclass = MessageEntry::SUBSCRIBE_ON_TOPIC;
+			kh.host = MessageEntry::HOST_ID_LOCAL_HOST;
 			boost::shared_ptr<const HostSubscriptions> hs = boost::static_pointer_cast<const HostSubscriptions>(m.msg);
 			hd.hostname = hs->hostname(); //Get HostName from the remote host
 			const ::google::protobuf::RepeatedPtrField< ::Subscription >& fptr = hs->topics();
@@ -482,7 +501,7 @@ namespace KNetwork
 			hd.needsTopics.clear();
 			for(cit = fptr.begin(); cit != fptr.end(); ++cit)
 			{
-				if((*cit).host() == thishost || (*cit).host() == msgentry::HOST_ID_ANY_HOST)
+				if((*cit).host() == thishost || (*cit).host() == MessageEntry::HOST_ID_ANY_HOST)
 				{
 					hd.needsTopics.insert((*cit).topicid());
 
@@ -516,7 +535,7 @@ namespace KNetwork
 		  )
 			return;
 
-		m.timestamp += (otherHosts[r.host]).timecorrection; //Correct timestamp
+		m.timestamp = (now + (otherHosts[r.host]).timecorrection).wrapTo<KSystem::Time::TimeStamp>(); //Correct timestamp
 		m.host = r.host; //Fix Host
 		//std::cout<<"Received:"<<m.msg->GetTypeName()<<std::endl;
 		publish(m);

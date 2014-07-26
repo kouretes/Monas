@@ -3,6 +3,7 @@ message ( STATUS " _..::: Configuring Architecture :::.._ " )
 message ( STATUS "" )
 
 add_subdirectory ( ./messaging/ )
+#add_subdirectory ( ./SystemLogger/ )
 #add_subdirectory ( ./statechartEngine/ )
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
@@ -28,9 +29,20 @@ add_library ( MonasCore ${LibBuildType}
 			configurator/ConfigNode.cpp
 			time/StopWatch.hpp
 			time/Profiler.hpp
+			time/SystemClockProvider.hpp
+			time/SystemClockProvider.cpp
+			time/SystemTime.hpp
+			time/SystemTime.cpp
+			time/IClock.hpp
+			time/TimeTypes.hpp
+			time/Timer.hpp
+			time/BasicTimeStamp.hpp
 			talws.h
 			talws.cpp
 			statechartWrapper.h
+			Logger.hpp
+			Logger.cpp
+			RandomHostid.hpp
 )
 
 target_link_libraries ( MonasCore M_tinyxml z )

@@ -3,8 +3,8 @@
 #include <string>
 
 #include "core/architecture/messaging/EndPoint.hpp"
-#include "hal/Thread.hpp"
-#include "hal/Mutex.hpp"
+#include "hal/SystemThread.hpp"
+#include "hal/SystemMutex.hpp"
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
 #include "rawPacketDePacket.h"
@@ -20,7 +20,7 @@
 namespace KNetwork
 {
 
-	class MulticastPoint : public EndPoint, private KSystem::Thread
+	class MulticastPoint : public Messaging::EndPoint, private KSystem::SystemThread
 	{
 	public:
 		MulticastPoint(std::string const& name, unsigned payloadsize);
@@ -29,9 +29,9 @@ namespace KNetwork
 		void setCleanupAndBeacon(unsigned i);
 	private:
 		int Execute();
-		void handle_receive_from(const char *buffer, const boost::system::error_code& error, size_t bytes_recvd);
+		void handle_receive_from(const uint8_t *buffer, const boost::system::error_code& error, size_t bytes_recvd);
 
-		void handle_send_to(const char *buffer, std::size_t size); //Executed by sio service in sendthread context;
+		void handle_send_to(const uint8_t *buffer, std::size_t size); //Executed by sio service in sendthread context;
 		void handle_timeout(const boost::system::error_code& error);
 
 		void queue_receive();
@@ -56,8 +56,8 @@ namespace KNetwork
 		{
 			//hostid h;
 			std::string hostname;
-			boost::posix_time::time_duration timecorrection;
-			boost::posix_time::ptime lastseen;
+			KSystem::Time::TimeAbsolute timecorrection;
+			KSystem::Time::TimeAbsolute lastseen;
 			std::set<size_t> needsTopics;//Ie what I broadcast because this host needs it
 			std::set<size_t> providesTopics;//Ie what I receive from this host
 			/*bool operator== (const struct hostDescription & b) const {return h==b.h;	};
@@ -69,14 +69,14 @@ namespace KNetwork
 		std::map<hostid, hostDescription> otherHosts;
 		std::set<size_t>   localsubscriptions;//Ie what I ask from messagequeue currently
 
-		void  bufferCallback(MessageBuffer *mbuf);
-		void processIncoming(const char * buff, size_t size);
-		void processOutGoing(msgentry m);
+		void  bufferCallback(Messaging::MessageBuffer *mbuf);
+		void processIncoming(const uint8_t * buff, size_t size);
+		void processOutGoing(Messaging::MessageEntry m);
 
 		void cleanupLocalSubscriptions();
 
 
-		KSystem::Mutex  mut;
+		KSystem::SystemMutex  mut;
 
 
 		//Random Early Detection... for outgoing only

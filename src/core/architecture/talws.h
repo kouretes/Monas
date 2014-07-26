@@ -3,8 +3,8 @@
 
 #include "core/architecture/thread/agent/Agent.hpp"
 #include "core/architecture/executable/provider/IProvider.hpp"
-#include "core/architecture/configurator/Configurator.hpp"
-#include "hal/Thread.hpp"
+#include "core/include/Configurator.hpp"
+
 
 #include "core/architecture/statechartWrapper.h"
 #include <vector>
@@ -30,7 +30,7 @@ private:
 	std::vector<StatechartWrapper*> StatechartPlans;
 
 
-	MessageHub com;
+	Messaging::MessageHub com;
 
 };
 

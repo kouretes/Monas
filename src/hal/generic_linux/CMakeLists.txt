@@ -7,6 +7,7 @@ message ( STATUS "" )
 add_library( GenLinux ${LibBuildType}
                       syscall.cpp
                       dlib_fnc.cpp
+                      #SystemThread.cpp
 )
 
 

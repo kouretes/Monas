@@ -3,9 +3,10 @@
 
 #include "ThreadConfig.hpp"
 
-#include "hal/Thread.hpp"
+#include "hal/SystemThread.hpp"
 #include "hal/syscall.h"
-#include "hal/smart_timer.h"
+#include "core/architecture/time/SystemClockProvider.hpp"
+#include "core/architecture/time/Timer.hpp"
 
 #include "core/include/Logger.hpp"
 
@@ -13,23 +14,26 @@
 
 namespace KSystem
 {
-	class PeriodicThread : public Thread
+	class PeriodicThread : public SystemThread
 	{
 
 	public:
 
 
-		PeriodicThread ( ThreadConfig &c, bool start = false ) : Thread(start)
+		PeriodicThread ( ThreadConfig &c, bool start = false ) :
+		SystemThread(start),
+		t(Time::SystemClockProvider::getSystemClock())
 		{
 			IsRealTime = c.IsRealTime;
 			Priority = c.Priority;
-			ThreadPeriod = c.ThreadPeriod;
+			ThreadPeriod = KSystem::Time::ClockValue::fromFloat(c.ThreadPeriod);
 		}
-
 		void StartThread()
 		{
 			running = true;
-			bThread = boost::thread( &PeriodicThread::startHelper , this);
+			overhead=KSystem::Time::ClockValue::seconds(0);
+            SystemThread::setThreadName(GetName());
+			SystemThread::StartThread();
 		}
 
 	protected:
@@ -38,23 +42,35 @@ namespace KSystem
 		{
 			while (running)
 			{
-				t.restart ();
-				this->Execute();
-				float el = t.elapsed();
+			    t.restart ();
+              	this->Execute();
+				KSystem::Time::ClockValue el = t.duration();
 
-				if ( el  > ThreadPeriod && ThreadPeriod > 0 )
+				if ( el  > ThreadPeriod && ThreadPeriod > KSystem::Time::ClockValue::seconds(0) )
 					LogEntry(LogLevel::ExtraInfo,GetName())<< "Thread period cannot be achieved";
 				else
-					SysCall::_usleep( (ThreadPeriod - el) * 1000000L );
+				{
+                    t.restart();
+                    float sleepfor=(ThreadPeriod-el-overhead).toFloat();
+				    SysCall::_usleep( sleepfor * 1000000L );
+				    overhead=((t.duration()-(ThreadPeriod - el-overhead) ));//+overhead)/2;
+                }
+                //LogEntry(LogLevel::ExtraInfo,GetName())<<overhead;
+
+
 			}
 		}
-		KSystem::smart_timer t;
+		bool timerfirst;
+		KSystem::Time::Timer t;
+		KSystem::Time::ClockValue overhead;
 
 		bool IsRealTime;
 
 		int Priority;
 
-		float ThreadPeriod;
+		KSystem::Time::ClockValue ThreadPeriod;
+
+
 
 
 	};

@@ -10,11 +10,7 @@ public:
 
 	static int _usleep ( unsigned long usec ) ;
 
-	static unsigned long _GetCurrentTimeInUSec ( ) ;
-
 	static void _exit ( int status );
-
-	static bool _GetCwd ( std::string& path );
 
 	static void _Shutdown ( );
 

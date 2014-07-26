@@ -9,7 +9,7 @@
 
 #include "hal/robot/nao/generic_nao/kAlBroker.h"
 
-#include "core/architecture/configurator/Configurator.hpp"
+#include "core/include/Configurator.hpp"
 
 #include <alproxies/almemoryproxy.h>
 #include <alvalue/alvalue.h>
@@ -68,7 +68,7 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	std::cout << "KRobot - Found Head ID: '" << headId << "'" << std::endl;
 	//std::cout << "KRobot - Found Body ID: '" << _toString(KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID).size()) << "'" << std::endl;
 	std::cout << "KRobot - Found Body ID: '" << bodyId << "'" << std::endl;
-#ifndef KROBOT_IS_REMOTE	
+#ifndef KROBOT_IS_REMOTE
 	Configurator::Instance().initConfigurator("/home/nao/naoqi/config/", headId, bodyId);
 #else
 	Configurator::Instance().initConfigurator("./config/", "", "");

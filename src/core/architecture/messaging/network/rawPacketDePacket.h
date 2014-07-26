@@ -1,9 +1,10 @@
 #ifndef RAWPACKETDEPACKET_H
 #define RAWPACKETDEPACKET_H
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "core/architecture/time/TimeTypes.hpp"
 #include <vector>
 #include <set>
 #include <map>
+#include <string>
 //#include "hal/mutex.h"
 
 
@@ -28,8 +29,8 @@ namespace KNetwork
 #pragma pack(pop)
 	struct packet
 	{
-		int size;
-		const char *bytes;
+		std::size_t size;
+		const uint8_t *bytes;
 	};
 
 	class RawPacketizer
@@ -37,18 +38,18 @@ namespace KNetwork
 	public:
 		RawPacketizer();
 		void setHost(hostid h);
-		void assign(const char* bytes, std::size_t size);
+		void assign(const uint8_t* bytes, std::size_t size);
 
 		std::size_t  nextPacket();
 
-		char buff[MAX_UDP_PAYLOAD];
+		uint8_t buff[MAX_UDP_PAYLOAD];
 	private:
 		msgid nextmid;
 		packetheader hdr;
 		size_t numofpackets;
 		std::size_t currentpacket;
-		const char * nextbyte;
-		const char* srcbytes;
+		const uint8_t * nextbyte;
+		const uint8_t* srcbytes;
 		std::size_t srcsize;
 		size_t payloadlength;
 
@@ -64,12 +65,12 @@ namespace KNetwork
 			packet p;
 		};
 		void setHost(hostid h);
-		depacketizer_result feed(const char *const bytes, std::size_t size);
-		depacketizer_result feed(std::string const& s);
+		depacketizer_result feed(const uint8_t *const bytes, std::size_t size);
+		//depacketizer_result feed(std::string const& s);
 		void * getbuffer();
 		void releaseBuffer(const void * buf);
 		std::size_t getbufferSize() const;
-		void cleanOlderThan(boost::posix_time::time_duration td);
+		void cleanOlderThan(KSystem::Time::TimeDuration td);
 
 	private:
 
@@ -80,7 +81,7 @@ namespace KNetwork
 			~partialMessage();
 			std::map<sequenceid, packet> packets;
 			std::size_t totalpackets;
-			boost::posix_time::ptime lastupdate;
+			KSystem::Time::TimeAbsolute lastupdate;
 
 		};
 		typedef std::map<msgid, partialMessage> hostMessages;

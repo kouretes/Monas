@@ -26,7 +26,7 @@ class Agent : public KSystem::PeriodicThread
 
 public:
 
-	Agent ( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub& com, std::vector<std::string> activities ) ;
+	Agent ( std::string name, KSystem::ThreadConfig cfg, int stats, Messaging::MessageHub& com, std::vector<std::string> activities ) ;
 
 	virtual ~Agent ();
 
@@ -44,14 +44,14 @@ private:
 	std::string _name;
 
 
-	MessageHub & _com;
-	Blackboard _blk;
+	Messaging::MessageHub & _com;
+	Messaging::Blackboard _blk;
 
 	typedef std::vector<IActivity*> ActivList;
 
 	ActivList _activities; //in execution order
 
-	AgentTiming agentStats;
+	KSystem::AgentTiming agentStats;
 
 	unsigned int _statsCycle;
 

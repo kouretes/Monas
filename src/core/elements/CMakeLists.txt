@@ -30,8 +30,9 @@ set(ELEMENT_SRCS
       StringRegistry.hpp
       Singleton.hpp
       KStandard.hpp
-      Logger.hpp
       vision/KImage.h
+      IClonableCRTP.hpp
+      BasicSerialization.hpp
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

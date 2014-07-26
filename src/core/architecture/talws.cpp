@@ -32,7 +32,19 @@ Talws::Talws ()
 	{
 		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Enable").c_str()) == 1){
 			std::string AgentName = Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".name");
+			//Clear naming conflicts
 
+
+
+            for(unsigned k=0;k<Agents.size();k++)
+            {
+                if(AgentName.compare(Agents[k]->GetName())==0)
+                {
+                    LogEntry(LogLevel::Warning,"Talws")  << "Agent name: " << AgentName << " exists! mangling name to resolve conflict";
+                    AgentName+="_mangling";
+                    k=0;
+                }
+            }
 			int numOfActivities = Configurator::Instance().numberOfNodesForKey(agentFile + ".agent~" + _toString(i) + ".activity");
 			std::vector<std::string> activities;
 
@@ -123,23 +135,44 @@ void Talws::Start()
 void Talws::Stop()
 {
 	std::cout << "Talws: Stoping..." << std::endl; //TODO
+	std::cout << "Talws: Stoping Agents...";
+	std::cout.flush();
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->StopThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Stoping Providers...";
+    std::cout.flush();
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->StopThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Joining Agents...";
+    std::cout.flush();
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->JoinThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Joining Providers...";
+    std::cout.flush();
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->JoinThread();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Terminating StateCharts...";
+    std::cout.flush();
 	for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
 		(*it)->Stop();
-
+    std::cout << "Done!"<<std::endl;
+    std::cout << "Talws: Stopping MessageHub...";
+    std::cout.flush();
 	com.StopThread();
+	std::cout << "Done!"<<std::endl;
+	std::cout << "Talws: Wake MessageHub one last time...";
+	std::cout.flush();
 	com.requestMailMan(NULL); //Wake him
+	std::cout << "Done!"<<std::endl;
+	std::cout << "Talws: Joining MessageHub...";
+	std::cout.flush();
 	com.JoinThread();
+	std::cout << "Done!"<<std::endl;
+	std::cout<<"Bye Bye!"<<std::endl;
+	std::cout.flush();
 }
 
