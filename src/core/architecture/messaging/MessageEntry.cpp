@@ -16,6 +16,7 @@
 
 #include "MessageEntry.hpp"
 #include <google/protobuf/descriptor.h>
+#include <iostream>
 namespace Messaging
 {
     google::protobuf::Message * getFromFactory(std::string const&str)

@@ -14,4 +14,4 @@ set ( ProviderSrcs  ImageExtractor.cpp ImageExtractor.h )
 
 include ( ../provTemplate.cmake )
 
-qi_use_lib(${ProviderName} ALCOMMON LIBVISION)
+qi_use_lib(${ProviderName} ALCOMMON ALVISION)
