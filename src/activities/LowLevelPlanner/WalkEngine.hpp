@@ -75,7 +75,7 @@ private:
 
 	KDeviceLists::SupportLeg supportleg;
 	KDeviceLists::ChainsNames chainsupport; /// Corresponds to this supportleg
-    bool double_support;
+    bool double_support,reinitstart;
     float double_support_progress;  ///Progress of double support, zero in single supports
 	WalkInstruction ci;
 	KVecFloat3 predicterror;
@@ -88,8 +88,9 @@ private:
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
 
-	float comzintegral;
+	float comzintegral,comzlast;
 	KVecDouble3 measuredcom;
+    float horizontalaccel;
 
 
 

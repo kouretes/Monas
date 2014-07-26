@@ -114,7 +114,7 @@ void Dynamics::Update(float u,KVecFloat2 error)
     State+=temp;
     State+=L*error;
     //State.prettyPrint();
-    predictedError=0.000;//Cd(0)*State(0)+Cd(2)*State(2)-ZMPReference(1);
+    //predictedError=Cd(0)*State(0)+Cd(2)*State(2)-ZMPReference(1);
     zmpstateNew=(Cd(0)*State(0)+Cd(2)*State(2));
 }
 void Dynamics::AugmentState()

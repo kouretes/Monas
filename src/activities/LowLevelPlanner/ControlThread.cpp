@@ -110,8 +110,10 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
          //Estimated COM position
         COM(0)=DynamicsX.State(0);
         COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
-        predictedErrorX=DynamicsX.predictedError;
-        predictedErrorY=DynamicsY.predictedError;
+        predictedErrorX=DynamicsX.zmpstateNew-ZMPReferenceX(0);
+        predictedErrorY=DynamicsY.zmpstateNew-ZMPReferenceY(0);
+        xddot=DynamicsX.State(2);
+        yddot=DynamicsY.State(2);
 
         /*flog.insert("ZMPx",DynamicsX.zmpstate);
         flog.insert("ZMPy",DynamicsY.zmpstate);

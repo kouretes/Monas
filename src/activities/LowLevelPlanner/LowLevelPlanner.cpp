@@ -55,7 +55,7 @@ void LowLevelPlanner::UserInit()
 	state = DO_NOTHING;
 	dcm_state = DCM_STOP;
 
-
+    _blk.updateSubscription("buttonevents", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC);
 
 	Reset();
 }
@@ -63,7 +63,7 @@ void LowLevelPlanner::UserInit()
 void LowLevelPlanner::Reset()
 {
 
-	setStiffness(0.8f);
+	setStiffness(1.0f);
 	std::cout << "Walk Engine Reseted" << std::endl;
 	sleep(1);
 }
@@ -78,7 +78,7 @@ int LowLevelPlanner::Execute()
 		firstrun = false;
 	}
 
-	static int counter = 0; //just for testing
+	/*static int counter = 0; //just for testing
 	if ((counter % 2 == 0))
 	{
 		MotionWalkMessage* wmot = new MotionWalkMessage();
@@ -103,7 +103,7 @@ int LowLevelPlanner::Execute()
 		_blk.publishSignal(*wmot, "motion");
 		delete wmot;
 	}
-	counter++;
+	counter++;*/
 
 	/**
 	 Message GetSpeed from high level
@@ -113,27 +113,30 @@ int LowLevelPlanner::Execute()
 	/**
 	 Check if after Stepping the Target is reached
 	 **/
-	wm = _blk.readSignal<MotionWalkMessage>("motion");
+	/*wm = _blk.readSignal<MotionWalkMessage>("motion");
 	if (wm != NULL)
 	{
 		if (wm->command() == "setWalkTargetVelocity")
 		{
-			if (state == DO_NOTHING)
-			{
-				dcm_counter = 0;
-				state = INIT_WALK;
-				std::cout << "Message arrived should initialize walk" << std::endl;
-			}
+
 		} else
 		{
 			return 0;
 		}
 	} else
-		return 0;
+		return 0;*/
 
-	speed.push_back(wm->parameter(0));
-	speed.push_back(wm->parameter(1));
-	speed.push_back(wm->parameter(2));
+    if (state == DO_NOTHING)
+    {
+        dcm_counter = 0;
+        state = INIT_WALK;
+        std::cout << "Message arrived should initialize walk" << std::endl;
+    }
+
+
+	speed.push_back(0);
+	speed.push_back(0);
+	speed.push_back(0);
 
 	/*if (dcm_length[next_2B_inserted] != 0)
 	{
@@ -148,6 +151,21 @@ int LowLevelPlanner::Execute()
 		state = FINAL_STEP;*/
 
 	//std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
+    boost::shared_ptr<const ButtonMessage> bm = _blk.readSignal<ButtonMessage>("buttonevents");
+    int chest=0;
+    if(bm)
+        chest=bm->data(KDeviceLists::CHEST_BUTTON);
+    if(chest==1)
+        state=IDLE;
+    if(chest>1)
+    {
+        if(chest==3)
+            speed[0]=3;
+        else
+            speed[0]=0;
+        state=DO_STEPS;
+
+    }
 
 	switch (state)
 	{
@@ -179,7 +197,7 @@ int LowLevelPlanner::Execute()
 					NaoPlanner.inst.pop();
 			}
 
-			state=DO_STEPS;
+			state=IDLE;
 			break;
 		case DO_STEPS:
 
@@ -213,6 +231,8 @@ int LowLevelPlanner::Execute()
 			//Calculate_Tragectories();
 			state = WAIT_TO_FINISH;
 			break;
+        case IDLE:
+            break;
 		case WAIT_TO_FINISH:
 			return 0;
 			break; // nothing to do

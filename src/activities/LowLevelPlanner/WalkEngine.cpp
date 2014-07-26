@@ -17,6 +17,8 @@ WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(P
 void WalkEngine::Reset()
 {
 	comzintegral=0;
+	comzlast=0;
+	measuredcom.zero();
 
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	currentstep=0;
@@ -97,24 +99,25 @@ std::vector<float> WalkEngine::Calculate_IK()
 	t.p=Tilerror.getTranslation();
 	t.a=Tilerror.getEulerAngles();
 
-	t.p.scalar_mult(0.05);
+	t.p.scalar_mult(0.000);
 	if(t.p(2)<0)
 		t.p(2)=0;
-	t.a.scalar_mult(0.05);
+	t.a.scalar_mult(0.000);
 
 	Tilerror=NAOKinematics::getTransformation(t);
 
 	t.p=Tirerror.getTranslation();
 	t.a=Tirerror.getEulerAngles();
 
-	t.p.scalar_mult(0.05);
+	t.p.scalar_mult(0.000);
 	if(t.p(2)<0)
 		t.p(2)=0;
 
-	t.a.scalar_mult(0.05);
+	t.a.scalar_mult(0.000);
 
     Tirerror=NAOKinematics::getTransformation(t);
-
+    Tilerror.identity();
+    Tirerror.identity();
 
 	/** Interpolation **/
 
@@ -172,7 +175,9 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 	    ret.clear();
         if(double_support)
-		    measuredcom = nkin.calculateCenterOfMass();
+		    measuredcom =measuredcom*0.3+ nkin.calculateCenterOfMass()*0.7;
+        //else
+        //    measuredcom(2)+=0.2;
 		//measured.prettyPrint();
 
 		//if(double_support)
@@ -181,12 +186,19 @@ std::vector<float> WalkEngine::Calculate_IK()
 		//measured.prettyPrint();
 		com_error=desired;
 		com_error-=Tipprime.transform(measuredcom);
+
 		//com_error.prettyPrint();
-		comzintegral=com_error(2)*0.05 +comzintegral*0.95;
-        if(double_support)
-                com_error(2)=0.2*com_error(2)+0.1*comzintegral;
+		//comzintegral=com_error(2)*0.05 +comzintegral*0.95;
+		//std::cout<<(com_error(2)-comzlast)<<std::endl;
+		//std::cout<<(comzlast)<<std::endl;
+		//if(double_support==false)
+		//std::cout<<horizontalaccel<<std::endl;
+         com_error(2)+=0.1*horizontalaccel*10;
+        /*if(double_support)
+                com_error(2)=0.05*com_error(2)-0.00*(com_error(2)-comzlast)+0.0*comzintegral;
             else
-                com_error(2)=1*com_error(2)+0.5*comzintegral+0.05;
+                com_error(2)=0.05*com_error(2)-0.0*(com_error(2)-comzlast)+0.0*comzintegral+1e-10;
+        comzlast=com_error(2);*/
 		//if(com_error(2)>5)
 		//	com_error(2)=5;
 		//com_error(0)*=softstand;
@@ -278,22 +290,22 @@ void WalkEngine::Calculate_Desired_COM()
 	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
-
+    horizontalaccel=sqrt(NaoLIPM.xddot*NaoLIPM.xddot+NaoLIPM.yddot*NaoLIPM.yddot);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.2);
-        e.scalar_mult(0.8);
+        predicterror.scalar_mult(0.5);
+        e.scalar_mult(0.5);
 	}
     else
     {
-       predicterror.scalar_mult(0.999);
-       e.scalar_mult(0.001);
+       predicterror.scalar_mult(0.5);
+       e.scalar_mult(0.5);
     }
 
-    predicterror+=e;
+    predicterror+=e*0.2;
 //    predicterror.prettyPrint();
 
-	predicterror.zero();
+//	predicterror.zero();
 	/** Pop the used Point **/
 
 	Zbuffer.pop();
@@ -454,7 +466,9 @@ void WalkEngine::feed()
 		   planned.targetSupport!=KDeviceLists::SUPPORT_LEG_NONE)
 		{
 			i.targetZMP=i.targetSupport;
-			i.steps=NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Ts);
+			i.steps=i.steps*NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tss);
+			if(i.steps>20)
+			    i.steps=20;
 
 		}
 		else
@@ -526,11 +540,15 @@ void WalkEngine::feed()
 			ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH||
 			old.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH) //double support
 		{
-			double_support=true;
+		    double_support=true;
 
 		}
 		else
 			double_support=false;
+        if(ci.targetZMP==old.targetZMP&&ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH)
+            reinitstart=false;
+        else
+            reinitstart=true;
 		currentstep=1;
 
 	}
@@ -605,8 +623,9 @@ std::vector<float> WalkEngine::runStep()
 	}
 
     /** Beginning of command to be executed **/
-	if(currentstep==1)
+	if(currentstep==1&&reinitstart)
 	{
+	    std::cout<<"Change start"<<std::endl;
 		startL=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
 		startR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 	}

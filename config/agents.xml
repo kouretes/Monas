@@ -8,3 +8,4 @@
 </agent>
 
 
+<provider IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="1000" Enable="1">Sensors</provider>

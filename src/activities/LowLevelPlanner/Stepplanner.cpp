@@ -94,19 +94,31 @@ void Stepplanner::oneStep(std::vector<float> v)
 	else
 		h(1)=-h(1);//duh
     KVecFloat3 velocity;
+
+
 	KVecFloat2 a(v[0],v[1]);
 	a=RotPelvisZ*a;
-	velocity(0)= a(0) * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepX);
-	velocity(1)= a(1) * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepY);
-    velocity(2) = v[2] * Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepTheta);
+	velocity(0)= a(0) ;//* Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepX);
+	velocity(1)= a(1) ;// Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepY);
+    velocity(2) = v[2] ;// Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepTheta);
+
+	float tstep=Robot.getWalkParameter(Tstep)/(1.0+sqrt(velocity.norm2())*0.05);
+	std::cout<<tstep<<std::endl;
+	velocity(0)= a(0) * tstep*Robot.getWalkParameter(MaxStepX);
+	velocity(1)= a(1) * tstep*Robot.getWalkParameter(MaxStepY);
+    velocity(2) = v[2] * tstep*Robot.getWalkParameter(MaxStepTheta);
+    if(velocity.norm2()==0)
+	    lastvelocity.zero();
 
 	velocity=velocity*0.1+lastvelocity*0.9;
+
 	lastvelocity=velocity;
     Pelvis+=velocity;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
     h=RotPelvisZ*h;
 	i.target=Pelvis;
 	i.target(0)+=h(0);
+
 	i.target(1)+=h(1);
 	i.targetSupport=support;
 	i.targetZMP=support;
@@ -116,7 +128,7 @@ void Stepplanner::oneStep(std::vector<float> v)
 		ankler=i.target;
 	else
 		anklel=i.target;
-	i.steps=Robot.getWalkParameter(Tss)/Robot.getWalkParameter(Ts);
+	i.steps=ceil(Robot.getWalkParameter(Tss)*tstep/Robot.getWalkParameter(Ts));
 	inst.push(i);
 
 

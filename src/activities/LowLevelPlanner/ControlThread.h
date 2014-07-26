@@ -32,7 +32,7 @@
 
 #include "Kalman.h"
 #include "Dynamics.h"
-#define PreviewWindow 121
+#define PreviewWindow 101
 #define CONST_SKIP 0
 #define CONST_SIZE 50
 #define CONST_STEP 2
@@ -81,6 +81,7 @@ class LIPMPreviewController{
 		void DMPC();
         float DeltauX,DeltauY,uX,uY;
 		float predictedErrorX,predictedErrorY;
+		float xddot,yddot;
 		float d;
 		bool isDoubleSupport;
 		KVecFloat2 COM;
