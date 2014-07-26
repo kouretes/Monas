@@ -17,6 +17,7 @@
 
 //#define W_LShoulderPitchLow  0.7
 //#define W_RShoulderPitchLow  0.7
+#define PRE_INIT_STEPS 120.0
 
 #define ARMROLL (10*3.14f/180)
 
@@ -45,7 +46,6 @@ void LowLevelPlanner::UserInit()
 	initialise_devices();
 
 
-
 	std::cout << "Walk Engine Initialized" << std::endl;
 	dcm_counter = 0; //dcm_counter = -1;
 	/**
@@ -58,6 +58,36 @@ void LowLevelPlanner::UserInit()
 
 
 	Reset();
+	initialjoints.resize(KDeviceLists::NUMOFJOINTS, 0);
+	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+			initialjoints[j] = *jointPtr[i];
+
+	firstcommands=commands;
+
+	firstcommands[5][0][0]=-0.0;
+	firstcommands[5][1][0]=0.0;
+	firstcommands[5][2][0]=-0.92;
+	firstcommands[5][3][0]=1.768;
+	firstcommands[5][4][0]=-0.80;
+	firstcommands[5][5][0]=0.0;
+
+	firstcommands[5][6][0]=0.0;
+	firstcommands[5][7][0]=0.0;
+	firstcommands[5][8][0]=-0.92;
+	firstcommands[5][9][0]=1.768;
+	firstcommands[5][10][0]=-0.80;
+	firstcommands[5][11][0]=0.0;
+
+
+	firstcommands[5][12][0]=1.34;
+	firstcommands[5][13][0]=0.24;
+	firstcommands[5][14][0]=0;
+	firstcommands[5][15][0]=-0.24;
+	firstcommands[5][16][0]=1.34;
+	firstcommands[5][17][0]=-0.24;
+	firstcommands[5][18][0]=0;
+	firstcommands[5][19][0]=0.24;
+
 }
 
 void LowLevelPlanner::Reset()
@@ -66,7 +96,7 @@ void LowLevelPlanner::Reset()
 	float f =0;
 	for(int i=0; i<=10; i++)
 	{
-		f=0.8f*(i/10.0);
+		f=0.65f*(i/10.0);
 		cout << " Stiffness: " << f;
 		usleep(350);
 		setStiffness(f);
@@ -129,7 +159,7 @@ int LowLevelPlanner::Execute()
 			if (state == DO_NOTHING)
 			{
 				dcm_counter = 0;
-				state = INIT_WALK;
+				state = PRE_INIT;
 				std::cout << "Message arrived should initialize walk" << std::endl;
 			}
 		} else
@@ -155,7 +185,7 @@ int LowLevelPlanner::Execute()
 	/*if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
 		state = FINAL_STEP;*/
 
-	//std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
+	//std::cout << " State " << state << std::endl;
 
 	switch (state)
 	{
@@ -163,9 +193,15 @@ int LowLevelPlanner::Execute()
 			dcm_state = DCM_STOP;
 			return 0;
 			break;
-
+		case PRE_INIT:
+			dcm_state=PRE_INIT;
+			if(dcm_counter>PRE_INIT_STEPS)
+				state = INIT_WALK;
+			return 0;
+			break;
 
 		case INIT_WALK:
+			cout << " Init Walk " << endl;
 			dcm_state = INIT_WALK;
 			//engine->Reset();
 			engine->addInit();
@@ -238,73 +274,127 @@ int LowLevelPlanner::Execute()
 
 int LowLevelPlanner::DCMcallback()
 {
-
-
-
-
 	/** Read Values of joints **/
 	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
 		alljoints[j] = *jointPtr[i];
 
 	alljoints[KDeviceLists::R_LEG+KDeviceLists::HIP_YAW_PITCH]=alljoints[KDeviceLists::L_LEG+KDeviceLists::HIP_YAW_PITCH];
-	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
-	fsrl.zero();
-	fsrr.zero();
-	for(int i=0;i<4;i++)
+
+
+	if(dcm_state==PRE_INIT){
+		//cout << " PreInit " << endl;
+		if(dcm_counter>PRE_INIT_STEPS/6.0)
+			setStiffness(0.8);
+		if(dcm_counter>PRE_INIT_STEPS){
+			state = INIT_WALK;
+			return 0;
+		}
+		dcm_counter++;
+		int l=0;
+//		for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+//			commands[5][(l)][0] = alljoints[KDeviceLists::L_LEG + j]*0.98;
+//		for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+//			commands[5][(l)][0] = alljoints[KDeviceLists::R_LEG + j]*0.98;
+//		for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+//			commands[5][(l)][0] = alljoints[KDeviceLists::L_ARM + j]*0.99;
+//		for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+//			commands[5][(l)][0] = alljoints[KDeviceLists::R_ARM + j]*0.99;
+
+		for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+			commands[5][(l)][0] = (((float)(firstcommands[5][(l)][0])-initialjoints[KDeviceLists::L_LEG + j])/PRE_INIT_STEPS)*dcm_counter +initialjoints[KDeviceLists::L_LEG + j] ;//alljoints[KDeviceLists::L_LEG + j]*0.98;
+		for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+			commands[5][(l)][0] = (((float)(firstcommands[5][(l)][0])-initialjoints[KDeviceLists::R_LEG + j])/PRE_INIT_STEPS)*dcm_counter +initialjoints[KDeviceLists::R_LEG + j] ;//alljoints[KDeviceLists::R_LEG + j]*0.98;
+		for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+			commands[5][(l)][0] = (((float)(firstcommands[5][(l)][0])-initialjoints[KDeviceLists::L_ARM + j])/PRE_INIT_STEPS)*dcm_counter +initialjoints[KDeviceLists::L_ARM + j];//alljoints[KDeviceLists::L_ARM + j]*0.99;
+		for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+			commands[5][(l)][0] = (((float)(firstcommands[5][(l)][0])-initialjoints[KDeviceLists::R_ARM + j])/PRE_INIT_STEPS)*dcm_counter +initialjoints[KDeviceLists::R_ARM + j];//alljoints[KDeviceLists::R_ARM + j]*0.99;
+
+
+	}else if(dcm_state==PRE_SHUTDOWN)
 	{
-		fsrl(i)=*sensorPtr[KDeviceLists::L_FSR+i];
-		fsrr(i)=*sensorPtr[KDeviceLists::R_FSR+i];
+		dcm_counter++;
+		cout << " PRE_SHUTDOWN" << endl;
+		int p;
+		for (p = 0; p < (KDeviceLists::LEG_SIZE * 2); p++)
+			commands[5][(p)][0] = 0.97*((float)commands[5][(p)][0]);
+		if (dcm_counter > PRE_INIT_STEPS*3){
+			setStiffness(0.0);
+			if (dcm_counter > PRE_INIT_STEPS*3 + 10) {
+				int *test;
+				test = 0;
+				*test = 5;
+				exit(0);
+			}
+			return 0;
+		}
+
+	}else{
+		KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
+		fsrl.zero();
+		fsrr.zero();
+		for(int i=0;i<4;i++)
+		{
+			fsrl(i)=*sensorPtr[KDeviceLists::L_FSR+i];
+			fsrr(i)=*sensorPtr[KDeviceLists::R_FSR+i];
+		}
+
+		engine->setFSR(fsrl,fsrr);
+
+		engine->nkin.setJoints(alljoints); //Feed to kinematics
+		if(dcm_state==INIT_WALK)
+		{
+			engine->Reset();
+			dcm_state=DCM_RUN;
+		}
+		if (dcm_state == DCM_STOP) //Nothing to execute
+			return 0;
+
+		std::vector<float>joints_action=engine->runStep();
+
+		if (joints_action.size() != 12)
+		{
+
+			engine->force_write_log();
+			//setStiffness(0.0);
+			std::cerr << "Not enough joint values" << std::endl;
+			dcm_state=PRE_SHUTDOWN;
+			dcm_counter=0;
+			//usleep(200);
+//
+//				int *test;
+//				test=0;
+//				*test=5;
+//				exit(0);
+			return 0;
+		}
+		int p;
+		for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
+			commands[5][(p)][0] = (float) joints_action[p];
+		//Left Shoulder use right hip value
+		//std::cout << p;
+
+		try{
+
+			commands[5][p+KDeviceLists::SHOULDER_PITCH][0] =engine->armangles(0);
+			commands[5][p+KDeviceLists::SHOULDER_ROLL][0] =engine->armangles(1);
+			commands[5][p+KDeviceLists::ELBOW_YAW][0] = 0.0f;
+			commands[5][p+KDeviceLists::ELBOW_ROLL][0] =-engine->armangles(1);
+			p+=KDeviceLists::ARM_SIZE;
+
+			commands[5][p+KDeviceLists::SHOULDER_PITCH][0] = engine->armangles(2);
+			commands[5][p+KDeviceLists::SHOULDER_ROLL][0] =-engine->armangles(3);
+			commands[5][p+KDeviceLists::ELBOW_YAW][0] = 0.0f;
+			commands[5][p+KDeviceLists::ELBOW_ROLL][0] =engine->armangles(3);
+		}
+		catch (const AL::ALError &e)
+		{
+			std::cout<<e.toString()<<std::endl;
+		}
+		//Right Shoulder use left hip value
+//		for (p = 0; p < (KDeviceLists::LEG_SIZE * 2+KDeviceLists::ARM_SIZE * 2); p++)
+//			cout << "firstcommands[5][" << p << "][0]=" <<commands[5][(p)][0]<< ";"<<endl;
+
 	}
-
-	engine->setFSR(fsrl,fsrr);
-
-	engine->nkin.setJoints(alljoints); //Feed to kinematics
-	if(dcm_state==INIT_WALK)
-	{
-		engine->Reset();
-		dcm_state=DCM_RUN;
-	}
-	if (dcm_state == DCM_STOP) //Nothing to execute
-		return 0;
-      std::vector<float>joints_action=engine->runStep();
-
-	if (joints_action.size() != 12)
-	{
-
-		engine->force_write_log();
-		setStiffness(0.0);
-		std::cerr << "Not enough joint values" << std::endl;
-
-		usleep(200);
-			int *test;
-			test=0;
-			*test=5;
-		return 0;
-	}
-	int p;
-	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
-		commands[5][(p)][0] = (float) joints_action[p];
-	//Left Shoulder use right hip value
-	//std::cout << p;
-	try{
-
-	commands[5][p+KDeviceLists::SHOULDER_PITCH][0] =engine->armangles(0);
-	commands[5][p+KDeviceLists::SHOULDER_ROLL][0] =engine->armangles(1);
-	commands[5][p+KDeviceLists::ELBOW_YAW][0] = 0.0f;
-	commands[5][p+KDeviceLists::ELBOW_ROLL][0] =-engine->armangles(1);
-	p+=KDeviceLists::ARM_SIZE;
-
-	commands[5][p+KDeviceLists::SHOULDER_PITCH][0] = engine->armangles(2);
-	commands[5][p+KDeviceLists::SHOULDER_ROLL][0] =-engine->armangles(3);
-	commands[5][p+KDeviceLists::ELBOW_YAW][0] = 0.0f;
-	commands[5][p+KDeviceLists::ELBOW_ROLL][0] =engine->armangles(3);
-	}
-	catch (const AL::ALError &e)
-	{
-		std::cout<<e.toString()<<std::endl;
-	}
-	//Right Shoulder use left hip value
-
 
 	//Send command
 
@@ -318,10 +408,6 @@ int LowLevelPlanner::DCMcallback()
 	{
 		throw ALERROR("KWalk", "execute_action", "Error when sending command to DCM : " + e.toString());
 	}
-
-
-
-
 
 	return 0;
 }

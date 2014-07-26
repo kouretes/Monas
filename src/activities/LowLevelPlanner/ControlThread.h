@@ -38,6 +38,9 @@
 #define CONST_SKIP 0
 #define CONST_SIZE 50
 #define CONST_STEP 2
+
+#define SWITCH_STEPS 20.0
+
 #define LagN 30
 class LIPMPreviewController{
     private:

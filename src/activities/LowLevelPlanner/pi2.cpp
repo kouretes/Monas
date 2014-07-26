@@ -47,7 +47,10 @@ void pi2::init_pi2() {
 		pi2config[i].R = 10e-10;
 		pi2config[i].control_cost.identity();
 		pi2config[i].control_cost.scalar_mult(pi2config[i].R);//*eye(pi2config.M);
+		pi2config[i].inv_control_cost.identity();
+		pi2config[i].inv_control_cost.scalar_mult(1.0/pi2config[i].R);
 		pi2config[i].theta.zero();
+
 
 	}
 	//initial parameter matrix
@@ -64,8 +67,9 @@ void pi2::init_pi2() {
 	Rinv.identity();
 
 	//Rinv = pi2config[0].control_cost; //.invert_square_matrix(pi2config.control_cost);
-	//Rinv.prettyPrint();
-	Rinv.scalar_mult(1/pi2config[0].R);
+	//
+	Rinv.scalar_mult(1.0/pi2config[0].R);
+	Rinv.prettyPrint();
 	//Rinv=Rinv.invert_square_matrix(Rinv);
 	GMx1_t gt;
 	gt.zero();
@@ -112,6 +116,14 @@ void pi2::init_pi2() {
 		   cout<< "Me[" << k << "][" << t << "]:" ;
 		   Me[k][t].prettyPrint();
 		}
+	float sumd=0;
+	int t;
+	for (t = 0; t < PI2_N; t++){
+		denom[t]=PI2_N-1-t;
+		sumd+=denom[t];
+	}
+	for (t = 0; t < PI2_N; t++)
+		denom[t]/=sumd;
 
 
 	//(Me[2][3]).prettyPrint();
@@ -127,7 +139,7 @@ float pi2::Gaussian(float t, float cm, float sm) {
 //output Me = kxNxM q[KxN], theta Mx1, state 1xS, noise, Mx1
 void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 		GSx1_t init_state, Dynamics & sys, GNx1_t Zref,float expl_sigma) {
-	float u,fS0,fS1,ZmpE2;
+	float u,fS0,fS1,fS2,ZmpE2,fZmpE;
 	int k,t, m;
 	GMx1_t theta_k, e;
 	GSx1_t State_old;
@@ -149,7 +161,9 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 			Me[k][t] = M[t] * e;
 		    //calculate cost
 			{
-				ZmpE2 = ( 0*Zref(t)-sys.zmpstateNew)*( 0*Zref(t)-sys.zmpstateNew);
+				fZmpE=fabs(0*Zref(t)-sys.zmpstateNew);
+				ZmpE2 =fZmpE*fZmpE;
+				fS2 = (sys.State(2))*(sys.State(2));
 				fS1 = (sys.State(1))*(sys.State(1));
 				fS0 = (sys.State(0))*(sys.State(0));
 				q(k, t)=0.000000001;
@@ -173,7 +187,7 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 //				    q(j) = 0.3*q_1(j) +8*q_1(j).^2 + 10*q_2(j) + 0.9*q_3(j);%+x(2)^2;%+ q_1(j)*200*(x(2)^2)+0.3*(x(3)^2)*q_1(j) + 0.002 *(x(3)^2);%; +2.5*q_2(j) + 0.5*q_3(j);%+2.9*(x(2)^2);%+ q_3(j)*0.05;% + 2*((x(2))^2)+ 2*q_3(j);%  +2*(x(3)-xold(3))^2  ;%+0.0001*abs(x(3));%(x-xold)'*(model.Q)*(x-xold);
 //				%     q(j)=q(j)*j;
 //				%
-				q(k,t) += 16.0*ZmpE2 + 18*fS1+2*fS0;
+				q(k,t) += 36.0*ZmpE2 + 18*fS1+2*fS0;
 				q(k,t)*=(t+1);
 			}
 			//calculate action
@@ -202,42 +216,44 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 
 	for (t=0; t<PI2_N; t++)
 	{
-		minS(t)=INT_MAX/2.0;
-		maxS(t)=-INT_MAX/2.0;
+		minS(t)=std::numeric_limits<float>::max();
+		maxS(t)=std::numeric_limits<float>::min();
 	}
 
     for (k = 0; k < PI2_K; k++) { //for all rollouts
 		control_cost_cum = 0;
 		state_cost_cum = 0;
 
-		t = PI2_N - 1;
-		terminal_cost=q(k, t)*2;
-		S(k, t)=terminal_cost;
-		if (S(k, t) > maxS(t))
-			maxS(t) =(float)S(k, t);
-		if (S(k, t) < minS(t))
-			minS(t) =(float)S(k, t);
 
-		for (t--; t >= 0; t--) {
+		terminal_cost=q(k, PI2_N - 1);
+		S(k,  PI2_N - 1)=terminal_cost;
 
-//			theta_hat_temp = theta + Me[k][t + 1];
-//
-//			thRth =theta_hat_temp.transp() * pi2config[0].control_cost * theta_hat_temp; //Check if nan;
-//			control_cost_cum += thRth;
-			state_cost_cum += q(k, t);
+
+		for (t=PI2_N -1 -1;t>= 0; t--) {
+
+            state_cost_cum += q(k, t);
 			S(k, t) = state_cost_cum + control_cost_cum / 2.0 + terminal_cost;
-			if (S(k, t) > maxS(t))
-				maxS(t) = (float)S(k, t);
-			if (S(k, t) < minS(t))
-				minS(t) = (float)S(k, t);
+
+
+			theta_hat_temp = theta + Me[k][t+1];
+			//theta_hat_temp.prettyPrint();
+
+			thRth =theta_hat_temp.transp() * pi2config[0].control_cost * theta_hat_temp; //Check if nan;
+			control_cost_cum += thRth;
+
 		}
 	}
-	//cout<<" S: ";
-	//S.prettyPrint();
-//	cout<<"After\nMin:" ;
-//	minS.prettyPrint();
-//	cout<<"Max:" ;
-//	maxS.prettyPrint();
+
+	for (t = 0; t < PI2_N;t++) {
+	   for (k = 0; k < PI2_K; k++)
+	   {
+            if (S(k, t) > maxS(t))
+                maxS(t) =(float)S(k, t);
+            if (S(k, t) < minS(t))
+                minS(t) =(float)S(k, t);
+        }
+	}
+
 	GKxN_t P;
 	P.zero();
 	GNx1_t expsum;
@@ -248,25 +264,18 @@ GMx1_t pi2::pi2_update(vector<vector<GMx1_t> >& Me, GKxN_t q, GMx1_t theta) {
 	 P = expS./(sum(expS,2)*ones(1,pi2config.K));*/
 
 	for (t = 0; t < PI2_N; t++) {
-		float max_min =  maxS(t) - minS(t)+0.00000032;
+		float max_min =  maxS(t) - minS(t);
+		if(max_min<1e-10)
+			max_min=1e-10;
 		//cout << " dif: " << max_min;
 		for (k = 0; k < PI2_K; k++) {    //exp
 			float res = -h * (S(k, t) - minS(t));
-			//cout << " res: " << res << " div " << res/max_min ;
-			P(k, t) =exp(res/max_min);
+
+			P(k, t) = exp(res/max_min);
 			expsum(t) += P(k, t);
 		}
 		for (k = 0; k < PI2_K; k++)
 			P(k, t) = P(k, t) / (float) expsum(t);
-		//P.prettyPrint();
-//			try {
-//				cout << "P(" << k << "," << t << "):" << endl;
-//				cout << "  expsum " << expsum(t) << endl;
-//				cout << " P(k, t) " << P(k, t);
-//				P(k, t) = P(k, t) / (float) expsum(t);
-//			} catch (exception ex) {
-//				std::cout << " Pexpsum  " << ex.what() << std::endl;
-//			}
 	}
 
 	vector<GMx1_t> dtheta;
@@ -326,7 +335,7 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 		}
 	}
 
-    expl_sigma = 5*fabs(Dx.State(1))+2+5*fabs(Dx.State(2));
+    expl_sigma =30*fabs(Dx.State(0))+ 10*fabs(Dx.State(1))+5+5*fabs(Dx.State(2));
 
 	run_rollouts(Me, q, pi2config[0].theta, Dx.State, rolloutSys,ZMPReferenceX, expl_sigma );
 	pi2config[0].theta += pi2_update(Me, q, pi2config[0].theta);

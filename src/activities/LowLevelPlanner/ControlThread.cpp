@@ -55,7 +55,7 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
     KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
 
-
+    //std::cout << "Only LIPMComPI2" << std::endl;
 
 
 
@@ -71,6 +71,11 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
 
       //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
+      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
+      pi2Balance.pi2prof.generate_report(500);
+
+        DynamicsX.AugmentState();
+     	DynamicsY.AugmentState();
 
 
       KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
@@ -84,27 +89,28 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
       //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
       //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
-      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
-      pi2Balance.pi2prof.generate_report(500);
-//      uX*=20;
-//      uY*=20;
+
+      //uX=0;
+      //uY=0;
       flog.insert("ZMPx",DynamicsX.zmpstateNew);
       flog.insert("ZMPy",DynamicsY.zmpstateNew);
       //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
       DynamicsX.Update(uX,errorX);
       DynamicsY.Update(uY,errorY);
 
+      DynamicsX.AugmentState();
+      DynamicsY.AugmentState();
 
-        KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
-        //KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
-        KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
-        //KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
+	KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
+	//KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
+	KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
+	//KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
 
-         //Estimated COM position
-        COM(0)=DynamicsX.State(0);
-        COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
-        predictedErrorX=DynamicsX.predictedError;
-        predictedErrorY=DynamicsY.predictedError;
+	 //Estimated COM position
+	COM(0)=DynamicsX.State(0);
+	COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+	predictedErrorX=DynamicsX.predictedError;
+	predictedErrorY=DynamicsY.predictedError;
 
 
         flog.insert("COMx",DynamicsX.State(0));
@@ -115,8 +121,8 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
         flog.insert("COMyddot",DynamicsY.State(2));
         flog.insert("Ux",0);
         flog.insert("Uy",0);
-        flog.insert("MUx",uX);
-        flog.insert("MUy",uY);
+		flog.insert("MUx",uX);
+		flog.insert("MUy",uY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
         flog.periodic_save();
@@ -147,87 +153,92 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 		}
 	}
 	float muX,muY;
-	  pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
-	  pi2Balance.pi2prof.generate_report(500);
+	pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+    /*KMath::KMat::GenMatrix<float,4,1> gain;
+    gain.zero();
+    gain(0)=1.0e+04 * 3.2000;
+    gain(1)=1.0e+04 * 0.4080;
+    gain(2)=1.0e+04 * 0.0109;
+    gain(3)=0;
+	muX=gain.transp()*DynamicsX.State;
+	muX=-muX;
+	muY=gain.transp()*DynamicsY.State;
+	muY=-muY;*/
+	pi2Balance.pi2prof.generate_report(500);
+
+	DynamicsX.AugmentState();
+	DynamicsY.AugmentState();
+
+	/**define Laguerre Coefficients **/
+	//std::cout<<"==============="<<std::endl;
+	solveConstrainedMPC();
+	walkprof.generate_report(1000);
+	/** Optimal Preview Control **/
+	DeltauX=L0.transp()*httaX;
+	DeltauY=L0.transp()*httaY;
+	//std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
+	//std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
+	//std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
+
+	KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
+	KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
+	//errorX.prettyPrint();
+	// errorY.prettyPrint();
+	//std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
+	//std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
+
+	uX=uX+DeltauX;
+	uY=uY+DeltauY;
+
+	//std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
+	//std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
+
+	//std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
+
+	if(balance<=0){
+	  DynamicsX.Update(uX,errorX);
+	  DynamicsY.Update(uY,errorY);
+	}else if(balance < SWITCH_STEPS){
+	  float p = (SWITCH_STEPS-balance)/SWITCH_STEPS;
+
+	  DynamicsX.Update(uX*p+(1-p)*muX,errorX);
+	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
+	}else
+	{
+	std::cout << "Only Pi2" << std::endl;
+	  DynamicsX.Update(muX,errorX);
+	  DynamicsY.Update(muY,errorY);
+	}
 
 
+	KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
+	//KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
+	KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
+	//KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
 
-      DynamicsX.AugmentState();
-      DynamicsY.AugmentState();
+	 //Estimated COM position
+	COM(0)=DynamicsX.State(0);
+	COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+	predictedErrorX=DynamicsX.predictedError;
+	predictedErrorY=DynamicsY.predictedError;
 
-      /**define Laguerre Coefficients **/
-
-	 //std::cout<<"==============="<<std::endl;
-      solveConstrainedMPC();
-      walkprof.generate_report(1000);
-      /** Optimal Preview Control **/
-      DeltauX=L0.transp()*httaX;
-      DeltauY=L0.transp()*httaY;
-      //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
-     //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
-
-
-      //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
-
-
-      KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
-      KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
-      //errorX.prettyPrint();
-     // errorY.prettyPrint();
-      //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
-      //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
-
-      uX=uX+DeltauX;
-      uY=uY+DeltauY;
-
-      //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
-      //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
-
-      //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
-
-      if(balance<=0){
-		  DynamicsX.Update(uX,errorX);
-		  DynamicsY.Update(uY,errorY);
-      }else if(balance < 100){
-    	  float p = (100-balance)/100.0;
-
-    	  DynamicsX.Update(uX*p+(1-p)*muX,errorX);
-    	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
-      }else
-      {
-    	  DynamicsX.Update(muX,errorX);
-    	  DynamicsY.Update(muY,errorY);
-      }
-
-
-        KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);
-        //KalmanX.uBuffer.push(ZMPReferenceX(1)-ZmpBufferX[0]);
-        KalmanY.uBuffer.push(DynamicsY.zmpstateNew-DynamicsY.zmpstate);
-        //KalmanY.uBuffer.push(ZMPReferenceY(1)-ZmpBufferY[0]);
-
-         //Estimated COM position
-        COM(0)=DynamicsX.State(0);
-        COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
-        predictedErrorX=DynamicsX.predictedError;
-        predictedErrorY=DynamicsY.predictedError;
-
-       flog.insert("ZMPx",DynamicsX.zmpstate);
-       flog.insert("ZMPy",DynamicsY.zmpstate);
-//        flog.insert("refZMPx",ZmpBuffer[0](0));
-//        flog.insert("refZMPy",ZmpBuffer[0](1));
-        flog.insert("MUx",muX);
-       	flog.insert("MUy",muY);
-        flog.insert("COMx",DynamicsX.State(0));
-        flog.insert("COMy",DynamicsY.State(0));
-        flog.insert("COMxdot",DynamicsX.State(1));
-        flog.insert("COMydot",DynamicsY.State(1));
-        flog.insert("COMxddot",DynamicsX.State(2));
-        flog.insert("COMyddot",DynamicsY.State(2));
-        flog.insert("Ux",uX);
-        flog.insert("Uy",uY);
-        flog.insert("Bx",DynamicsX.State(3));
-        flog.insert("By",DynamicsY.State(3));
-        flog.periodic_save();
+	flog.insert("ZMPx",DynamicsX.zmpstate);
+	flog.insert("ZMPy",DynamicsY.zmpstate);
+	//        flog.insert("refZMPx",ZmpBuffer[0](0));
+	//        flog.insert("refZMPy",ZmpBuffer[0](1));
+	flog.insert("MUx",muX);
+	flog.insert("MUy",muY);
+	flog.insert("COMx",DynamicsX.State(0));
+	flog.insert("COMy",DynamicsY.State(0));
+	flog.insert("COMxdot",DynamicsX.State(1));
+	flog.insert("COMydot",DynamicsY.State(1));
+	flog.insert("COMxddot",DynamicsX.State(2));
+	flog.insert("COMyddot",DynamicsY.State(2));
+	flog.insert("Ux",uX);
+	flog.insert("Uy",uY);
+	flog.insert("Bx",DynamicsX.State(3));
+	flog.insert("By",DynamicsY.State(3));
+	flog.periodic_save();
 
 }
 

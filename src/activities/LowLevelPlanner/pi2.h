@@ -7,9 +7,9 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define PI2_N  14
+#define PI2_N  20
 #define PI2_M  3
-#define PI2_K  25
+#define PI2_K  20
 #define PI2_S  3
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -37,6 +37,7 @@ typedef struct pi2config_
     float sigme_e;
     KMath::KMat::GenMatrix<float, PI2_M, 1 > theta;
     KMath::KMat::GenMatrix<float, PI2_M , PI2_M> control_cost; //R
+    KMath::KMat::GenMatrix<float, PI2_M , PI2_M> inv_control_cost; //R^-1
 
 } pi2config_t;
 
@@ -46,9 +47,10 @@ class pi2
 {
 public:
     vector<float> centers, sigmas, sumGt;
-    vector<KMath::KMat::GenMatrix<float, PI2_M,PI2_M > > M;
+    vector<GMxM_t > M;
 
-    vector<KMath::KMat::GenMatrix<float, PI2_M,1 > > Gt;
+    vector<GMx1_t > Gt;
+    vector<GMx1_t > Gst;
     pi2(RobotParameters robot);
     void init_pi2();
     void calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,CircularBuffer<KVecFloat3> & ZmpBuffer);
@@ -57,6 +59,7 @@ public:
 
 protected:
 private:
+	float denom[PI2_N];
 	KMath::KMat::GenMatrix<float,PI2_N,1> ZMPReferenceX,ZMPReferenceY;
 
     vector<vector< GMx1_t> > Me;
@@ -68,7 +71,7 @@ private:
     vector<double> normalizedG(float t, vector<float> cm, vector<float>sm);
     pi2config_t pi2config[2];
     Dynamics rolloutSys;
-     KMath::KMat::GenMatrix<float, PI2_M,1 >  ng(float t,vector<float> centers ,vector<float> sigma);
+    GMx1_t ng(float t,vector<float> centers ,vector<float> sigma);
     void run_rollouts(vector<vector< GMx1_t> >& Me, GKxN_t &q, GMx1_t theta, GSx1_t init_state,Dynamics & sys,GNx1_t Zref  , float expl_sigma );
     GMx1_t pi2_update(vector<vector< GMx1_t> >& Me, GKxN_t q, GMx1_t theta);
 

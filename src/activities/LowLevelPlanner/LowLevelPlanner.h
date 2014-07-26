@@ -25,7 +25,7 @@
  **/
 
 enum {
-	DO_NOTHING =0, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH, DCM_RUN, DCM_STOP
+	DO_NOTHING =0, PRE_INIT, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH, DCM_RUN, DCM_STOP,PRE_SHUTDOWN
 };
 
 
@@ -83,7 +83,11 @@ class LowLevelPlanner: public IActivity
 		AL::ALMotionProxy *motion;
 		AL::DCMProxy *dcm;
 		std::vector<float> alljoints;
+		std::vector<float> initialjoints;
+
 		AL::ALValue commands;
+		AL::ALValue firstcommands;
+
 		/****/
 		float fsr_position[4][2][2];
 
@@ -109,7 +113,7 @@ class LowLevelPlanner: public IActivity
 
 		void setStiffnessDCM(const float &stiffnessValue);
 
-		int state, dcm_state;
+	int state, dcm_state;
 	};
 	ACTIVITY_END
 #endif
