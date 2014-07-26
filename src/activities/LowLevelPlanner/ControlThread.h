@@ -25,7 +25,7 @@
 
 
 #define KPROFILING_ENABLED
-#include "tools/profiler.hpp"
+#include "core/architecture/time/Profiler.hpp"
 #include "matlog.h"
 
 #include "RobotParameters.h"

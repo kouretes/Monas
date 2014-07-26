@@ -25,7 +25,7 @@
 #include "core/include/Logger.hpp"
 #include <vector>
 #include "hal/smart_timer.h"
-#include "toString.h"
+#include "tools/toString.h"
 #include <sstream>
 
 #endif
@@ -60,7 +60,7 @@ namespace KProfiling
 	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "stopping profile " << name;
 	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "time profile "  << _toString(sec);
 
-			if (underflow) LogEntry(LogLevel::Warning,"KProf:") << "Underflow Occured ";       
+			if (underflow) LogEntry(LogLevel::Warning,"KProf:") << "Underflow Occured ";
 		}
 	};
 
