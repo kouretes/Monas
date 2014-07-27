@@ -159,8 +159,9 @@ int LowLevelPlanner::Execute()
         state=IDLE;
     if(chest>1)
     {
+        //speed[2]=0.05;
         if(chest==3)
-            speed[0]=4.0;
+            speed[0]=3.0;
         else
             speed[0]=0;
         state=DO_STEPS;
@@ -257,8 +258,8 @@ int LowLevelPlanner::DCMcallback()
 	/** Read Values of joints **/
 	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
 		alljoints[j] = *jointPtr[i];
-
 	alljoints[KDeviceLists::R_LEG+KDeviceLists::HIP_YAW_PITCH]=alljoints[KDeviceLists::L_LEG+KDeviceLists::HIP_YAW_PITCH];
+
 	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
 	fsrl.zero();
 	fsrr.zero();
@@ -289,8 +290,13 @@ int LowLevelPlanner::DCMcallback()
 			*test=5;
 		return 0;
 	}
+	//std::cout<<joints_action[0]<<std::endl;
+	//std::cout<<joints_action[KDeviceLists::LEG_SIZE]<<std::endl;
+    joints_action[0]=0;
+    joints_action[KDeviceLists::LEG_SIZE]=0;
 	int p;
 	for (p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
+
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
 	//std::cout << p;

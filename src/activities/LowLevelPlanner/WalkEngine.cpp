@@ -43,6 +43,8 @@ void WalkEngine::Reset()
 	startL=planL;
 	planR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 	startR=planR;
+	dl=startL;
+	dr=startR;
 
 	std::cout<<"Reset:"<<std::endl;
 
@@ -65,7 +67,7 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 
 
-	NAOKinematics::kmatTable Tip,Tpi,Til,Tir;
+	NAOKinematics::kmatTable Tip,Tpi;
 	/**  pelvis to inertial  **/
 
 	Tip=Tis*Tsp;
@@ -121,7 +123,8 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 	/** Interpolation **/
 
-	KVecFloat3 dl=startL,dr=startR;
+	dl=startL;
+	dr=startR;
 	if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
 		dr=ci.target+predicterror;
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
@@ -130,19 +133,24 @@ std::vector<float> WalkEngine::Calculate_IK()
 	float h=NaoRobot.getWalkParameter(StepZ);
 
     //float vel=NaoRobot.getWalkParameter(StepZ)*(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
-	float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4.0,0.0  ,ci.steps);
+	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4.0,0.0  ,ci.steps);
+	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,2*h/3.0,h,h/4.0,0.0  ,ci.steps);
+
+	float vel= NaoRobot.getWalkParameter(StepZ)* interp.BezierZ( ((float)currentstep) /ci.steps);
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
-    dl(0)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
+    dl(0)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
 
-    dl(1)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
+    dl(1)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
 
-    dl(2)=startL(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,ldiff,1.0);
+    dl(2)=startL(2)+interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,0,ldiff,1.0);
 
-    dr(0)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
-    dr(1)=interp.LinearInterpolation(((float)currentstep)/ci.steps,startR(1),dr(1),1.0);
-    dr(2)=startR(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,rdiff,1.0);
+    dr(0)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
+    dr(1)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startR(1),dr(1),1.0);
+    dr(2)=startR(2)+interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,0,rdiff,1.0);
+    /*dl.prettyPrint();
+    dr.prettyPrint();*/
 
     float zl=0,zr=0;
     if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
@@ -154,10 +162,16 @@ std::vector<float> WalkEngine::Calculate_IK()
 	Tir=getTransformation(dr,zr);
 
 
-	if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+	/*if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
 		Til=Tis;
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-		Tir=Tis;
+		Tir=Tis;*/
+
+    /*if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+		Tis=Til;
+	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+		Tis=Tir;*/
+
 
 
 
@@ -174,8 +188,12 @@ std::vector<float> WalkEngine::Calculate_IK()
 	{
 
 	    ret.clear();
+	    measuredcom=nkin.calculateCenterOfMass();
         if(double_support)
-		    measuredcom =measuredcom*0.3+ nkin.calculateCenterOfMass()*0.7;
+		    measuredcom =measuredcom*0.9+ nkin.calculateCenterOfMass()*0.1;
+        else
+            measuredcom =measuredcom*0.99+ nkin.calculateCenterOfMass()*0.01;
+
         //else
         //    measuredcom(2)+=0.2;
 		//measured.prettyPrint();
@@ -193,14 +211,14 @@ std::vector<float> WalkEngine::Calculate_IK()
 		//std::cout<<(comzlast)<<std::endl;
 		//if(double_support==false)
 		//std::cout<<horizontalaccel<<std::endl;
-         com_error(2)+=0.1*horizontalaccel*10;
+         com_error(2)+=0.02*horizontalaccel*10;
         /*if(double_support)
                 com_error(2)=0.05*com_error(2)-0.00*(com_error(2)-comzlast)+0.0*comzintegral;
             else
                 com_error(2)=0.05*com_error(2)-0.0*(com_error(2)-comzlast)+0.0*comzintegral+1e-10;
         comzlast=com_error(2);*/
-		//if(com_error(2)>5)
-		//	com_error(2)=5;
+		if(com_error(2)>5)
+			com_error(2)=5;
 		//com_error(0)*=softstand;
 		//com_error(1)*=softstand;
 //		com_error.prettyPrint();
@@ -216,7 +234,7 @@ std::vector<float> WalkEngine::Calculate_IK()
 													(double)
 													anglemean(dl(2),dr(2))
 													);
-
+        //std::cout<<dl(2)<<" "<<dr(2)<<" "<<anglemean(dl(2),dr(2))<<std::endl;
 		Tpprimei.setTranslation(com_error+Tipprime.getTranslation());
 		/** Generate Transformation from Pelvis' to Inertial **/
 		Tipprime=Tpprimei;
@@ -225,9 +243,9 @@ std::vector<float> WalkEngine::Calculate_IK()
         /** Generate the Inverse Kinematics Targets **/
 		NAOKinematics::kmatTable Tpprimel,Tpprimer;
 
-		Tpprimel=Tpprimei*Til*Tilerror;
+		Tpprimel=Tpprimei*Til;//*Tilerror;
 		Tilold=Til*Tilerror;
-		Tpprimer=Tpprimei*Tir*Tirerror;
+		Tpprimer=Tpprimei*Tir;//*Tirerror;
 		Tirold=Tir*Tirerror;
 
 
@@ -237,19 +255,28 @@ std::vector<float> WalkEngine::Calculate_IK()
         /** Set Leg Kinematics Chains **/
 		if (!resultL.empty())
 		{
-			ret = resultL.at(0);
+
 			if (!resultR.empty())
 			{
-				ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
+
 				nkin.setChain(KDeviceLists::CHAIN_L_LEG,resultL[0]);
 				nkin.setChain(KDeviceLists::CHAIN_R_LEG,resultR[0]);
+				//resultL[0][0]=0;
+				//resultR[0][0]=0;
+				//std::cout<<resultL[0][0]<<std::endl;
+				//std::cout<<resultR[0][0]<<std::endl;
+				ret = resultL.at(0);
+				ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
 			}
 
             else
 				std::cerr << "Right Leg EMPTY VECTOR " << std::endl;
 		} else
 			std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
-
+        /*Tpprimel.fast_invert();
+        Tpprimer.fast_invert();
+        (Tpprimel*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG)).prettyPrint();
+        (Tpprimer*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG)).prettyPrint();*/
 		armangles.zero();
 		KVecDouble3 armt;
 		armt=Tpprimel.getTranslation();
@@ -293,19 +320,19 @@ void WalkEngine::Calculate_Desired_COM()
     horizontalaccel=sqrt(NaoLIPM.xddot*NaoLIPM.xddot+NaoLIPM.yddot*NaoLIPM.yddot);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.5);
-        e.scalar_mult(0.5);
+        predicterror.scalar_mult(0.05);
+        e.scalar_mult(0.95);
 	}
     else
     {
-       predicterror.scalar_mult(0.5);
-       e.scalar_mult(0.5);
+       predicterror.scalar_mult(0.05);
+       e.scalar_mult(0.95);
     }
 
     predicterror+=e*0.2;
 //    predicterror.prettyPrint();
 
-//	predicterror.zero();
+	predicterror.zero();
 	/** Pop the used Point **/
 
 	Zbuffer.pop();
@@ -434,9 +461,9 @@ void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 			newpoint.zero();
 			float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
 
-			newpoint(0)=interp.LinearInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
-			newpoint(1)=interp.LinearInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
-			newpoint(2)=startZMP(2)+interp.trigIntegInterpolation(((float)p)/steps,0,adiff,1.0);
+			newpoint(0)=interp.ManosBezierLinearInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
+			newpoint(1)=interp.ManosBezierLinearInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
+			newpoint(2)=startZMP(2)+interp.ManosBezierLinearInterpolation(((float)p)/steps,0,adiff,1.0);
 			Zbuffer.cbPush(newpoint);
 
 			//if(p==steps-1)
@@ -467,8 +494,8 @@ void WalkEngine::feed()
 		{
 			i.targetZMP=i.targetSupport;
 			i.steps=i.steps*NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tss);
-			if(i.steps>20)
-			    i.steps=20;
+			if(i.steps>50)
+			    i.steps=50;
 
 		}
 		else
@@ -545,10 +572,11 @@ void WalkEngine::feed()
 		}
 		else
 			double_support=false;
-        if(ci.targetZMP==old.targetZMP&&ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH)
+        /*if(ci.targetZMP==old.targetZMP&&ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH)
             reinitstart=false;
         else
             reinitstart=true;
+        */
 		currentstep=1;
 
 	}
@@ -595,39 +623,60 @@ std::vector<float> WalkEngine::runStep()
 
 	NAOKinematics::FKvars t;
 	Tssprime=merger;
+	//Tssprime.getEulerAngles().prettyPrint();
 
 
 
 	if(oldsupportleg!=supportleg )
 	{
-		NAOKinematics::kmatTable a=Tssprime;
+		NAOKinematics::kmatTable a=Tssprime,b=Tssprime;
+
+		t.p=a.getTranslation();
+		t.a=a.getEulerAngles();
+		t.p(2)*=0.5;
+		t.a(0)*=0.5;
+		t.a(1)*=0.5;
+		a=NAOKinematics::getTransformation(t);
+
+
 		a.fast_invert();
+		//(b*a).prettyPrint();
 
 
 		std::cout<<"SWITCH LEG----"<<std::endl;
+
 		Tis*=a;
+
+		if(rightsupport==false)
+		    Tis=Til;
+	    else
+		    Tis=Tir;
+		//Tssprime=a;
 
 
 
 
 	}
-
+    //Tis.getEulerAngles().prettyPrint();
 	if(double_support==false)
 	{
 		t.p=Tis.getTranslation();
 		t.a=Tis.getEulerAngles();
-		t.p(2)*=0.1;
-		t.a(0)*=0.1;
-		t.a(1)*=0.1;
+		t.p(2)*=0.9;
+		t.a(0)*=0.9;
+		t.a(1)*=0.9;
 		Tis=NAOKinematics::getTransformation(t);
 	}
 
+	//Tis.prettyPrint();
+
     /** Beginning of command to be executed **/
-	if(currentstep==1&&reinitstart)
+	if(currentstep==1)
 	{
 	    std::cout<<"Change start"<<std::endl;
-		startL=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
-		startR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
+		startL=dl;//getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
+		startR=dr;//getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
+		//startR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 	}
 
 	Calculate_Desired_COM();

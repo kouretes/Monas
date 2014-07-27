@@ -23,7 +23,7 @@ void Stepplanner::initialize(RobotParameters OurRobot)
 	i.target(0)=Robot.getWalkParameter(HX);
 	i.target(1)=-Robot.getWalkParameter(H0);
 	i.target(2)=0;
-	i.steps=Robot.getWalkParameter(Tss)/Robot.getWalkParameter(Ts);
+	i.steps=Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(Tss)/Robot.getWalkParameter(Ts);
 	ankler=i.target;
 	inst.push(i);
 	i.targetSupport=KDeviceLists::SUPPORT_LEG_RIGHT;

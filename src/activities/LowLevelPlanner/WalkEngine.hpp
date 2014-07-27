@@ -61,8 +61,9 @@ private:
 	/** Real odometry **/
 
 
-	NAOKinematics::kmatTable Tis,Tsp,Tssprime;//Odometry, from supportleg to inertial, transformation from support leg to other leg
+	NAOKinematics::kmatTable Tis,Tsp,Tssprime,Til,Tir;//Odometry, from supportleg to inertial, transformation from support leg to other leg
 	KVecFloat3 startL,startR;
+	KVecFloat3 dl,dr;
 	NAOKinematics::kmatTable Tilold,Tirold,Tilerror,Tirerror;
 
 	/** FSR Transform **/
@@ -87,6 +88,7 @@ private:
 	CircularBuffer<KVecFloat3> 	Zbuffer;
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
+
 
 	float comzintegral,comzlast;
 	KVecDouble3 measuredcom;

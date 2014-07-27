@@ -11,8 +11,8 @@
 
 //#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
 #define SCALECONSTRAINT(i) 0.75
-#define BASISM 3.0
-#define BASISD 3.0
+#define BASISM 2.0
+#define BASISD 2.0
 
 LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
 {
@@ -341,7 +341,7 @@ void LIPMPreviewController::fillConstraints(
 void LIPMPreviewController::generateLaguerre()
 {
 
-	float alpha=0.4;
+	float alpha=0.9;
 
 	float beta=1-alpha*alpha;
 
@@ -377,11 +377,13 @@ void LIPMPreviewController::generateLaguerre()
 	Al.prettyPrint();*/
 
 }
+
 /*
+
 void LIPMPreviewController::DMPC()
 {
 	generateLaguerre();
-	float rl=4e-6;
+	float rl=5e-6;
 
 
 
@@ -484,12 +486,17 @@ void LIPMPreviewController::DMPC()
 	std::cout<<"EDW?"<<std::endl;
 
 
+	Ky=Tres+Tres.transp();
+	Ky.fast_invert();
+	Ky+=Ky.transp();
+	Ky.scalar_mult(0.5);
 
-	Tres.fast_invert();
-	Meg=Tres*Phi.transp();
 
-	Kx=Meg*Tau;
-	Ky=Meg;
+	//Tres.fast_invert();
+	//Meg=Tres*Phi.transp();
+
+	//Kx=Meg*Tau;
+	//Ky=Tres;
 
 	Aineq1.zero();
 	Aineq2.zero();
@@ -503,6 +510,7 @@ void LIPMPreviewController::DMPC()
 
 }
 */
+
 
 void LIPMPreviewController::DMPC()
 {
@@ -684,5 +692,4 @@ void LIPMPreviewController::DMPC()
 	bineq4.zero();
 
 }
-
 

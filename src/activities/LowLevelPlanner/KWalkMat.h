@@ -347,5 +347,32 @@ void CubicSplineInterpolation(float *buffer,int &counter,float p0,float p1,float
 			}
 
 		}
+
+
+		float Bezier(float p[],int start, int end, float t)
+		{
+		    if(start==end)
+		        return p[start];
+            else
+                return (1-t)*Bezier(p,start,end-1,t)+t*Bezier(p,start+1,end,t);
+
+		}
+
+		float BezierZ(float t)
+		{
+		    //float p[]={0,0.2,1.5,1.2 ,0.05,0};
+		    //float p[]={0,0.5 ,1.5 ,1.2 , 0.6 ,0};
+		    float p[] = {0,0.2,1,1.5,0.5,0.05,0};
+		    return Bezier(p,0,6,t);
+		}
+
+		float ManosBezierLinearInterpolation(float t,float start, float end, float Tss)
+		{
+
+		    //float p[]={0, 0.2 , 0.9, 1.0};
+		    float p[]={0, 0.001 , 0.999, 1.0};
+			return  Bezier(p,0,3,t/Tss)*(end-start)+start;
+
+		}
 };
 #endif
