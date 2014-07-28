@@ -14,7 +14,7 @@ class WalkInstruction
 
 	KVecFloat3 target;
 	KDeviceLists::SupportLeg targetSupport,targetZMP;
-
+    float ttlspeed;
 	unsigned steps;
 
 };

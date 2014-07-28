@@ -123,6 +123,7 @@ void Stepplanner::oneStep(std::vector<float> v)
 	i.targetSupport=support;
 	i.targetZMP=support;
 	i.target=i.target+velocity;
+	i.ttlspeed=sqrt(velocity.norm2());
 	//i.target.prettyPrint();
 	if(support==KDeviceLists::SUPPORT_LEG_LEFT)
 		ankler=i.target;

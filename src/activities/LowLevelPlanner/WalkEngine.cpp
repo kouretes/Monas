@@ -211,7 +211,7 @@ std::vector<float> WalkEngine::Calculate_IK()
 		//std::cout<<(comzlast)<<std::endl;
 		//if(double_support==false)
 		//std::cout<<horizontalaccel<<std::endl;
-         com_error(2)+=0.02*horizontalaccel*10;
+         com_error(2)+=0.05*horizontalaccel*10;
         /*if(double_support)
                 com_error(2)=0.05*com_error(2)-0.00*(com_error(2)-comzlast)+0.0*comzintegral;
             else
@@ -280,10 +280,12 @@ std::vector<float> WalkEngine::Calculate_IK()
 		armangles.zero();
 		KVecDouble3 armt;
 		armt=Tpprimel.getTranslation();
+		armt.scalar_mult(0.4);
 		//armt.prettyPrint();
 		armangles(2)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
 		armangles(1)=asin((armt(1)+85-ShoulderOffsetY)/(UpperArmLength*1.5));
 		armt=Tpprimer.getTranslation();
+		armt.scalar_mult(0.4);
 		//armt.prettyPrint();
 		armangles(0)=asin((-armt(0)+NaoRobot.getWalkParameter(HX)*1000)/(UpperArmLength*1.5) )+M_PI_2;
 		armangles(3)=asin((-armt(1)+85-ShoulderOffsetY)/(UpperArmLength*1.5) );
@@ -493,9 +495,24 @@ void WalkEngine::feed()
 		   planned.targetSupport!=KDeviceLists::SUPPORT_LEG_NONE)
 		{
 			i.targetZMP=i.targetSupport;
-			i.steps=i.steps*NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tss);
-			if(i.steps>50)
-			    i.steps=50;
+			KVecFloat3 sz;
+			if(Zbuffer.size()>0)
+            {
+                //Zbuffer[Zbuffer.size()-1].prettyPrint();
+                sz(0)=Zbuffer[Zbuffer.size()-1](0);
+                sz(1)=Zbuffer[Zbuffer.size()-1](1);
+                sz(2)=Zbuffer[Zbuffer.size()-1](2);
+            }
+            else
+            {
+                sz.zero();
+            }
+            sz-=i.target;
+            float ttl=sqrt(sz.norm2())/(i.ttlspeed+0.5);
+
+			i.steps=ttl*NaoRobot.getWalkParameter(Ts)+1;
+			if(i.steps>20)
+                i.steps=20;
 
 		}
 		else
