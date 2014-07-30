@@ -93,6 +93,7 @@ private:
 	float comzintegral,comzlast;
 	KVecDouble3 measuredcom;
     float horizontalaccel;
+    float weight,wold;
 
 
 

@@ -51,6 +51,7 @@ void WalkEngine::Reset()
 	planned.targetZMP=KDeviceLists::SUPPORT_LEG_NONE;
 	planned.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	predicterror.zero();
+	weight=fsrl.sum()+fsrr.sum();
 
 };
 void WalkEngine::addInit()
@@ -101,25 +102,25 @@ std::vector<float> WalkEngine::Calculate_IK()
 	t.p=Tilerror.getTranslation();
 	t.a=Tilerror.getEulerAngles();
 
-	t.p.scalar_mult(0.000);
-	if(t.p(2)<0)
-		t.p(2)=0;
-	t.a.scalar_mult(0.000);
+	t.p.scalar_mult(0.05);
+	//if(t.p(2)<0)
+	//	t.p(2)=0;
+	t.a.scalar_mult(0.05);
 
 	Tilerror=NAOKinematics::getTransformation(t);
 
 	t.p=Tirerror.getTranslation();
 	t.a=Tirerror.getEulerAngles();
 
-	t.p.scalar_mult(0.000);
-	if(t.p(2)<0)
-		t.p(2)=0;
+	t.p.scalar_mult(0.05);
+	//if(t.p(2)<0)
+	//	t.p(2)=0;
 
-	t.a.scalar_mult(0.000);
+	t.a.scalar_mult(0.05);
 
     Tirerror=NAOKinematics::getTransformation(t);
-    Tilerror.identity();
-    Tirerror.identity();
+    //Tilerror.identity();
+    //Tirerror.identity();
 
 	/** Interpolation **/
 
@@ -130,13 +131,13 @@ std::vector<float> WalkEngine::Calculate_IK()
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
 		dl=ci.target+predicterror;
 
-	float h=NaoRobot.getWalkParameter(StepZ);
+	float h=(NaoRobot.getWalkParameter(StepZ)+ci.ttlspeed*0.4);
 
     //float vel=NaoRobot.getWalkParameter(StepZ)*(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
 	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4.0,0.0  ,ci.steps);
 	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,2*h/3.0,h,h/4.0,0.0  ,ci.steps);
 
-	float vel= NaoRobot.getWalkParameter(StepZ)* interp.BezierZ( ((float)currentstep) /ci.steps);
+	float vel= h* interp.BezierZ( ((float)currentstep) /ci.steps);
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
@@ -190,9 +191,9 @@ std::vector<float> WalkEngine::Calculate_IK()
 	    ret.clear();
 	    measuredcom=nkin.calculateCenterOfMass();
         if(double_support)
-		    measuredcom =measuredcom*0.9+ nkin.calculateCenterOfMass()*0.1;
+		    measuredcom =measuredcom*0.99+ nkin.calculateCenterOfMass()*0.01;
         else
-            measuredcom =measuredcom*0.99+ nkin.calculateCenterOfMass()*0.01;
+            measuredcom =measuredcom*0.999+ nkin.calculateCenterOfMass()*0.001;
 
         //else
         //    measuredcom(2)+=0.2;
@@ -211,14 +212,25 @@ std::vector<float> WalkEngine::Calculate_IK()
 		//std::cout<<(comzlast)<<std::endl;
 		//if(double_support==false)
 		//std::cout<<horizontalaccel<<std::endl;
-         com_error(2)+=0.05*horizontalaccel*10;
+        //com_error(2)+=0.0002*horizontalaccel*10;
+		float w=fsrl.sum()+fsrr.sum();
+		if(w>0) //Have contact
+		{
+		    float fdif=-0.2*((w+wold)/2-weight);
+		    if(fdif>0)
+		        com_error(2)+=fdif;
+		    weight=w*0.1+weight*0.9;
+		    wold=(w+wold)/2;
+		}
+
+
         /*if(double_support)
                 com_error(2)=0.05*com_error(2)-0.00*(com_error(2)-comzlast)+0.0*comzintegral;
             else
                 com_error(2)=0.05*com_error(2)-0.0*(com_error(2)-comzlast)+0.0*comzintegral+1e-10;
         comzlast=com_error(2);*/
-		if(com_error(2)>5)
-			com_error(2)=5;
+		if(com_error(2)>20)
+			com_error(2)=20;
 		//com_error(0)*=softstand;
 		//com_error(1)*=softstand;
 //		com_error.prettyPrint();
@@ -322,19 +334,19 @@ void WalkEngine::Calculate_Desired_COM()
     horizontalaccel=sqrt(NaoLIPM.xddot*NaoLIPM.xddot+NaoLIPM.yddot*NaoLIPM.yddot);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
-        predicterror.scalar_mult(0.05);
-        e.scalar_mult(0.95);
+        predicterror.scalar_mult(0.1);
+        e.scalar_mult(0.9);
 	}
     else
     {
-       predicterror.scalar_mult(0.05);
-       e.scalar_mult(0.95);
+       predicterror.scalar_mult(0.6);
+       e.scalar_mult(0.4);
     }
 
     predicterror+=e*0.2;
 //    predicterror.prettyPrint();
 
-	predicterror.zero();
+	//predicterror.zero();
 	/** Pop the used Point **/
 
 	Zbuffer.pop();
@@ -508,11 +520,11 @@ void WalkEngine::feed()
                 sz.zero();
             }
             sz-=i.target;
-            float ttl=sqrt(sz.norm2())/(i.ttlspeed+0.5);
 
-			i.steps=ttl*NaoRobot.getWalkParameter(Ts)+1;
-			if(i.steps>20)
-                i.steps=20;
+			i.steps=i.steps*NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tss)+3;
+			std::cout<<i.steps<<std::endl;
+			//if(i.steps>20)
+            //    i.steps=20;
 
 		}
 		else

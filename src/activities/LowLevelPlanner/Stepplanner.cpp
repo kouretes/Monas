@@ -49,7 +49,7 @@ void Stepplanner::oneStep(std::vector<float> v)
      **/
 	WalkInstruction i;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
-    if( (v[1]>0 ||v[2]>0)&&support==KDeviceLists::SUPPORT_LEG_RIGHT)
+    /*if( (v[1]>0 ||v[2]>0)&&support==KDeviceLists::SUPPORT_LEG_RIGHT)
 	{
 		std::vector<float> speed;
 		speed.push_back(0);
@@ -66,7 +66,7 @@ void Stepplanner::oneStep(std::vector<float> v)
 		speed.push_back(0);
 		oneStep(speed);
 		return oneStep(v);
-	}
+	}*/
 
 
     //Switch Support for next step
@@ -93,26 +93,52 @@ void Stepplanner::oneStep(std::vector<float> v)
 		h(1)=h(1);//duh
 	else
 		h(1)=-h(1);//duh
-    KVecFloat3 velocity;
+    KVecFloat3 velocity,tv;
 
 
 	KVecFloat2 a(v[0],v[1]);
 	a=RotPelvisZ*a;
-	velocity(0)= a(0) ;//* Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepX);
-	velocity(1)= a(1) ;// Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepY);
-    velocity(2) = v[2] ;// Robot.getWalkParameter(Tstep)*Robot.getWalkParameter(MaxStepTheta);
 
-	float tstep=Robot.getWalkParameter(Tstep)/(1.0+sqrt(velocity.norm2())*0.05);
-	std::cout<<tstep<<std::endl;
-	velocity(0)= a(0) * tstep*Robot.getWalkParameter(MaxStepX);
-	velocity(1)= a(1) * tstep*Robot.getWalkParameter(MaxStepY);
-    velocity(2) = v[2] * tstep*Robot.getWalkParameter(MaxStepTheta);
+
+
     if(velocity.norm2()==0)
 	    lastvelocity.zero();
 
-	velocity=velocity*0.1+lastvelocity*0.9;
 
-	lastvelocity=velocity;
+    velocity(0)= a(0) * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepX);
+	velocity(1)= a(1) * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepY);
+    velocity(2) = v[2] *  Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepTheta);
+    velocity=velocity*0.1+lastvelocity*0.9;
+
+    tv=velocity;
+    tv(0)/= Robot.getWalkParameter(MaxStepX);
+    tv(1)/= Robot.getWalkParameter(MaxStepY);
+    tv(2)/= Robot.getWalkParameter(MaxStepTheta);
+    float mt=max(tv(0),tv(1));
+    mt=max(mt,(float)tv(2));
+
+    lastvelocity=velocity;
+
+    float tstep=Robot.getWalkParameter(Tstep);
+    if(mt>1)
+    {
+        velocity.scalar_mult(1/mt);
+        tstep/=mt;
+    }
+    if(tstep<0.28)
+    {
+        mt=0.28/tstep;
+        velocity.scalar_mult(mt);
+        tstep*=mt;
+    }
+
+
+    std::cout<<tstep<<" "<<mt<<std::endl;
+
+
+
+
+
     Pelvis+=velocity;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
     h=RotPelvisZ*h;
@@ -129,7 +155,7 @@ void Stepplanner::oneStep(std::vector<float> v)
 		ankler=i.target;
 	else
 		anklel=i.target;
-	i.steps=ceil(Robot.getWalkParameter(Tss)*tstep/Robot.getWalkParameter(Ts));
+	i.steps=ceil(Robot.getWalkParameter(Tss)*(tstep)/Robot.getWalkParameter(Ts));
 	inst.push(i);
 
 
