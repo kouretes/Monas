@@ -9,7 +9,7 @@ Build:
 		- Change TargetPlatform to linux.
 		- Change TargetRobot to host.
 	- Execute make install -jk, where k is the number of cores in your system.
-	- Execute make install KMonitor
+	- Execute make KMonitor
 	
 Execution:
 	- Enter folder binaries/linux
