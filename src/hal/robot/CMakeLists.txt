@@ -3,9 +3,9 @@ message ( STATUS " _..::: Configuring Robot Abstraction Layer :::.._ " )
 message ( STATUS "" )
 
 
-if ( "x${TargetRobot}x" STREQUAL "xnonex" )
+if ( "x${TargetRobot}x" STREQUAL "xnonex" OR "${TargetRobot}" STREQUAL "host")
     message ( STATUS "No robot defined, skipping robot hal"  )
-else("x${TargetRobot}x" STREQUAL "xnonex")
+else("x${TargetRobot}x" STREQUAL "xnonex" OR ${TargetRobot} STREQUAL "host" )
 	if( IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TargetRobot} )
 		message(STATUS "Using folder: " ${TargetRobot})
 		add_subdirectory(${TargetRobot})
