@@ -9,10 +9,10 @@ else("x${TargetRobot}x" STREQUAL "xnonex" OR ${TargetRobot} STREQUAL "host" )
 	if( IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TargetRobot} )
 		message(STATUS "Using folder: " ${TargetRobot})
 		add_subdirectory(${TargetRobot})
-	else()
+	else(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TargetRobot} )
 		message ( FATAL_ERROR "Please select a valid TargetRobot:" ${TargetRobot}  )
-	endif()
-endif("x${TargetRobot}x" STREQUAL "xnonex")
+	endif(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TargetRobot} )
+endif("x${TargetRobot}x" STREQUAL "xnonex" OR ${TargetRobot} STREQUAL "host" )
 
 
 

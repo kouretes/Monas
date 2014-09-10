@@ -78,7 +78,7 @@ SET( KMonitor_RESOURCES KMonitorResources.qrc )
 								${KMonitor_RESOURCES_RCC}
 	)
 	SET_TARGET_PROPERTIES( KMonitor PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX})
-	TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} M_tinyxml messaging MessageLib MessageSystemLib ${Boost_LIBRARIES})
+	TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} M_tinyxml messaging MessageLib MessageSystemLib MonasCore ${Boost_LIBRARIES} )
 #elseif(Qt5Core_FOUND)
 #	message (-=-=-= Using Qt5 =-=-=-)
 #	FIND_PACKAGE( Qt5Widgets REQUIRED )

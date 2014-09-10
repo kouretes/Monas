@@ -33,8 +33,8 @@ public:
 	KGUIMessenger();
 	~KGUIMessenger();
 
-	MessageBuffer *makeWriteBuffer(std::string const &s);
-	MessageBuffer *makeReadBuffer(std::string const &s);
+	Messaging::MessageBuffer *makeWriteBuffer(std::string const &s);
+	Messaging::MessageBuffer *makeReadBuffer(std::string const &s);
 
 public slots:
 	void GWSubscriptionHandler(QString);
@@ -45,7 +45,7 @@ public slots:
 	void XMLPublishMessage(ExternalConfig);
 	void CommandPublishMessage(ExternalCommand message);
 	void KccPublishMessage(CameraCalibration message);
-	
+
 	void tabChangeHandler(int);
 
 signals:
@@ -68,7 +68,7 @@ signals:
 	void rawImage(KRawImage, QString, boost::posix_time::ptime);
 	void sensorsDataUpdate(AllSensorValuesMessage, QString);
 	void GenericAckReceived(GenericACK, QString);
-   
+
 	void addHost(QString hostId, QString hostName);
 	void removeHost(QString hostId);
 	void updateGameState(QString iconPath, QString state, QString hostId);
@@ -79,13 +79,13 @@ private slots:
 	void allocateReceivedMessages();
 
 private:
-	void updateSubscription(std::string const &topic , msgentry::msgclass_t where, std::size_t host);
+	void updateSubscription(std::string const &topic , Messaging::MessageEntry::msgclass_t where, std::size_t host);
 	void updateKnownHosts(KnownHosts myRemoteHosts);
 	void updateGameState(GameStateMessage gsm, QString hostId);
 
 	void printKnownHosts(KnownHosts hosts);
 
-	EndPoint *multicast;
+	Messaging::EndPoint *multicast;
 	StringRegistry pubsubRegistry;
 
 	QTimer *timer;

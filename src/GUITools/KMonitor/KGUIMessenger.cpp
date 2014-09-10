@@ -19,7 +19,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL) {
 	unsigned maxpayload;
 	unsigned beacon_interval;
 
-	
+
     multicastip = Configurator::Instance().findValueForKey("network.multicast_ip");
 	port = atoi(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
     maxpayload = atoi(Configurator::Instance().findValueForKey("network.maxpayload").c_str());
@@ -50,22 +50,22 @@ KGUIMessenger::~KGUIMessenger() {
 		delete multicast;
 }
 
-MessageBuffer *KGUIMessenger::makeWriteBuffer(std::string const &s) {
+Messaging::MessageBuffer *KGUIMessenger::makeWriteBuffer(std::string const &s) {
 	size_t newid = pubsubRegistry.registerNew(s);
-	MessageBuffer *new_msg_buf = new MessageBuffer(newid);
+	Messaging::MessageBuffer *new_msg_buf = new Messaging::MessageBuffer(newid);
 	return new_msg_buf;
 }
 
-MessageBuffer *KGUIMessenger::makeReadBuffer(std::string const &s) {
+Messaging::MessageBuffer *KGUIMessenger::makeReadBuffer(std::string const &s) {
 	size_t newid = pubsubRegistry.registerNew(s);
-	MessageBuffer *new_msg_buf = new MessageBuffer(newid);
+	Messaging::MessageBuffer *new_msg_buf = new Messaging::MessageBuffer(newid);
 	return new_msg_buf;
 }
 
 void KGUIMessenger::allocateReceivedMessages() {
 
 	QString currentRHost;
-	std::vector<msgentry> incomingMessages = multicast->getWriteBuffer()->remove();
+	std::vector<Messaging::MessageEntry> incomingMessages = multicast->getWriteBuffer()->remove();
 
 	for(unsigned i = 0 ; i < incomingMessages.size() ; i++) {
 		if(incomingMessages.at(i).msg != NULL) {
@@ -77,28 +77,28 @@ void KGUIMessenger::allocateReceivedMessages() {
 				myRemoteHosts.Clear();
 				myRemoteHosts.CopyFrom(*(incomingMessages.at(i).msg));
 				updateKnownHosts(myRemoteHosts);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "KRawImage" && myKMonitorRequestedHost == currentRHost) {
 				KRawImage rawimg;
 				rawimg.Clear();
 				rawimg.CopyFrom(*(incomingMessages.at(i).msg));
 				if(myKMonitorRequestedHost == currentRHost)
-					emit rawImage(rawimg, currentRHost, incomingMessages.at(i).timestamp);
-			} 
+					emit rawImage(rawimg, currentRHost, boost::posix_time::ptime());//incomingMessages.at(i).timestamp
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "GameStateMessage") {
 				GameStateMessage gsm;
 				gsm.Clear();
 				gsm.CopyFrom(*(incomingMessages.at(i).msg));
 				updateGameState(gsm, currentRHost);
 				emit gameStateMessageUpdate(gsm, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "WorldInfo" && (myGWRequestedHosts.contains(currentRHost) ||(myKMonitorRequestedHost == currentRHost)) ) {
 				WorldInfo wim;
 				wim.Clear();
 				wim.CopyFrom(*(incomingMessages.at(i).msg));
 				emit worldInfoUpdate(wim, currentRHost);
-			} 
-			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost) 
+			}
+			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost)
 																								||(myKMonitorRequestedHost == currentRHost)) ) {
 				SharedWorldInfo swim;
 				swim.Clear();
@@ -110,13 +110,13 @@ void KGUIMessenger::allocateReceivedMessages() {
 				om.Clear();
 				om.CopyFrom(*(incomingMessages.at(i).msg));
 				emit obsmsgUpdate(om, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "LocalizationDataForGUI" && myKMonitorRequestedHost == currentRHost) {
 				LocalizationDataForGUI debugGUI;
 				debugGUI.Clear();
 				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 				emit localizationDataUpdate(debugGUI, currentRHost);
-			}  
+			}
             else if(incomingMessages.at(i).msg->GetTypeName() == "EKFMHypothesis" && myKMonitorRequestedHost == currentRHost) {
 				EKFMHypothesis ekfmHypothesisM;
 				ekfmHypothesisM.Clear();
@@ -152,32 +152,32 @@ void KGUIMessenger::allocateReceivedMessages() {
 				vdm.Clear();
 				vdm.CopyFrom(*(incomingMessages.at(i).msg));
 				emit visionDebugData(vdm, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "MotionWalkMessage" && myKMonitorRequestedHost == currentRHost) {
 				MotionWalkMessage mwm;
 				mwm.Clear();
 				mwm.CopyFrom(*(incomingMessages.at(i).msg));
 				emit motionCommandUpdate(mwm, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "GridInfo" && myKMonitorRequestedHost == currentRHost) {
 				GridInfo ngim;
 				ngim.Clear();
 				ngim.CopyFrom(*(incomingMessages.at(i).msg));
 				emit gridInfoUpdate(ngim, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "AllSensorValuesMessage" && myKMonitorRequestedHost == currentRHost) {
 				AllSensorValuesMessage asvm;
 				asvm.Clear();
 				asvm.CopyFrom(*(incomingMessages.at(i).msg));
 				emit sensorsDataUpdate(asvm, currentRHost);
-			} 
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "GenericACK" && myKMonitorRequestedHost == currentRHost) {
 				GenericACK gack;
 				gack.Clear();
 				gack.CopyFrom(*(incomingMessages.at(i).msg));
 				emit GenericAckReceived(gack, currentRHost);
 			}
-		} 
+		}
 		else
 			std::cout << "Null msg from host " << incomingMessages.at(i).host << std::endl;
 	}
@@ -200,7 +200,7 @@ void KGUIMessenger::updateKnownHosts(KnownHosts myRemoteHosts) {
 	}
 
 	for(vec::iterator iter = hostIds.begin() ; iter < hostIds.end() ; iter++) {
-		updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, (*iter));
+		updateSubscription("global", Messaging::MessageEntry::UNSUBSCRIBE_ALL_TOPIC, (*iter));
 		emit removeHost(QString::fromStdString(_toString(*iter)));
 
 		if(myKMonitorRequestedHost.toUInt() == *iter)
@@ -257,13 +257,13 @@ void KGUIMessenger::updateGameState(GameStateMessage gsm, QString hostId) {
 	emit updateGameState(iconFile, stateMSG, hostId);
 }
 
-void KGUIMessenger::updateSubscription(std::string const &topic , msgentry::msgclass_t where, std::size_t host) {
+void KGUIMessenger::updateSubscription(std::string const &topic , Messaging::MessageEntry::msgclass_t where, std::size_t host) {
 
 	if(multicast->getReadBuffer() == NULL || multicast->getWriteBuffer() == NULL)
 		return;
 
-	msgentry nmsg;
-	nmsg.topic = Topics::Instance().getId(topic);
+	Messaging::MessageEntry nmsg;
+	nmsg.topic = Messaging::Topics::Instance().getId(topic);
 	nmsg.host = host;
 	nmsg.msgclass = where;
 	multicast->getReadBuffer()->add(nmsg);
@@ -282,44 +282,44 @@ void KGUIMessenger::GWUnsubscriptionHandler(QString hostId) {
 
 void KGUIMessenger::SubscriptionHandler(QString hostId) {
 	emit changeAllTabsToHost(hostId);
-	updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
+	updateSubscription("global", Messaging::MessageEntry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
 	myKMonitorRequestedHost = hostId;
 	tabChangeHandler(currentKMonitorTab);
 }
 
 void KGUIMessenger::XMLPublishMessage(ExternalConfig message) {
 	message.set_targethost(myKMonitorRequestedHost.toUInt());
-	msgentry nmsg;
+	Messaging::MessageEntry nmsg;
 	google::protobuf::Message *newptr = message.New();
 	newptr->CopyFrom(message);
 	nmsg.msg.reset(newptr);
-	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	nmsg.topic = Topics::Instance().getId("external");
-	nmsg.msgclass = msgentry::SIGNAL;
+	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Messaging::Topics::Instance().getId("external");
+	nmsg.msgclass = Messaging::MessageEntry::SIGNAL;
 	multicast->getReadBuffer()->add(nmsg);
 }
 
 void KGUIMessenger::CommandPublishMessage(ExternalCommand message) {
 	message.set_targethost(myKMonitorRequestedHost.toUInt() );
-	msgentry nmsg;
+	Messaging::MessageEntry nmsg;
 	google::protobuf::Message *newptr = message.New();
 	newptr->CopyFrom(message);
 	nmsg.msg.reset(newptr);
-	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	nmsg.topic = Topics::Instance().getId("external");
-	nmsg.msgclass = msgentry::SIGNAL;
+	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Messaging::Topics::Instance().getId("external");
+	nmsg.msgclass = Messaging::MessageEntry::SIGNAL;
 	multicast->getReadBuffer()->add(nmsg);
 }
 
 void KGUIMessenger::KccPublishMessage(CameraCalibration message) {
 	message.set_targethost(myKMonitorRequestedHost.toUInt() );
-	msgentry nmsg;
+	Messaging::MessageEntry nmsg;
 	google::protobuf::Message *newptr = message.New();
 	newptr->CopyFrom(message);
 	nmsg.msg.reset(newptr);
-	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
-	nmsg.topic = Topics::Instance().getId("external");
-	nmsg.msgclass = msgentry::SIGNAL;
+	nmsg.host = Messaging::MessageEntry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Messaging::Topics::Instance().getId("external");
+	nmsg.msgclass = Messaging::MessageEntry::SIGNAL;
 	multicast->getReadBuffer()->add(nmsg);
 }
 
@@ -327,7 +327,7 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 	QString hostId;
 	currentKMonitorTab = currentTab;
 
-	updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
+	updateSubscription("global", Messaging::MessageEntry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
 	if((myKMonitorRequestedHost.isEmpty() && currentTab != 0) ||(myGWRequestedHosts.isEmpty() && currentTab == 0))
 		return;
 
@@ -336,30 +336,30 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 	case 0: // Global World State ((un-)sub to worldstate is absolutely defined by user's prefs)
 		for(int i = 0 ; i < myGWRequestedHosts.count() ; i++ ) {
 			hostId = myGWRequestedHosts.at(i);
-			updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, hostId.toUInt());
+			updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, hostId.toUInt());
 		}
-		break;	
+		break;
 	case 1: // Local World State
-		updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		updateSubscription("debug", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		break;	
+		updateSubscription("worldstate", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("vision", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("debug", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("motion", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		break;
 	case 2: // Local Polar Map
-		updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("pathplanning", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
 	case 3:	// Local Sensors Data
-		updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("sensors", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
 	case 4: // Kcc
-		updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		updateSubscription("debug", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("image", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("debug", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 	case 5: // Xml
-		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
 	case 6: // Commands
-		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("external", Messaging::MessageEntry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
 	}
 }

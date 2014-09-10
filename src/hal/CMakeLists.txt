@@ -31,9 +31,9 @@ endif ( "x${TargetRobot}x" STREQUAL "xx" )
 add_subdirectory(generic_${TargetPlatform})
 
 
-if ( "${TargetRobot}" STREQUAL "none" )
+if ( "${TargetRobot}" STREQUAL "none" OR "${TargetRobot}" STREQUAL "host" )
 	add_subdirectory(target_${TargetPlatform})
-endif ( "${TargetRobot}" STREQUAL "none" )
+endif ( "${TargetRobot}" STREQUAL "none" OR "${TargetRobot}" STREQUAL "host" )
 add_subdirectory(robot)
 
 
