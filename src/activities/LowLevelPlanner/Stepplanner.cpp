@@ -34,9 +34,9 @@ void Stepplanner::initialize(RobotParameters OurRobot)
 	inst.push(i);
 
 
-	i.targetSupport=KDeviceLists::SUPPORT_LEG_RIGHT;
-	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
-	inst.push(i);
+	//i.targetSupport=KDeviceLists::SUPPORT_LEG_RIGHT;
+	//i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
+	//inst.push(i);
 	Pelvis.zero();//Init
 
 

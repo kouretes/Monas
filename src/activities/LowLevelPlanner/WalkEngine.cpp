@@ -19,6 +19,7 @@ void WalkEngine::Reset()
 	Now = microsec_clock::universal_time();
 	balance=0;
 	comzmeasured=0;
+	isbalancing=false;
 
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	currentstep=0;
@@ -57,6 +58,16 @@ void WalkEngine::addInit()
 	i.targetSupport=KDeviceLists::SUPPORT_LEG_LEFT;
 	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
 	i.steps=NaoRobot.getWalkParameter(Tinit)/NaoRobot.getWalkParameter(Ts);
+	walkbuffer.add(i);
+}
+
+void WalkEngine::InitSingleSupport()
+{
+	WalkInstruction i;
+	i.targetSupport=KDeviceLists::SUPPORT_LEG_RIGHT;
+	i.targetZMP=KDeviceLists::SUPPORT_LEG_RIGHT;
+	i.steps=NaoRobot.getWalkParameter(Tinit)/NaoRobot.getWalkParameter(Ts);
+	//i.target.zero();
 	walkbuffer.add(i);
 }
 
@@ -116,7 +127,8 @@ std::vector<float> WalkEngine::Calculate_IK()
 	t.a.scalar_mult(0.1);
 
     Tirerror=NAOKinematics::getTransformation(t);
-
+    //cout << "Ci " ;
+   // ci.target.prettyPrint();
 
 	/** Interpolation **/
 
@@ -133,6 +145,13 @@ std::vector<float> WalkEngine::Calculate_IK()
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
+	cout << "Dl ";
+	dl.prettyPrint();
+
+	if(isbalancing)
+		dl(1)=0.02;
+
+
     dl(0)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
 
     dl(1)=interp.trigIntegInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
@@ -144,10 +163,11 @@ std::vector<float> WalkEngine::Calculate_IK()
     dr(2)=startR(2)+interp.trigIntegInterpolation(((float)currentstep)/ci.steps,0,rdiff,1.0);
 
     float zl=0,zr=0;
-    if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-		zr=vel;
-	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-		 zl=vel;
+    if(!(isbalancing))
+		if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
+			zr=vel;
+		else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
+			 zl=vel;
 
 	Til=getTransformation(dl,zl);
 	Tir=getTransformation(dr,zr);
@@ -270,21 +290,21 @@ void WalkEngine::Calculate_Desired_COM()
 	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
 	NaoLIPM.isDoubleSupport=double_support;
-	if(balance>SWITCH_STEPS){
-		//cout << "full balance " << endl;
-		NaoLIPM.LIPMComPI2(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(14000)){
-			balance=0;
-			Now=microsec_clock::universal_time();
-		}
-	}else {
-		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(10000)){
-			std::cout << "Balance "<< balance << std::endl;
-			NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1),++balance);
-		}else{
+//	if(balance>SWITCH_STEPS){
+//		//cout << "full balance " << endl;
+//		NaoLIPM.LIPMComPI2(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
+//		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(14000)){
+//			balance=0;
+//			Now=microsec_clock::universal_time();
+//		}
+//	}else {
+//		if( microsec_clock::universal_time()- Now >boost::posix_time::milliseconds(10000)){
+//			std::cout << "Balance "<< balance << std::endl;
+//			NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1),++balance);
+//		}else{
 		 NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-		}
-	}
+//		}
+//	}
 	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
 	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
@@ -447,10 +467,11 @@ void WalkEngine::feed()
 
 	//Prepare  buffer
 	if(walkbuffer.size()==0)
-	{
-
-		//balance=true;
-		addInit();
+	{   isbalancing=true;
+		if(isbalancing)
+		 InitSingleSupport();
+		else
+		 addInit();
 	}
 
 
@@ -554,8 +575,10 @@ void WalkEngine::feed()
 
 std::vector<float> WalkEngine::runStep()
 {
+	//cout << " RunStep " ;
 
-
+	//cout << "Ci " ;
+	//ci.target.prettyPrint();
 
 	feed();//PrepareBuffers, and target stuff;
 

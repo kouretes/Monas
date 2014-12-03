@@ -187,8 +187,10 @@ void pi2::run_rollouts(vector<vector<GMx1_t> >& Me, GKxN_t &q, GMx1_t theta,
 //				    q(j) = 0.3*q_1(j) +8*q_1(j).^2 + 10*q_2(j) + 0.9*q_3(j);%+x(2)^2;%+ q_1(j)*200*(x(2)^2)+0.3*(x(3)^2)*q_1(j) + 0.002 *(x(3)^2);%; +2.5*q_2(j) + 0.5*q_3(j);%+2.9*(x(2)^2);%+ q_3(j)*0.05;% + 2*((x(2))^2)+ 2*q_3(j);%  +2*(x(3)-xold(3))^2  ;%+0.0001*abs(x(3));%(x-xold)'*(model.Q)*(x-xold);
 //				%     q(j)=q(j)*j;
 //				%
-				q(k,t) += 36.0*ZmpE2 + 18*fS1+2*fS0;
+				q(k,t) += 2000*fS0 + 10*fS1 + 0.05*fS2; //630.0*ZmpE2 +
 				q(k,t)*=(t+1);
+			//	if(fZmpE>0.05)
+				//	q(k,t) += 10.0*(fZmpE);
 			}
 			//calculate action
 			if(t==PI2_N)
@@ -335,7 +337,7 @@ void pi2::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 		}
 	}
 
-    expl_sigma =30*fabs(Dx.State(0))+ 10*fabs(Dx.State(1))+5+5*fabs(Dx.State(2));
+    expl_sigma =10*fabs(Dx.State(0))+ 20*fabs(Dx.State(1))+5+6*fabs(Dx.State(2));
 
 	run_rollouts(Me, q, pi2config[0].theta, Dx.State, rolloutSys,ZMPReferenceX, expl_sigma );
 	pi2config[0].theta += pi2_update(Me, q, pi2config[0].theta);

@@ -8,6 +8,7 @@
 
 #include "ControlThread.h"
 #include <iostream>
+#include "tools/toString.h"
 
 //#define SCALECONSTRAINT(i) (0.9-((float)(i))/(50.0*CONST_SIZE))
 #define SCALECONSTRAINT(i) 0.75
@@ -45,6 +46,12 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     flog.insert("By",0);
     flog.insert("MUx",0);
     flog.insert("MUy",0);
+
+    for(int i=0; i<PI2_M;i++)
+    	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
+    for(int i=0; i<PI2_M;i++)
+        flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
+    flog.periodic_save();
 
 }
 
@@ -125,7 +132,12 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 		flog.insert("MUy",uY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
+        for(int i=0; i<PI2_M;i++)
+        	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
+        for(int i=0; i<PI2_M;i++)
+            flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
         flog.periodic_save();
+
 
 }
 
@@ -152,8 +164,8 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 			ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
-	float muX,muY;
-	pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+	float muX=0,muY=0;
+	//pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
     /*KMath::KMat::GenMatrix<float,4,1> gain;
     gain.zero();
     gain(0)=1.0e+04 * 3.2000;
@@ -238,7 +250,11 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	flog.insert("Uy",uY);
 	flog.insert("Bx",DynamicsX.State(3));
 	flog.insert("By",DynamicsY.State(3));
-	flog.periodic_save();
+    for(int i=0; i<PI2_M;i++)
+    	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
+    for(int i=0; i<PI2_M;i++)
+        flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
+    flog.periodic_save();
 
 }
 

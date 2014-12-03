@@ -45,6 +45,7 @@ public:
 
 	void Reset();
 	void addInit();
+	void InitSingleSupport();
 
 	KMath::KMat::GenMatrix<double,4,1> armangles;
 	void force_write_log(){
@@ -53,6 +54,7 @@ public:
 private:
 	ptime Now;
 	int balance;
+	bool isbalancing;
 	void feed();
 
 		/** Computation of the Target Center of Mass wrt the inertial frame **/

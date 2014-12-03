@@ -98,7 +98,7 @@ void LowLevelPlanner::Reset()
 	{
 		f=0.65f*(i/10.0);
 		cout << " Stiffness: " << f;
-		usleep(350);
+		usleep(150);
 		setStiffness(f);
 	}
 	//	setStiffness(0.8f);
@@ -313,7 +313,7 @@ int LowLevelPlanner::DCMcallback()
 	}else if(dcm_state==PRE_SHUTDOWN)
 	{
 		dcm_counter++;
-		cout << " PRE_SHUTDOWN" << endl;
+		//cout << " PRE_SHUTDOWN" << endl;
 		int p;
 		for (p = 0; p < (KDeviceLists::LEG_SIZE * 2); p++)
 			commands[5][(p)][0] = 0.97*((float)commands[5][(p)][0]);

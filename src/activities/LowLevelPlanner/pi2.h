@@ -7,9 +7,9 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define PI2_N  20
+#define PI2_N  18
 #define PI2_M  3
-#define PI2_K  20
+#define PI2_K  13
 #define PI2_S  3
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -56,7 +56,7 @@ public:
     void calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,CircularBuffer<KVecFloat3> & ZmpBuffer);
     virtual ~pi2();
 	mutable KProfiling::profiler pi2prof;
-
+	pi2config_t pi2config[2];
 protected:
 private:
 	float denom[PI2_N];
@@ -69,7 +69,7 @@ private:
     float Gaussian(float t,float cm,float sm);
     vector<float> GaussianV(vector<float> t,float cm,float sm);
     vector<double> normalizedG(float t, vector<float> cm, vector<float>sm);
-    pi2config_t pi2config[2];
+
     Dynamics rolloutSys;
     GMx1_t ng(float t,vector<float> centers ,vector<float> sigma);
     void run_rollouts(vector<vector< GMx1_t> >& Me, GKxN_t &q, GMx1_t theta, GSx1_t init_state,Dynamics & sys,GNx1_t Zref  , float expl_sigma );
