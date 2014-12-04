@@ -20,6 +20,7 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			Dynamics.cpp
 			matlog.cpp
 			pi2.cpp
+			cem.cpp
 			)
 
 include ( ../activTemplate.cmake )
