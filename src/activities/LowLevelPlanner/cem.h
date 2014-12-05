@@ -1,5 +1,5 @@
-#ifndef cem_H
-#define cem_H
+#ifndef CEM_H
+#define CEM_H
 
 #include <cmath>
 #include "core/elements/math/KMat.hpp"
@@ -7,11 +7,9 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define cem_N  50 //Number of time steps per rollout
-#define cem_M  2 //Number of paramaters
-#define cem_S  2
-#define cem_K =
-
+#define CEM_N  50 //Number of time steps per rollout
+#define CEM_M  2 //Number of paramaters
+#define CEM_S  3
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -19,23 +17,24 @@
 #include <boost/preprocessor/arithmetic/div.hpp>
 using namespace std;
 
-typedef KMath::KMat::GenMatrix<float, cem_M,1> GMx1_t;
-typedef KMath::KMat::GenMatrix<float, cem_M,cem_M> GMxM_t;
-typedef KMath::KMat::GenMatrix<float, cem_N,1> GNx1_t;
+typedef KMath::KMat::GenMatrix<float, CEM_M,1> GMx1_t;
+typedef KMath::KMat::GenMatrix<float, CEM_M,CEM_M> GMxM_t;
+typedef KMath::KMat::GenMatrix<float, CEM_N,1> GNx1_t;
 
 
-//typedef KMath::KMat::GenMatrix<float, cem_K,cem_N> GKxN_t;
-typedef KMath::KMat::GenMatrix<float, cem_S+1,1> GSx1_t;
+//typedef KMath::KMat::GenMatrix<float, CEM_K,CEM_N> GKxN_t;
+typedef KMath::KMat::GenMatrix<float, CEM_S+1,1> GSx1_t;
 
 #define KPROFILING_ENABLED
 #include "core/architecture/time/Profiler.hpp"
+
 
 typedef struct cemconfig
 {
 	static float R_val;
 
 	GMx1_t theta;
-	GMx1_t cov;
+	GMxM_t cov;
     GMxM_t Q; //control_cost R
     GMxM_t R; //control_cost R
     GMxM_t R_inv; //R^-1
@@ -46,17 +45,17 @@ typedef struct cemconfig
 
 } cemconfig_t;
 
-struct rollout_result
+typedef struct rollout_result
 {
-    float S; //cost
-    GMx1_t e; //noise
+	float S; //cost
+	GMx1_t e; //noise
+	rollout_result() {S = -1;e.zero();};
 
-    rollout_result(float k, GMx1_t& s) : S(k), e(s) {}
+	rollout_result(float k, GMx1_t& s) :S(k), e(s){};
 
-    bool operator < (const rollout_result other) const
-    {
-    	return (S < other.S);
-    }
+	bool operator <(const rollout_result other) const {
+		return (S < other.S);
+	}
 
 }rollout_result_t;
 
@@ -65,7 +64,7 @@ class cem
 public:
     //vector<float> centers, sigmas,
 	vector<float>   sumGt;
-	float P[];
+	float * P;
 
     cem(RobotParameters robot);
     void init_cem();
@@ -75,10 +74,10 @@ public:
 	cemconfig_t cemconfig[2];
 protected:
 private:
+	vector<rollout_result_t> rollouts;
 
-
-	float denom[cem_N];
-	KMath::KMat::GenMatrix<float,cem_N,1> ZMPReferenceX,ZMPReferenceY;
+	float denom[CEM_N];
+	KMath::KMat::GenMatrix<float,CEM_N,1> ZMPReferenceX,ZMPReferenceY;
 
     boost::mt19937 eng;
     boost::normal_distribution<float> dist ;
@@ -89,10 +88,10 @@ private:
 
     Dynamics rolloutSys;
     GMx1_t ng(float t,vector<float> centers ,vector<float> sigma);
-    void  run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) ;
+    void  run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) ;
     //void run_rollouts(vector<vector< GMx1_t> >& Me, GKxN_t &q, GMx1_t theta, GSx1_t init_state,Dynamics & sys,GNx1_t Zref  , float expl_sigma );
     bool cem_update(vector<rollout_result_t> & rolls, Dynamics & sys, cemconfig_t & config, float converge_value);
 
 };
 
-#endif // cem_H
+#endif // CEM_H

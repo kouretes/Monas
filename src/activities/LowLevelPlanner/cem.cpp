@@ -7,31 +7,27 @@
 #include <iterator> // for ostream_iterator
 #include <vector>
 using namespace std;
-#define printfVector(x) std::cout << "fVector: " << #x << "  "; printfVector_(x); std::cout << std::endl
 
-void printfVector_(vector<float> vec ){
+#define printfVector2(x) std::cout << "fVector: " << #x << "  "; printfVector_(x); std::cout << std::endl
+int cemconfig::K=0;
+int cemconfig::K_e=0;
+int cemconfig::l=0;
+float cemconfig::R_val=0.0;
+
+
+void printfVector_2(vector<float> vec ){
 	copy(vec.begin(), vec.end(), ostream_iterator<float>(cout, " "));
 }
 
-vector<float> linspace(float a, float b, size_t N) {
-	float h = (b - a) / static_cast<float>(N - 1);
-	vector<float> xs(N);
-	vector<float>::iterator x;
-	float val;
-	for (x = xs.begin(), val = a; x != xs.end(); ++x, val += h)
-		*x = val;
-	return xs;
-}
-;
 
 cem::cem(RobotParameters robot) :
 		rolloutSys(robot),eng(time(0)), dist(0, 1), gen(eng, dist), cemprof("cemThread") {
-	//ctor
+	//constructor
 	eng.seed(time(0));
 }
 
 cem::~cem() {
-	//dtor
+	//destructor
 }
 
 void cem::init_cem() {
@@ -50,22 +46,30 @@ void cem::init_cem() {
 		cemconfig[i].R_inv.scalar_mult(1.0/cemconfig[i].R_val);
 		cemconfig[i].theta.zero();
 	}
-	cemconfig::l =4 + floorf(3+log10f(cem_M));
+	cemconfig::l =4 + floorf(3+log10f(CEM_M));
 	cemconfig::K_e = floorf(cemconfig->l/2.0);
 	cemconfig::K =cemconfig->l;
 
-	cout << "M: " + cem_M + " N: " + cem_N +" K: " + cemconfig::K;
+	cout << "M: " << CEM_M << " N: " << CEM_N << " K: " << cemconfig::K;
 
 	P = new float[cemconfig::K];
 	for(int k  = 0; k < cemconfig::K; k++)
 		if(k<=cemconfig::K_e)
-			P(k) = 1.0f/cemconfig::K_e;
+			P[k] = 1.0f/cemconfig::K_e;
 		else
-			P(k)=0.0;
+			P[k]=0.0;
+
+	 GMx1_t e ;
+	 e.zero();
+	 rollout_result  ex;
+	 ex.e=e;
+	rollouts.resize(cemconfig::K,ex);
+	for(int k  = 0; k < cemconfig::K; k++)
+			(rollouts[k].e).zero();
 
 
-	sumGt.resize(cem_M);
-	for (int m = 0; m < cem_M; m++)
+	sumGt.resize(CEM_M);
+	for (int m = 0; m < CEM_M; m++)
 		sumGt[m] = 0;
 }
 
@@ -75,9 +79,9 @@ float cem::Gaussian(float t, float cm, float sm) {
 
 //output SUM the updated theta parameters
 //input theta Mx1, state 1xS, L, Mx1
-void  cem::run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) {
+void  cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) {
 	float sum, state_cost, action_cost, cum_cost;
-	float u,fS0,fS1,fS2,ZmpE2,fZmpE;
+	float u;
 	int k,t, m;
 	GMx1_t theta_k, randn;
 	GSx1_t State_old;
@@ -92,18 +96,18 @@ void  cem::run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t i
 
 	for (k = 0; k < cemconfig::K; k++) {
 		cum_cost=0;
-		for (m = 0; m < cem_M; m++)
+		for (m = 0; m < CEM_M; m++)
 			randn(m) = gen();// * expl_sigma + 0.000001; //e= randn(cem_K,1)*expl_sigma;
 
 		rolls[k].e =  L*randn;
-		theta_k = theta +rolls[k].e; //Add parameter noise
+		theta_k = config.theta +rolls[k].e; //Add parameter noise
 
 		//Initialize Dynamics with incoming state
 		sys.State = init_state;
 		x(0) = sys.State(0);
 		x(1) = sys.State(1);
 		cum_cost =0;
-		for (t = 0; t < cem_N; t++) {
+		for (t = 0; t < CEM_N; t++) {
 
 			//calculate action
 			u = x.transp()*theta_k;
@@ -112,9 +116,9 @@ void  cem::run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t i
 			x(0) = sys.State(0);
 			x(1) = sys.State(1);
 
-			 state_cost = x.transp()* config.Q * x;
-			 action_cost = theta_k.transp() * config.R * theta_k;
-			 cum_cost+=state_cost + action_cost;
+			state_cost = x.transp()* config.Q * x;
+			action_cost = theta_k.transp() * config.R * theta_k;
+			cum_cost+=state_cost + action_cost;
 
 		}
 		rolls[k].S = cum_cost;
@@ -126,8 +130,9 @@ bool cem::cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfi
 	GMx1_t SUM;
 	int k=0, t=0, m=0;
 	SUM.zero();
-	GMxM_t sigma_temp;
+	GMxM_t sigma_temp,temp;
 	sigma_temp.zero();
+	temp.zero();
 
 	float state_cost, action_cost, old_cost;
 
@@ -135,8 +140,9 @@ bool cem::cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfi
 	//Update the theta parameters
 	//Update the covariance Matrix
 	for (k = 0; k < cemconfig::K; k++) { //for all rollouts
-		sigma_temp = sigma_temp +(rolls[k].e*rolls[k].e.tansp()).scalar_mult(P(k));
-		SUM = SUM + (config.theta + rolls[k].e).scalar_mult(P(k));
+		//temp = rolls[k].e*(rolls[k].e.transp());
+		sigma_temp = sigma_temp  +(rolls[k].e*(rolls[k].e).transp()).scalar_mult(P[k]);
+		SUM = SUM + (config.theta + rolls[k].e).scalar_mult(P[k]);
 	}
 	config.theta = SUM;
 	config.cov = sigma_temp;
@@ -160,9 +166,8 @@ bool cem::cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfi
 void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, CircularBuffer<KVecFloat3> & ZmpBuffer) {
 	KPROF_SCOPE(cemprof,"cem");
 
-
     //Setting the Reference Signal
-	for (int i = 1; i < cem_N; i++)
+	for (int i = 1; i < CEM_N; i++)
 	{
 		if (i < ZmpBuffer.size()){
 			ZMPReferenceX(i-1) = ZmpBuffer[i](0);
@@ -176,31 +181,36 @@ void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 			//ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
-	GMxM_t L = cemconfig[0].cov.cholesky_decomposition();
-	run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L)
-	//cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfig_t & config, float converge_value)
+	GMxM_t L = cholesky_decomposition(cemconfig[0].cov);
 
-	//run_rollouts(0, q, cemconfig[0].theta, Dx.State, rolloutSys,ZMPReferenceX, expl_sigma );
-	///cemconfig[0].theta += cem_update(Me, q, cemconfig[0].theta);
-//	cout << "Theta 0 : ";
-//	cemconfig[0].theta.prettyPrint();
-//
-	//expl_sigma =0.1;// 50.0*fabs(Dy.State(0)) + 5.0*fabs(Dy.State(1))+ 6.0*fabs(Dy.State(2))+0.000005;;
+	do{
+		run_rollouts(rollouts, Dx.State, rolloutSys, cemconfig[0],ZMPReferenceX, L);
+		sort(rollouts.begin(),rollouts.end());
+	}while(cem_update(rollouts, Dx, cemconfig[0], 10e-5));
 
-    ///run_rollouts(Me, q, cemconfig[1].theta, Dy.State, rolloutSys, ZMPReferenceY, expl_sigma );
-	///cemconfig[1].theta += cem_update(Me, q, cemconfig[1].theta);
+	L = cholesky_decomposition(cemconfig[1].cov);
+	do{
+		run_rollouts(rollouts, Dy.State, rolloutSys, cemconfig[1],ZMPReferenceY, L);
+		sort(rollouts.begin(),rollouts.end());
+	}while(cem_update(rollouts, Dy, cemconfig[1], 10e-5));
 
-    //	cout << "Theta 1 : ";
+
 //	cemconfig[1].theta.prettyPrint();
+	GMx1_t x;
+	x.zero();
+	x(0) = Dx.State(0);
+	x(1) = Dx.State(1);
+	ux = cemconfig[0].theta.transp() * x;
 
-	ux = 0;//cemconfig[0].theta.transp() * Gt[0];
-	uy = 0;//cemconfig[1].theta.transp() * Gt[0];
+	x(0) = Dy.State(0);
+	x(1) = Dy.State(1);
+	uy = cemconfig[1].theta.transp() * x;
 }
 
 //returns the vector for all the basis functions
 GMx1_t cem::ng(float t, vector<float> centers, vector<float> sigma) {
 
-	GMx1_t ret; //= new KMath::KMat::GenMatrix<float, cem_M,1>();
+	GMx1_t ret; //= new KMath::KMat::GenMatrix<float, CEM_M,1>();
 	ret.zero();
 	float sum = 0;
 

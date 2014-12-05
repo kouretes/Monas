@@ -15,7 +15,7 @@
 #define BASISM 3.0
 #define BASISD 3.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"),pi2Balance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,80)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"),cemBalance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,80)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -23,7 +23,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
 
     /** Compute Gains Kx, Ky **/
     DMPC();
-    pi2Balance.init_pi2();
+    cemBalance.init_cem();
 
     //Initializing Variables
     DeltauX=0.000;
@@ -47,22 +47,22 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     flog.insert("MUx",0);
     flog.insert("MUy",0);
 
-    for(int i=0; i<PI2_M;i++)
-    	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
-    for(int i=0; i<PI2_M;i++)
-        flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
+    for(int i=0; i<CEM_M;i++)
+    	flog.insert("xTheta_"+_toString(i),cemBalance.cemconfig[0].theta(i));
+    for(int i=0; i<CEM_M;i++)
+        flog.insert("yTheta_"+_toString(i),cemBalance.cemconfig[1].theta(i));
     flog.periodic_save();
 
 }
 
 
-void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY )
+void LIPMPreviewController::LIPMComCEM(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY )
 {
     KalmanX.Filter(ZMPMeasuredX,CoMMeasuredX);
 
     KalmanY.Filter(ZMPMeasuredY,CoMMeasuredY);
 
-    //std::cout << "Only LIPMComPI2" << std::endl;
+    //std::cout << "Only LIPMComCEM" << std::endl;
 
 
 
@@ -78,8 +78,8 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 
 
       //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
-      pi2Balance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
-      pi2Balance.pi2prof.generate_report(500);
+      cemBalance.calculate_action(uX,uY,DynamicsX,DynamicsY,ZmpBuffer);
+      cemBalance.cemprof.generate_report(500);
 
         DynamicsX.AugmentState();
      	DynamicsY.AugmentState();
@@ -132,10 +132,10 @@ void LIPMPreviewController::LIPMComPI2(CircularBuffer<KVecFloat3> & ZmpBuffer, f
 		flog.insert("MUy",uY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
-        for(int i=0; i<PI2_M;i++)
-        	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
-        for(int i=0; i<PI2_M;i++)
-            flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
+        for(int i=0; i<CEM_M;i++)
+        	flog.insert("xTheta_"+_toString(i),cemBalance.cemconfig[0].theta(i));
+        for(int i=0; i<CEM_M;i++)
+            flog.insert("yTheta_"+_toString(i),cemBalance.cemconfig[1].theta(i));
         flog.periodic_save();
 
 
@@ -165,7 +165,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 		}
 	}
 	float muX=0,muY=0;
-	//pi2Balance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+	//cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
     /*KMath::KMat::GenMatrix<float,4,1> gain;
     gain.zero();
     gain(0)=1.0e+04 * 3.2000;
@@ -176,7 +176,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	muX=-muX;
 	muY=gain.transp()*DynamicsY.State;
 	muY=-muY;*/
-	pi2Balance.pi2prof.generate_report(500);
+	cemBalance.cemprof.generate_report(500);
 
 	DynamicsX.AugmentState();
 	DynamicsY.AugmentState();
@@ -250,10 +250,10 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	flog.insert("Uy",uY);
 	flog.insert("Bx",DynamicsX.State(3));
 	flog.insert("By",DynamicsY.State(3));
-    for(int i=0; i<PI2_M;i++)
-    	flog.insert("xTheta_"+_toString(i),pi2Balance.pi2config[0].theta(i));
-    for(int i=0; i<PI2_M;i++)
-        flog.insert("yTheta_"+_toString(i),pi2Balance.pi2config[1].theta(i));
+    for(int i=0; i<CEM_M;i++)
+    	flog.insert("xTheta_"+_toString(i),cemBalance.cemconfig[0].theta(i));
+    for(int i=0; i<CEM_M;i++)
+        flog.insert("yTheta_"+_toString(i),cemBalance.cemconfig[1].theta(i));
     flog.periodic_save();
 
 }
