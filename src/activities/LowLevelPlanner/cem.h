@@ -30,21 +30,35 @@ typedef KMath::KMat::GenMatrix<float, cem_S+1,1> GSx1_t;
 #define KPROFILING_ENABLED
 #include "core/architecture/time/Profiler.hpp"
 
-typedef struct cemconfig_
+typedef struct cemconfig
 {
 	static float R_val;
 
-    KMath::KMat::GenMatrix<float, cem_M, 1 > theta;
-    KMath::KMat::GenMatrix<float, cem_M , cem_M> Q; //control_cost R
-    KMath::KMat::GenMatrix<float, cem_M , cem_M> R; //control_cost R
-    KMath::KMat::GenMatrix<float, cem_M , cem_M> R_inv; //R^-1
+	GMx1_t theta;
+	GMx1_t cov;
+    GMxM_t Q; //control_cost R
+    GMxM_t R; //control_cost R
+    GMxM_t R_inv; //R^-1
     static int l;
     static int K_e;
     static int K; //Number of rolluts per update
+    float cost;
 
 } cemconfig_t;
 
+struct rollout_result
+{
+    float S; //cost
+    GMx1_t e; //noise
 
+    rollout_result(float k, GMx1_t& s) : S(k), e(s) {}
+
+    bool operator < (const rollout_result other) const
+    {
+    	return (S < other.S);
+    }
+
+}rollout_result_t;
 
 class cem
 {
@@ -61,6 +75,8 @@ public:
 	cemconfig_t cemconfig[2];
 protected:
 private:
+
+
 	float denom[cem_N];
 	KMath::KMat::GenMatrix<float,cem_N,1> ZMPReferenceX,ZMPReferenceY;
 
@@ -73,8 +89,9 @@ private:
 
     Dynamics rolloutSys;
     GMx1_t ng(float t,vector<float> centers ,vector<float> sigma);
+    void  run_rollouts(vector<rollout_result_t> & rolls, GMx1_t theta, GSx1_t init_state, Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) ;
     //void run_rollouts(vector<vector< GMx1_t> >& Me, GKxN_t &q, GMx1_t theta, GSx1_t init_state,Dynamics & sys,GNx1_t Zref  , float expl_sigma );
-    //GMx1_t cem_update(vector<vector< GMx1_t> >& Me, GKxN_t q, GMx1_t theta);
+    bool cem_update(vector<rollout_result_t> & rolls, Dynamics & sys, cemconfig_t & config, float converge_value);
 
 };
 
