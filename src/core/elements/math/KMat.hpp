@@ -983,43 +983,29 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 	};
 
 	//Cholesky factorization using Cholesky–Banachiewicz algorithm, operates in-place
-	template <typename A, unsigned S>
-	GenMatrix<A, S, S> & cholesky_decomposition(GenMatrix<A, S, S> & athis)
-	{
-		for(unsigned j=0;j<S;j++)
-		{
-		    A t=0;
-		    //Diagonal Element
-		    for(unsigned k=0;k<j;k++)
-		    {
-		        t=t+athis(j,k)*athis(j,k);
-		    }
-		    t=athis(j,j)-t;
-		    if(t<=0)
-		    {
+	template<typename A, unsigned S>
+	GenMatrix<A, S, S> & cholesky_decomposition(GenMatrix<A, S, S> & athis) {
+		//std::cout<<"COHLSK"<<std::endl;
+		for (unsigned k = 0; k < S; k++) {
 
-		    	std::string d("KMat:cholesky_decomposition<T,S,S>() ");
-                throw SingularMatrixInvertionException(d);
-            }
-            athis(j,j)=sqrt(t);
-            t=0;
-			for(unsigned i=j+1;i<S;i++)
-			{
-			    for(unsigned k=0;k<j;k++)
-                {
-                    t=t+athis(i,k)*athis(j,k);
-                }
-                athis(i,j)=(athis(i,j)-t)/athis(j,j);
-                //std::cout<<"---"<<i<<","<<j<<std::endl;
-                //athis.prettyPrint();
+			if (athis(k, k) <= 0) {
+
+				std::string d("KMat:cholesky_decomposition<T,S,S>() ");
+				throw SingularMatrixInvertionException(d);
 			}
-			//Zero out k row
-			for(unsigned k=j+1;k<S;k++)
-			{
-				athis(j,k)=0;
+			for (unsigned j = k + 1; j < S; j++) {
+				for (unsigned q = j; q < S; q++)
+					athis(q, j) = athis(q, j)
+							- (athis(q, k) * athis(j, k)) / athis(k, k);
 			}
-			//athis.prettyPrint();
+			A rt = sqrt(athis(k, k));
+			for (unsigned q = k; q < S; q++)
+				athis(q, k) = athis(q, k) / rt;
+			//prettyPrint(athis);
 		}
+		for (unsigned k = 0; k < S; k++)
+			for (unsigned q = k + 1; q < S; q++)
+				athis(k, q) = 0;
 		return athis;
 
 	};

@@ -7,7 +7,7 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define CEM_N  50 //Number of time steps per rollout
+#define CEM_N  10 //Number of time steps per rollout
 #define CEM_M  2 //Number of paramaters
 #define CEM_S  3
 
@@ -55,6 +55,11 @@ typedef struct rollout_result
 
 	bool operator <(const rollout_result other) const {
 		return (S < other.S);
+	}
+	void print(){
+		std::cout << "cost: " << S << std::endl;
+		//std::cout << "noise: ";
+	    //e.prettyPrint();
 	}
 
 }rollout_result_t;

@@ -39,12 +39,13 @@ void cem::init_cem() {
 		cemconfig[i].Q(0,0)=5.0;
 		cemconfig[i].Q(1,1)=0.01;
 		//Control cost matrix
-		cemconfig[i].R_val = 10e-10;
+		cemconfig[i].R_val = 10e-5;
 		cemconfig[i].R.identity();
 		cemconfig[i].R.scalar_mult(cemconfig[i].R_val);//*eye(cemconfig.M);
 		cemconfig[i].R_inv.identity();
 		cemconfig[i].R_inv.scalar_mult(1.0/cemconfig[i].R_val);
 		cemconfig[i].theta.zero();
+		cemconfig[i].cov.identity();
 	}
 	cemconfig::l =4 + floorf(3+log10f(CEM_M));
 	cemconfig::K_e = floorf(cemconfig->l/2.0);
@@ -92,8 +93,9 @@ void  cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state, Dyn
 	State_old = init_state;
 
 	GMx1_t x;
+	GMx1_t x_pre;
 	x.zero();
-
+	x_pre.zero();
 	for (k = 0; k < cemconfig::K; k++) {
 		cum_cost=0;
 		for (m = 0; m < CEM_M; m++)
@@ -111,16 +113,52 @@ void  cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state, Dyn
 
 			//calculate action
 			u = x.transp()*theta_k;
+//			if(u > 50)
+//				u=50;
+//			if(u<-50)
+//				u=-50;
+			x_pre = x;
 			//run simulation
 			sys.RolloutUpdate(u);//get next_state
 			x(0) = sys.State(0);
 			x(1) = sys.State(1);
 
+			if(abs(x(0))>10)
+			{
+				cout << "fallen ";
+				rolls[k].S = 100;
+				break;
+			}
+
 			state_cost = x.transp()* config.Q * x;
 			action_cost = theta_k.transp() * config.R * theta_k;
 			cum_cost+=state_cost + action_cost;
+			if(isnan(cum_cost))
+			{
+				cout << " k: " << k << " t: " << t<< " u: " << u  << " cost: " ;
+				cout << cum_cost << endl;
+				cout << " Theta " << endl;
+				theta_k.prettyPrint();
+				cout  << endl << " Xpre " << endl;
+				x_pre.prettyPrint();
+				cout  << endl << " X " << endl;
+				x.prettyPrint();
+				cout << " state_cost " << state_cost << endl;
+				cout << " action_cost " << action_cost << endl;
 
+				cout  << endl << " config.Q " << endl;
+				config.Q.prettyPrint();
+				cout  << endl << "  config.R " << endl;
+				config.R.prettyPrint();
+				cout   << "  rolls[k].e " << endl;
+				rolls[k].e.prettyPrint();
+				cout   << "  L " << endl;
+				L.prettyPrint();
+				cout   << "  init_state " << endl;
+				init_state.prettyPrint();
+			}
 		}
+
 		rolls[k].S = cum_cost;
 	}
 }
@@ -141,11 +179,18 @@ bool cem::cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfi
 	//Update the covariance Matrix
 	for (k = 0; k < cemconfig::K; k++) { //for all rollouts
 		//temp = rolls[k].e*(rolls[k].e.transp());
-		sigma_temp = sigma_temp  +(rolls[k].e*(rolls[k].e).transp()).scalar_mult(P[k]);
 		SUM = SUM + (config.theta + rolls[k].e).scalar_mult(P[k]);
+
+		sigma_temp = sigma_temp  +(rolls[k].e*(rolls[k].e).transp()).scalar_mult(P[k]);
+
 	}
 	config.theta = SUM;
+	cout   << "Update  config.theta " << endl;
+	config.theta.prettyPrint();
+
 	config.cov = sigma_temp;
+	cout << "Stmp: ";
+	config.cov.prettyPrint();
 
 	GMx1_t x;
 	x.zero();
@@ -156,10 +201,11 @@ bool cem::cem_update(vector<rollout_result_t> & rolls , Dynamics & sys, cemconfi
 
 	old_cost = config.cost;
 	config.cost = state_cost + action_cost;
+	cout << "new cost " << config.cost << " oldcost " << old_cost << endl;
 	if(fabs(config.cost-old_cost)< converge_value)
-		return true;
-	else
 		return false;
+	else
+		return true;
 
 }
 
@@ -181,17 +227,41 @@ void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy, Circ
 			//ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
-	GMxM_t L = cholesky_decomposition(cemconfig[0].cov);
+	cout <<"before Chol" << endl;
 
+	cemconfig[0].cov.prettyPrint();
+
+	GMxM_t L;
+	L.zero();
+	L = cemconfig[0].cov;
+	try{
+	L=cholesky_decomposition(L);
+	}catch (KMath::KMat::SingularMatrixInvertionException e) {
+		cerr << " SingularMatrixInvertionException 0: " << e.what() << endl;
+		return;
+	}
+	cout <<"After Chol" << endl;
+	L.prettyPrint();
+
+	int count_conv =0;
 	do{
 		run_rollouts(rollouts, Dx.State, rolloutSys, cemconfig[0],ZMPReferenceX, L);
 		sort(rollouts.begin(),rollouts.end());
-	}while(cem_update(rollouts, Dx, cemconfig[0], 10e-5));
+		cout <<" convergance loop "<< count_conv++ << endl;
+	}while(cem_update(rollouts, Dx, cemconfig[0], 10e-5)); //while not converged
 
-	L = cholesky_decomposition(cemconfig[1].cov);
+	L = cemconfig[1].cov;
+	try{
+		L=cholesky_decomposition(L);
+	}catch (KMath::KMat::SingularMatrixInvertionException e) {
+		cerr << " SingularMatrixInvertionException 1: " << e.what() << endl;
+		return;
+	}
+	count_conv =0;
 	do{
 		run_rollouts(rollouts, Dy.State, rolloutSys, cemconfig[1],ZMPReferenceY, L);
 		sort(rollouts.begin(),rollouts.end());
+		cout <<" convergance loop "<< count_conv++ << endl;
 	}while(cem_update(rollouts, Dy, cemconfig[1], 10e-5));
 
 

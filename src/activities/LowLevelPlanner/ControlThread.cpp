@@ -165,7 +165,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 		}
 	}
 	float muX=0,muY=0;
-	//cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+	cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
     /*KMath::KMat::GenMatrix<float,4,1> gain;
     gain.zero();
     gain(0)=1.0e+04 * 3.2000;
@@ -210,17 +210,18 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 	if(balance<=0){
 	  DynamicsX.Update(uX,errorX);
 	  DynamicsY.Update(uY,errorY);
-	}else if(balance < SWITCH_STEPS){
-	  float p = (SWITCH_STEPS-balance)/SWITCH_STEPS;
-
-	  DynamicsX.Update(uX*p+(1-p)*muX,errorX);
-	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
-	}else
-	{
-	std::cout << "Only Pi2" << std::endl;
-	  DynamicsX.Update(muX,errorX);
-	  DynamicsY.Update(muY,errorY);
 	}
+	 // else if(balance < SWITCH_STEPS){
+//	  float p = (SWITCH_STEPS-balance)/SWITCH_STEPS;
+//
+//	  DynamicsX.Update(uX*p+(1-p)*muX,errorX);
+//	  DynamicsY.Update(uY*p+(1-p)*muY,errorY);
+//	}else
+//	{
+//	std::cout << "Only CEM" << std::endl;
+//	  DynamicsX.Update(muX,errorX);
+//	  DynamicsY.Update(muY,errorY);
+//	}
 
 
 	KalmanX.uBuffer.push(DynamicsX.zmpstateNew-DynamicsX.zmpstate);

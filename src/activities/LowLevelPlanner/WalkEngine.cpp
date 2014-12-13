@@ -145,8 +145,8 @@ std::vector<float> WalkEngine::Calculate_IK()
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
-	cout << "Dl ";
-	dl.prettyPrint();
+	//cout << "Dl ";
+	//dl.prettyPrint();
 
 	if(isbalancing)
 		dl(1)=0.02;
