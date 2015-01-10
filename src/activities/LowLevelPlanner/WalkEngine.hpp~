@@ -1,23 +1,32 @@
 #ifndef __WALKENGINE_HPP__
 #define __WALKENGINE_HPP__
 #include <core/elements/math/KMat.hpp>
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/nao/generic_nao/robot_consts.h"
 #include "core/elements/buffer/LockedBuffer.hpp"
 #include  "ControlThread.h"
-#include "hal/robot/generic_nao/NAOKinematics.h"
+#include "hal/robot/nao/generic_nao/NAOKinematics.h"
 #include "RobotParameters.h"
 #include "KWalkMat.h"
 #include "core/elements/math/Common.hpp"
+
+
+/** A class with the necessary data
+ * for the walking procedure
+ **/
 class WalkInstruction
 {
-	public:
+public:
 
 	KVecFloat3 target;
-	KDeviceLists::SupportLeg targetSupport,targetZMP;
-
+	KDeviceLists::SupportLeg targetSupport, targetZMP;
+	float ttlspeed;
 	unsigned steps;
 
 };
+
+/** Walking Instruction Buffer, with incoming walking instructions
+ * from the Stepplanner
+ **/
 typedef LockedBuffer<WalkInstruction> WalkBuffer;
 
 
@@ -27,8 +36,8 @@ class WalkEngine
 
 
 public:
-	WalkEngine(RobotParameters rp);
-	RobotParameters NaoRobot;
+	WalkEngine(RobotParameters &rp);
+	RobotParameters &NaoRobot;
 	KWalkMat interp;
 	NAOKinematics nkin;
 		WalkBuffer walkbuffer;
@@ -43,6 +52,8 @@ public:
 	void Reset();
 	void addInit();
 
+	KMath::KMat::GenMatrix<double,4,1> armangles;
+
 private:
 	void feed();
 
@@ -51,7 +62,7 @@ private:
 	std::vector<float> Calculate_IK();
 	void Calculate_Tragectories();
 
-
+	void planInstruction(KVecFloat3 destZMP, unsigned steps);
 
 	KVecFloat2 getCoP();
 
@@ -59,19 +70,22 @@ private:
 	/** Real odometry **/
 
 
-	NAOKinematics::kmatTable Tis,Tsp,Tssprime;//Odometry, from supportleg to inertial, transformation from support leg to other leg
+	NAOKinematics::kmatTable Tis,Tsp,Tssprime,Til,Tir;//Odometry, from supportleg to inertial, transformation from support leg to other leg
 	KVecFloat3 startL,startR;
+	KVecFloat3 dl,dr;
 	NAOKinematics::kmatTable Tilold,Tirold,Tilerror,Tirerror;
 
 	/** FSR Transform **/
 	KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
-	KMath::KMat::GenMatrix<double,4,1> fsrlbias,fsrrbias,fsrl,fsrr;
+	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
+
+
 
 
 
 	KDeviceLists::SupportLeg supportleg;
 	KDeviceLists::ChainsNames chainsupport; /// Corresponds to this supportleg
-    bool double_support;
+    bool double_support,reinitstart;
     float double_support_progress;  ///Progress of double support, zero in single supports
 	WalkInstruction ci;
 	KVecFloat3 predicterror;
@@ -79,12 +93,16 @@ private:
 	std::queue<WalkInstruction> qbuffer;
 
 	/** Leg Controllers **/
-	LIPMPreviewController NaoLIPM; //,NaoLIPMy;
-	CircularBuffer<float> 	ZbufferX,ZbufferY;
+	LIPMPreviewController NaoLIPM;//NaoLIPMy;
+	CircularBuffer<KVecFloat3> 	Zbuffer;
 	KVecFloat3 planL,planR;
 	WalkInstruction planned;
 
-	float comzmeasured;
+
+	float comzintegral,comzlast;
+	KVecDouble3 measuredcom;
+    float horizontalaccel;
+    float weight,wold;
 
 
 

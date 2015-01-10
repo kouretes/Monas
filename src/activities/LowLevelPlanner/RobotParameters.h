@@ -1,10 +1,3 @@
-//
-//  RobotParameters.h
-//  Kouretes Walk Engine
-//
-//  Created by Stelios Piperakis on 8/14/13.
-//  Copyright (c) 2013 SP. All rights reserved.
-//
 #ifndef ROBOTPARAMETERS_H_
 #define ROBOTPARAMETERS_H_
 #include <string>

@@ -1,32 +1,47 @@
 #include "WalkEngine.hpp"
 #include "hal/robot/nao/generic_nao/KinematicsDefines.h"
 
+
 WalkEngine::WalkEngine(RobotParameters &rp) : NaoLIPM(rp),NaoRobot(rp),Zbuffer(PreviewWindow*50),walkbuffer(0)
 {
 
+	/** Initializing the Transformation matrices **/
 	Tilerror.identity();
 	Tirerror.identity();
-	//fsrlbias.zero();
-	//fsrrbias.zero();
+	Tir.identity();
+	Til.identity();
+	Tirold.identity();
+	Tilold.identity();
+	Tis.identity();
+	Tsp.identity();
+	Tssprime.identity();
+	/** WalkEngine Step **/
 	currentstep=0;
+	/** Instruction **/
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	supportleg = KDeviceLists::SUPPORT_LEG_NONE;
 
-};
+}
 
 void WalkEngine::Reset()
 {
-	comzintegral=0;
-	comzlast=0;
+
 	measuredcom.zero();
 
 	ci.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 	currentstep=0;
+
+	/** Randomly picking the support leg **/
 	supportleg = KDeviceLists::SUPPORT_LEG_LEFT;
 	chainsupport=KDeviceLists::CHAIN_L_LEG;
+
+	/** Transformation from Support Leg to Pelvis  **/
 	Tsp=nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
 
+	/** Kinematics Instances **/
 	NAOKinematics::FKvars v;
+
+	/** Transformation from Support Leg  to Inertial Frame of Reference **/
 	v.p=Tsp.getTranslation();
 	v.a=Tsp.getEulerAngles();
 	v.p(0)=0;
@@ -35,10 +50,17 @@ void WalkEngine::Reset()
     v.a(0)=0;
     v.a(1)=0;
     Tis=NAOKinematics::getTransformation(v);
+
+	/** Transformation from Pelvis to Support Leg **/
 	Tsp.fast_invert();
 
+	/** Transformation from Left Leg to Inertial Frame of Reference **/
     Tilold=Tis*Tsp*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
+
+	/** Transformation from Right Leg to Inertial Frame of Reference **/
     Tirold=Tis*Tsp*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
+
+	/** Compute Reference Points in the x-y plane with orientation about the vertical axis z **/
 	planL=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
 	startL=planL;
 	planR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
@@ -46,84 +68,100 @@ void WalkEngine::Reset()
 	dl=startL;
 	dr=startR;
 
-	std::cout<<"Reset:"<<std::endl;
+	std::cout<<"Walkengine Resetted"<<std::endl;
 
+	/** Reference ZMP Point **/
 	planned.targetZMP=KDeviceLists::SUPPORT_LEG_NONE;
 	planned.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
+
 	predicterror.zero();
-	weight=fsrl.sum()+fsrr.sum();
 
 };
+
+
+/**
+* This function adds the Initial Walking Instruction to the
+* walking buffer for execution
+**/
+
 void WalkEngine::addInit()
 {
+	/** Initial Walking Instruction **/
 	WalkInstruction i;
-	i.targetSupport=KDeviceLists::SUPPORT_LEG_LEFT;
-	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
-	i.steps=NaoRobot.getWalkParameter(Tinit)/NaoRobot.getWalkParameter(Ts);
-	walkbuffer.add(i);
-}
 
+	/** Randomly chosen Left Leg as Initial Support Leg **/
+	i.targetSupport=KDeviceLists::SUPPORT_LEG_LEFT;
+
+	/** ZMP in the Middle of Convex Hull **/
+	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
+
+	/** Number of Discrete Time steps of the Initial Walking Instruction **/
+	i.steps=NaoRobot.getWalkParameter(Tinit)/NaoRobot.getWalkParameter(Ts);
+
+	/** Adding the Walking Instruction to the Walking Buffer for Execution **/
+	walkbuffer.add(i);
+	std::cout<<"Initial Walking Instruction added to Walking Command buffer"<<std::endl;
+
+}
+/**
+* This function computes the joint angles that the actuators must be set to
+**/
 std::vector<float> WalkEngine::Calculate_IK()
 {
 
 
-
+	/** Kinematics Instances **/
 	NAOKinematics::kmatTable Tip,Tpi;
-	/**  pelvis to inertial  **/
 
+	/**  Transformation from Pelvis to Inertial Frame of Reference  **/
 	Tip=Tis*Tsp;
 
-	/** inertial to pelvis **/
-
+	/** Transformation from Inertial Frame of Reference to Pelvis **/
 	Tpi=Tip;
 	Tpi.fast_invert();
 
-
-    /** Get Transformation from left foot to Pelvis in local frame **/
+    /**  Transformation from Left Leg to Pelvis in local frame **/
 	NAOKinematics::kmatTable l=nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
-    /** Get Transformation from right foot to Pelvis in local frame **/
+
+	/**  Transformation from Right Leg to Pelvis in local frame **/
 	NAOKinematics::kmatTable r=nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 
 
-    /** Get Transformation from left foot to inertial **/
+    /**  Transformation from Inertial Frame of Reference to Left Leg  **/
 	l=Tip*l;
 	l.fast_invert();
-	/** Get Transformation from right foot to inertial **/
-	r=Tip*r;
+
+	/**  Transformation from Inertial Frame of Reference to Right Leg  **/
+	r = Tip*r;
 	r.fast_invert();
 
-    /** Get Transformation from OLD left foot to NEW left foot **/
+    /** Error Transformation matrix for Left Leg **/
 	Tilerror=l*Tilold;
-    /** Get Transformation from OLD right foot to NEW right foot **/
+
+    /** Error Transformation matrix for Right Leg **/
 	Tirerror=r*Tirold;
 
-    /** Correction with 10% of Error **/
+    /** Correction with 5% of Error **/
 	NAOKinematics::FKvars t;
 	t.p=Tilerror.getTranslation();
 	t.a=Tilerror.getEulerAngles();
-
 	t.p.scalar_mult(0.05);
 	//if(t.p(2)<0)
 	//	t.p(2)=0;
 	t.a.scalar_mult(0.05);
-
 	Tilerror=NAOKinematics::getTransformation(t);
 
 	t.p=Tirerror.getTranslation();
 	t.a=Tirerror.getEulerAngles();
-
 	t.p.scalar_mult(0.05);
 	//if(t.p(2)<0)
 	//	t.p(2)=0;
-
 	t.a.scalar_mult(0.05);
-
     Tirerror=NAOKinematics::getTransformation(t);
     //Tilerror.identity();
     //Tirerror.identity();
 
-	/** Interpolation **/
-
+	/** Feet Trajectory Interpolation and online Correction with Predicted ZMP Error **/
 	dl=startL;
 	dr=startR;
 	if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
@@ -132,32 +170,24 @@ std::vector<float> WalkEngine::Calculate_IK()
 		dl=ci.target+predicterror;
 
 	float h=(NaoRobot.getWalkParameter(StepZ)+ci.ttlspeed*0.4);
-
-    //float vel=NaoRobot.getWalkParameter(StepZ)*(1-cos((( ((float)currentstep)/ci.steps )*M_PI*2)))/2.0;
-	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,h/4.0,h,h/4.0,0.0  ,ci.steps);
-	//float vel= interp.CubicSplineInterpolation( ((float)currentstep),0.0,2*h/3.0,h,h/4.0,0.0  ,ci.steps);
-
 	float vel= h* interp.BezierZ( ((float)currentstep) /ci.steps);
 	float ldiff=KMath::anglediff2(dl(2),startL(2));
 	float rdiff=KMath::anglediff2(dr(2),startR(2));
 
     dl(0)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startL(0),dl(0),1.0);
-
     dl(1)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startL(1),dl(1),1.0);
-
     dl(2)=startL(2)+interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,0,ldiff,1.0);
 
     dr(0)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startR(0),dr(0),1.0);
     dr(1)=interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,startR(1),dr(1),1.0);
     dr(2)=startR(2)+interp.ManosBezierLinearInterpolation(((float)currentstep)/ci.steps,0,rdiff,1.0);
-    /*dl.prettyPrint();
-    dr.prettyPrint();*/
 
-    float zl=0,zr=0;
+
+    float zl=0, zr=0;
     if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
 		zr=vel;
 	else if(ci.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-		 zl=vel;
+		zl=vel;
 
 	Til=getTransformation(dl,zl);
 	Tir=getTransformation(dr,zr);
@@ -176,12 +206,12 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 
 
-	NAOKinematics::kmatTable Tpprimei,Tipprime; ///Transformation of next pelvis p'
+	NAOKinematics::kmatTable Tpprimei,Tipprime; /** Transformation of next pelvis p' **/
 
-	KVecDouble3 com_error,desired;///All in inertial frame;
+	KVecDouble3 com_error,desired;	/** All in inertial frame **/
 
 	desired=KVecDouble3( NaoLIPM.COM(0),NaoLIPM.COM(1),NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
-//desired=KVecDouble3( NaoLIPMx.Com,NaoLIPMy.Com,NaoRobot.getWalkParameter(ComZ)).scalar_mult(1000);
+
 	std::vector<float> ret;
 	Tipprime=Tip;
 
@@ -189,51 +219,20 @@ std::vector<float> WalkEngine::Calculate_IK()
 	{
 
 	    ret.clear();
+	    /** COM smoothing **/
 	    measuredcom=nkin.calculateCenterOfMass();
         if(double_support)
 		    measuredcom =measuredcom*0.99+ nkin.calculateCenterOfMass()*0.01;
         else
             measuredcom =measuredcom*0.999+ nkin.calculateCenterOfMass()*0.001;
 
-        //else
-        //    measuredcom(2)+=0.2;
-		//measured.prettyPrint();
-
-		//if(double_support)
-		//	comzmeasured=comzmeasured*0.991+measured(2)*0.009;
-		//measured(2)=comzmeasured;
-		//measured.prettyPrint();
+        /** Computing the COM error **/
 		com_error=desired;
 		com_error-=Tipprime.transform(measuredcom);
 
-		//com_error.prettyPrint();
-		//comzintegral=com_error(2)*0.05 +comzintegral*0.95;
-		//std::cout<<(com_error(2)-comzlast)<<std::endl;
-		//std::cout<<(comzlast)<<std::endl;
-		//if(double_support==false)
-		//std::cout<<horizontalaccel<<std::endl;
-        //com_error(2)+=0.0002*horizontalaccel*10;
-		float w=fsrl.sum()+fsrr.sum();
-		if(w>0) //Have contact
-		{
-		    float fdif=-0.2*((w+wold)/2-weight);
-		    if(fdif>0)
-		        com_error(2)+=fdif;
-		    weight=w*0.1+weight*0.9;
-		    wold=(w+wold)/2;
-		}
-
-
-        /*if(double_support)
-                com_error(2)=0.05*com_error(2)-0.00*(com_error(2)-comzlast)+0.0*comzintegral;
-            else
-                com_error(2)=0.05*com_error(2)-0.0*(com_error(2)-comzlast)+0.0*comzintegral+1e-10;
-        comzlast=com_error(2);*/
 		if(com_error(2)>20)
 			com_error(2)=20;
-		//com_error(0)*=softstand;
-		//com_error(1)*=softstand;
-//		com_error.prettyPrint();
+
 
     /** Fix rotation first, using yawpitchroll coupling **/
 
@@ -246,25 +245,29 @@ std::vector<float> WalkEngine::Calculate_IK()
 													(double)
 													anglemean(dl(2),dr(2))
 													);
-        //std::cout<<dl(2)<<" "<<dr(2)<<" "<<anglemean(dl(2),dr(2))<<std::endl;
 		Tpprimei.setTranslation(com_error+Tipprime.getTranslation());
+
 		/** Generate Transformation from Pelvis' to Inertial **/
 		Tipprime=Tpprimei;
 		Tpprimei.fast_invert();
 
-        /** Generate the Inverse Kinematics Targets **/
-		NAOKinematics::kmatTable Tpprimel,Tpprimer;
 
+
+		/** Actuation Error Correction **/
 		Tpprimel=Tpprimei*Til;//*Tilerror;
 		Tilold=Til*Tilerror;
 		Tpprimer=Tpprimei*Tir;//*Tirerror;
 		Tirold=Tir*Tirerror;
 
-
+		/** Joint Vectors obtained from the Inverse Kinematics **/
 		std::vector<std::vector<float> > resultR, resultL;
+
+
+		/** Inverse Kinematics Procedure   **/
 		resultL = nkin.inverseLeftLeg(Tpprimel);
 		resultR = nkin.inverseRightLeg(Tpprimer);
-        /** Set Leg Kinematics Chains **/
+
+		/** Set Leg Kinematics Chains **/
 		if (!resultL.empty())
 		{
 
@@ -273,10 +276,6 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 				nkin.setChain(KDeviceLists::CHAIN_L_LEG,resultL[0]);
 				nkin.setChain(KDeviceLists::CHAIN_R_LEG,resultR[0]);
-				//resultL[0][0]=0;
-				//resultR[0][0]=0;
-				//std::cout<<resultL[0][0]<<std::endl;
-				//std::cout<<resultR[0][0]<<std::endl;
 				ret = resultL.at(0);
 				ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
 			}
@@ -285,10 +284,13 @@ std::vector<float> WalkEngine::Calculate_IK()
 				std::cerr << "Right Leg EMPTY VECTOR " << std::endl;
 		} else
 			std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
-        /*Tpprimel.fast_invert();
+
+		/*Tpprimel.fast_invert();
         Tpprimer.fast_invert();
         (Tpprimel*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG)).prettyPrint();
-        (Tpprimer*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG)).prettyPrint();*/
+        (Tpprimer*nkin.getForwardEffector((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG)).prettyPrint(); */
+
+		/** Arm Joint Angles Computation **/
 		armangles.zero();
 		KVecDouble3 armt;
 		armt=Tpprimel.getTranslation();
@@ -305,7 +307,6 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 
 	}
-	//X axes
 
 	currentstep++;
 	return ret;
@@ -319,19 +320,16 @@ void WalkEngine::Calculate_Desired_COM()
 
     /** Get Center of Pressure in Inertial Frame **/
 	KVecFloat2 copi=getCoP();
+
 	/** Get current Com in Inertial Frame **/
-	//(Tis*Tsp).prettyPrint();
-	//nkin.calculateCenterOfMass().prettyPrint();
+
 	KVecDouble3 CoMm =(Tis*Tsp).transform(nkin.calculateCenterOfMass());
 	CoMm.scalar_mult(1.0/1000.0);
-	//std::cout<<"PREDICTED ZMP ERROR"<<std::endl;
     /** Get Target Com in Inertial Frame **/
 	NaoLIPM.isDoubleSupport=double_support;
 	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
-	//NaoLIPMx.LIPMComPredictor(ZbufferX,CoMm(0),copi(0));
-	//NaoLIPMy.LIPMComPredictor(ZbufferY,CoMm(1),copi(1));
+
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
-    horizontalaccel=sqrt(NaoLIPM.xddot*NaoLIPM.xddot+NaoLIPM.yddot*NaoLIPM.yddot);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
 	{
         predicterror.scalar_mult(0.1);
@@ -344,201 +342,170 @@ void WalkEngine::Calculate_Desired_COM()
     }
 
     predicterror+=e*0.2;
-//    predicterror.prettyPrint();
+    predicterror.zero();
 
-	//predicterror.zero();
-	/** Pop the used Point **/
-
+    /** Pop the used ZMP **/
 	Zbuffer.pop();
 }
+
+
+
+/**
+ *  This function sets the FSR values
+ **/
 void WalkEngine::setFSR(KMath::KMat::GenMatrix<double,4,1> l,KMath::KMat::GenMatrix<double,4,1> r)
 {
 	fsrl=l;
 	fsrr=r;
 }
+
+/**
+* This Function returns the position of the Center of Pressure (CoP) as measured by
+* the Foot Sensitive Resistors (FSRs) in the Inertial Frame of Reference
+**/
 KVecFloat2 WalkEngine::getCoP()
 {
 
 	KVecFloat2 res;
-	KVecDouble3 copl,copr,copi,cops,copsprime;
-	float weightl,weightr,weights, weightsprime;
-	//std::cout<<"FSRLR"<<std::endl;
-    //fsrl.prettyPrint();
-    //fsrr.prettyPrint();
-	weightl=fsrl(0)+fsrl(1)+fsrl(2)+fsrl(3);
-	weightr=fsrr(0)+fsrr(1)+fsrr(2)+fsrr(3);
+	KVecDouble3 copl, copr, copi, cops, copsprime;
+	float weightl, weightr, weights, weightsprime;
+
+	/** Computation of the CoP in the Local Coordinate Frame of the Foot **/
+	weightl=fsrl(0) + fsrl(1) + fsrl(2) + fsrl(3);
+	weightr=fsrr(0) + fsrr(1) + fsrr(2) + fsrr(3);
 	//fsrposl.prettyPrint();
 	//fsrposr.prettyPrint();
-	copl=fsrposl*fsrl;
-	copr=fsrposr*fsrr;
 
-	copl.scalar_mult(1./(weightl));
-	copr.scalar_mult(1./(weightr));
+	copl=fsrposl * fsrl;
+	copr=fsrposr * fsrr;
 
-	if(weightl<0.01)
+	copl.scalar_mult(1.0/(weightl));
+	copr.scalar_mult(1.0/(weightr));
+
+	if (weightl < 0.01) //No Contact
 	{
 		copl.zero();
-		weightl=0;
-		//if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT&&double_support==false)
-		//	fsrlbias+=fsrl*0.5;
+		weightl = 0;
 	}
 
-	if(weightr<0.01)
+	if(weightr < 0.01) //No Contact
 	{
 		copr.zero();
-		weightr=0;
-		//if(supportleg==KDeviceLists::SUPPORT_LEG_LEFT&&double_support==false)
-		//	fsrrbias+=fsrr*0.5;
-	}
-
-/*
-//#define Margin 0.000
-
-	if(weightl==0 || weightr==0)
-	{
-		if(copl(1)>=fsrposl(0,1)-Margin || copl(1)<= fsrposl(1,1)+Margin || copl(0)>=fsrposl(0,0)-Margin ||copl(0)<=fsrposl(2,0)+Margin)
-		{
-			weightl=0;
-			copl.zero();
-		}
-
-
-		if(copr(1)>=fsrposr(0,1) -Margin|| copr(1)<= fsrposr(1,1)+Margin || copr(0)>=fsrposr(0,0)-Margin ||copr(0)<=fsrposr(2,0)+Margin)
-		{
-			weightr=0;
-			copr.zero();
-		}
+		weightr = 0;
 
 	}
-*/
 
+	/** Convert CoP to mm **/
 	copl.scalar_mult(1000);
 	copr.scalar_mult(1000);
-	//copl.prettyPrint();
-	//copr.prettyPrint();
-	if(supportleg==KDeviceLists::SUPPORT_LEG_RIGHT)
+
+
+	if(supportleg == KDeviceLists::SUPPORT_LEG_RIGHT)
 	{
-		cops=copr;
-		copsprime=copl;
-		weights=weightr;
-		weightsprime=weightl;
+		cops = copr;
+		copsprime = copl;
+		weights = weightr;
+		weightsprime = weightl;
 	}
 	else
 	{
-		cops=copl;
-		copsprime=copr;
-		weights=weightl;
-		weightsprime=weightr;
+		cops = copl;
+		copsprime = copr;
+		weights = weightl;
+		weightsprime = weightr;
 	}
-	//std::cout<<"TIs Tssprime"<<std::endl;
-	//Tis.prettyPrint();
-	//Tssprime.prettyPrint();
-    copi=(Tis.transform(cops)).scalar_mult(weights)+ ((Tis*Tssprime).transform(copsprime)).scalar_mult(weightsprime);
-    copi.scalar_mult(1.0/(weights+weightsprime));
 
+	/** Compute the CoP wrt the Inertial Frame of Reference **/
+    copi = (Tis.transform(cops)).scalar_mult(weights) + ((Tis*Tssprime).transform(copsprime)).scalar_mult(weightsprime);
+    copi.scalar_mult(1.0/(weights + weightsprime));
 
+	/** Convert CoP to m **/
     copi.scalar_mult(1.0/1000.0);
 
-    if((weights+weightsprime)<1)
+	/** If No Contact **/
+    if((weights + weightsprime) < 1.0)
 		copi.zero();
-	//copi.prettyPrint();
-	//cops.prettyPrint();
-	//copsprime.prettyPrint();
+
 	res(0)=copi(0);
 	res(1)=copi(1);
 	//res.prettyPrint();
 
 	return res;
 }
+
+
 void WalkEngine::planInstruction(KVecFloat3 destZMP, unsigned steps)
 {
 	KVecFloat3 startZMP;
+
+	/** If there exists a planned ZMP point in the ZMP buffer **/
 	if(Zbuffer.size()>0)
 	{
-		//Zbuffer[Zbuffer.size()-1].prettyPrint();
-		startZMP(0)=Zbuffer[Zbuffer.size()-1](0);
-		startZMP(1)=Zbuffer[Zbuffer.size()-1](1);
-		startZMP(2)=Zbuffer[Zbuffer.size()-1](2);
-		//startZMP.prettyPrint();
+		startZMP(0)=Zbuffer[Zbuffer.size()-1](0);  // ZMP position x
+		startZMP(1)=Zbuffer[Zbuffer.size()-1](1);  // ZMP position y
+		startZMP(2)=Zbuffer[Zbuffer.size()-1](2);  // orientation theta
 	}
 	else
 	{
 		startZMP.zero();
-		//for(unsigned i=0;i<PreviewWindow-1;i++)
-		//	Zbuffer.cbPush(startZMP);
 	}
-	//std::cout<<"PLANY"<<startZMP(1)<<" "<<destZMP(1)<<std::endl;
-
-	for(unsigned p=1;p<=steps;p++)
+	for(unsigned p = 1 ; p <= steps ; p++)
 	{
 			KVecFloat3 newpoint;
 			newpoint.zero();
-			float adiff=KMath::anglediff2(destZMP(2),startZMP(2));
 
+			/** Angle between the ending and starting foot orientation **/
+			float adiff = KMath::anglediff2(destZMP(2),startZMP(2));
+
+			/** ZMP Trajectory Generation **/
 			newpoint(0)=interp.ManosBezierLinearInterpolation(((float)p)/steps,startZMP(0),destZMP(0),1.0);
 			newpoint(1)=interp.ManosBezierLinearInterpolation(((float)p)/steps,startZMP(1),destZMP(1),1.0);
 			newpoint(2)=startZMP(2)+interp.ManosBezierLinearInterpolation(((float)p)/steps,0,adiff,1.0);
-			Zbuffer.cbPush(newpoint);
 
-			//if(p==steps-1)
-			//std::cout<<newpoint(1)<<std::endl;
-			//newpoint.prettyPrint();
+			/** ZMP Point pushed to ZMP buffer **/
+			Zbuffer.cbPush(newpoint);
 	}
 }
 void WalkEngine::feed()
 {
 
-	//Prepare  buffer
-	if(walkbuffer.size()==0)
+	/** Prepare the Instruction buffer **/
+	if(walkbuffer.size() == 0)
 	{
-
 		addInit();
 	}
 
 
-
-    if(Zbuffer.size()<PreviewWindow+1&&walkbuffer.size()>0)//ASSUME Y is the same
+	/** Robot is Ready to begin the walking Cycle **/
+    if(Zbuffer.size() < PreviewWindow + 1 && walkbuffer.size() > 0)
 	{
-		WalkInstruction i=walkbuffer.readOne();
-				//Add double support
-		//std::cout<<"read"<<walkbuffer.size()<<ZbufferX.size()<<std::endl;
-		if(planned.targetZMP!=i.targetSupport&&
-		   i.targetZMP!=KDeviceLists::SUPPORT_LEG_BOTH&&
-		   planned.targetSupport!=KDeviceLists::SUPPORT_LEG_NONE)
-		{
-			i.targetZMP=i.targetSupport;
-			KVecFloat3 sz;
-			if(Zbuffer.size()>0)
-            {
-                //Zbuffer[Zbuffer.size()-1].prettyPrint();
-                sz(0)=Zbuffer[Zbuffer.size()-1](0);
-                sz(1)=Zbuffer[Zbuffer.size()-1](1);
-                sz(2)=Zbuffer[Zbuffer.size()-1](2);
-            }
-            else
-            {
-                sz.zero();
-            }
-            sz-=i.target;
+		WalkInstruction i = walkbuffer.readOne();
 
-			i.steps=i.steps*NaoRobot.getWalkParameter(Tds)/NaoRobot.getWalkParameter(Tss)+3;
-			std::cout<<i.steps<<std::endl;
+		/** Add a double support phase in the middle of i and planned  **/
+		if(planned.targetZMP != i.targetSupport &&
+		   i.targetZMP != KDeviceLists::SUPPORT_LEG_BOTH &&
+		   planned.targetSupport != KDeviceLists::SUPPORT_LEG_NONE)
+		{
+			i.targetZMP = i.targetSupport;
+			i.steps=i.steps * NaoRobot.getWalkParameter(Tds) / NaoRobot.getWalkParameter(Tss); //CAUTION
+			//std::cout<<i.steps<<std::endl;
 			//if(i.steps>20)
             //    i.steps=20;
 
 		}
-		else
+		else /**  Leep walking command i **/
 		{
 			if(Zbuffer.size()>0)
 				walkbuffer.removeOne();
 		}
 
 
-		if(i.targetSupport==KDeviceLists::SUPPORT_LEG_LEFT&&i.targetZMP!=KDeviceLists::SUPPORT_LEG_BOTH)
-			planR=i.target;
-		else if(i.targetSupport==KDeviceLists::SUPPORT_LEG_RIGHT&&i.targetZMP!=KDeviceLists::SUPPORT_LEG_BOTH)
+		if(i.targetSupport == KDeviceLists::SUPPORT_LEG_LEFT && i.targetZMP != KDeviceLists::SUPPORT_LEG_BOTH)
+			planR = i.target;
+		else if(i.targetSupport == KDeviceLists::SUPPORT_LEG_RIGHT && i.targetZMP!=KDeviceLists::SUPPORT_LEG_BOTH)
 			planL=i.target;
-		KVecFloat3 destZMP;
+
+
 		/*if(i.targetSupport!=planned.targetZMP||i.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH)
 		{
 			std::cout<<"Fixedlegs"<<std::endl;
@@ -546,66 +513,68 @@ void WalkEngine::feed()
 			planR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 		}*/
 
+
+		/** Computing the  Reference ZMP point **/
 		if(i.targetZMP==KDeviceLists::SUPPORT_LEG_RIGHT)
+			/** Right Support Phase **/
 			destZMP=planR;
 		else if(i.targetZMP==KDeviceLists::SUPPORT_LEG_LEFT)
+			/** Left Support Phase **/
 			destZMP=planL;
 		else
 		{
+			/** Double Support Phase **/
 			destZMP=planL;
 			destZMP+=planR;
 			destZMP.scalar_mult(0.5);
-
 			destZMP(2)=anglemean(planL(2),planR(2));
 		}
 
 
 
-
+		/** planL,planR are the ankle positions, transforming them to Reference ZMP **/
 		KMath::KMat::GenMatrix<float,2,2> rot;
 		KMath::KMat::transformations::makeRotation(rot,(float)destZMP(2));
-		KVecFloat2 rr=rot*KVecFloat2(-NaoRobot.getWalkParameter(HX),0.0);
-		destZMP(0)+=rr(0);
-		destZMP(1)+=rr(1);
-		//std::cout<<"Plan"<<std::endl;
-		//planL.prettyPrint();
-		//planR.prettyPrint();
-		//destZMP.prettyPrint();
-		if(Zbuffer.size()==0)
+		KVecFloat2 rr = rot * KVecFloat2(-NaoRobot.getWalkParameter(HX),0.0);
+		destZMP(0) += rr(0);
+		destZMP(1) += rr(1);
+
+		/**  When ZMP buffer is empty
+		 * 	 Normally shouldn't happen
+		 **/
+		if(Zbuffer.size() == 0)
 		{
 			destZMP.zero();
-			i.steps=(PreviewWindow-1)/4;
+			i.steps = (PreviewWindow-1) / 4.0;
 		}
 		planInstruction(destZMP,i.steps);
-		planned=i;
+		planned = i;
 		qbuffer.push(i);
 	}
 
- /** EXECUTION PHASE **/
-
-	if((ci.targetSupport==KDeviceLists::SUPPORT_LEG_NONE||currentstep>ci.steps))
+ /** If the previous command i is completed
+  *  use the next one in the command buffer
+  **/
+	if((ci.targetSupport == KDeviceLists::SUPPORT_LEG_NONE || currentstep > ci.steps))
 	{
 
-		WalkInstruction old=ci;
+		WalkInstruction old = ci;
 
 		ci=qbuffer.front();
 
 		qbuffer.pop();
 
-		if(ci.targetSupport!=supportleg||
-			ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH||
-			old.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH) //double support
+       /** Check if double support phase **/
+		if(ci.targetSupport != supportleg ||
+			ci.targetZMP == KDeviceLists::SUPPORT_LEG_BOTH ||
+			old.targetZMP == KDeviceLists::SUPPORT_LEG_BOTH)
 		{
 		    double_support=true;
 
 		}
 		else
 			double_support=false;
-        /*if(ci.targetZMP==old.targetZMP&&ci.targetZMP==KDeviceLists::SUPPORT_LEG_BOTH)
-            reinitstart=false;
-        else
-            reinitstart=true;
-        */
+
 		currentstep=1;
 
 	}
@@ -615,97 +584,77 @@ void WalkEngine::feed()
 
 };
 
-
+/**
+* This function is the main function computing the Walk Trajectories
+**/
 std::vector<float> WalkEngine::runStep()
 {
 
 
-
-	feed();//PrepareBuffers, and target stuff;
-
-
-
-		//Get Tps
-
+	/** PrepareBuffers, and targets **/
+	feed();
 
 	KDeviceLists::SupportLeg oldsupportleg=supportleg;
-
-
 	double_support_progress=0;
+
 	if(double_support)
-		double_support_progress=((float)currentstep)/ci.steps;
-	//std::cout<<"Doublesupportprogress:"<<double_support_progress<<std::endl;
-	supportleg=ci.targetSupport;
-	bool rightsupport=supportleg==KDeviceLists::SUPPORT_LEG_RIGHT;
-	chainsupport= (rightsupport==true)?KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
+		double_support_progress = ((float) currentstep) / ci.steps;
 
-	Tsp=nkin.getForwardEffector((NAOKinematics::Effectors)chainsupport);
-	Tsp.fast_invert();//Tps->Tsp
+	supportleg = ci.targetSupport;
+	bool rightsupport = supportleg == KDeviceLists::SUPPORT_LEG_RIGHT;
+	chainsupport = (rightsupport == true)?KDeviceLists::CHAIN_R_LEG:KDeviceLists::CHAIN_L_LEG;
 
-	KDeviceLists::ChainsNames otherleg= (rightsupport==true)?
+	Tsp = nkin.getForwardEffector((NAOKinematics::Effectors) chainsupport);
+
+	/** Get the Transformation from pelvis to support **/
+	Tsp.fast_invert();
+
+	KDeviceLists::ChainsNames otherleg = (rightsupport == true)?
 										KDeviceLists::CHAIN_L_LEG:KDeviceLists::CHAIN_R_LEG;
-	NAOKinematics::kmatTable merger=nkin.getForwardFromTo(
+	NAOKinematics::kmatTable merger = nkin.getForwardFromTo(
 															(NAOKinematics::Effectors)chainsupport,
 															(NAOKinematics::Effectors)otherleg
 														  );
 
 
 	NAOKinematics::FKvars t;
-	Tssprime=merger;
-	//Tssprime.getEulerAngles().prettyPrint();
+	Tssprime = merger;
 
-
-
-	if(oldsupportleg!=supportleg )
+	if(oldsupportleg != supportleg)
 	{
-		NAOKinematics::kmatTable a=Tssprime,b=Tssprime;
+		NAOKinematics::kmatTable a = Tssprime, b = Tssprime;
 
-		t.p=a.getTranslation();
-		t.a=a.getEulerAngles();
-		t.p(2)*=0.5;
-		t.a(0)*=0.5;
-		t.a(1)*=0.5;
-		a=NAOKinematics::getTransformation(t);
-
-
+		t.p = a.getTranslation();
+		t.a = a.getEulerAngles();
+		t.p(2) *= 0.5;
+		t.a(0) *= 0.5;
+		t.a(1) *= 0.5;
+		a = NAOKinematics::getTransformation(t);
 		a.fast_invert();
-		//(b*a).prettyPrint();
-
-
-		std::cout<<"SWITCH LEG----"<<std::endl;
-
-		Tis*=a;
-
-		if(rightsupport==false)
-		    Tis=Til;
+		std::cout<<"Leg Switching Happening"<<std::endl;
+		Tis *= a;
+		if(rightsupport == false)
+		    Tis = Til;
 	    else
-		    Tis=Tir;
-		//Tssprime=a;
-
-
-
-
+		    Tis = Tir;
 	}
-    //Tis.getEulerAngles().prettyPrint();
-	if(double_support==false)
+	if(double_support == false)
 	{
-		t.p=Tis.getTranslation();
-		t.a=Tis.getEulerAngles();
-		t.p(2)*=0.9;
-		t.a(0)*=0.9;
-		t.a(1)*=0.9;
-		Tis=NAOKinematics::getTransformation(t);
+		t.p = Tis.getTranslation();
+		t.a = Tis.getEulerAngles();
+		t.p(2) *= 0.9;
+		t.a(0) *= 0.9;
+		t.a(1) *= 0.9;
+		Tis = NAOKinematics::getTransformation(t);
 	}
 
-	//Tis.prettyPrint();
 
     /** Beginning of command to be executed **/
 	if(currentstep==1)
 	{
-	    std::cout<<"Change start"<<std::endl;
+	    std::cout<<"Walking Command Starting"<<std::endl;
 		startL=dl;//getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_L_LEG);
 		startR=dr;//getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
-		//startR=getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 	}
 
 	Calculate_Desired_COM();
@@ -713,5 +662,4 @@ std::vector<float> WalkEngine::runStep()
 	return  Calculate_IK();
 
 }
-
 

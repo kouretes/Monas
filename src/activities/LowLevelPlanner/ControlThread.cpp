@@ -1,11 +1,3 @@
-//
-//  ControlThread.cpp
-//  Kouretes Walk Engine
-//
-//  Created by Stelios Piperakis on 8/14/13.
-//  Copyright (c) 2013 SP. All rights reserved.
-//
-
 #include "ControlThread.h"
 #include <iostream>
 
@@ -14,21 +6,21 @@
 #define BASISM 2.0
 #define BASISD 2.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("ControlThread"), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
 
 
-    /** Compute Gains Kx, Ky **/
+	/** Compute MPC Gains **/
     DMPC();
 
-    //Initializing Variables
+	//Initializing Variables
     DeltauX=0.000;
     DeltauY=0.000;
     uX=0.000;
     uY=0.000;
-    flog.insert("ZMPx",0);
+    /* flog.insert("ZMPx",0);
     flog.insert("ZMPy",0);
     flog.insert("refZMPx",0);
     flog.insert("refZMPy",0);
@@ -38,7 +30,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : walkprof("C
     flog.insert("Uy",0);
     flog.insert("Bx",0);
     flog.insert("By",0);
-
+    */
 }
 
 
@@ -70,34 +62,19 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
       DynamicsY.AugmentState();
 
       /**define Laguerre Coefficients **/
-
-	 //std::cout<<"==============="<<std::endl;
       solveConstrainedMPC();
-      walkprof.generate_report(1000);
       /** Optimal Preview Control **/
       DeltauX=L0.transp()*httaX;
       DeltauY=L0.transp()*httaY;
-      //std::cout<<"Du"<< DeltauX<< " "<<DeltauY<<std::endl;
-     //std::cout<<"uold"<< uX<< " "<<uY<<std::endl;
-
-
-      //std::cout<<"FSR:"<<KalmanX.StatePredict(0)<<" "<<KalmanY.StatePredict(0)<<std::endl;
 
 
       KVecFloat2 errorX=KVecFloat2(CoMMeasuredX,KalmanX.StatePredict(0));
       KVecFloat2 errorY=KVecFloat2(CoMMeasuredY,KalmanY.StatePredict(0));
-      //errorX.prettyPrint();
-     // errorY.prettyPrint();
-      //std::cout<<"X : "<< KalmanX.StatePredict(0)<<std::endl;
-      //std::cout<<"Y : "<< KalmanY.StatePredict(0)<<std::endl;
 
       uX=uX+DeltauX;
       uY=uY+DeltauY;
 
-      //std::cout<<":"<<uY<<","<<ZmpBuffer[0](1)<<","<< DynamicsY.State(0)<<","<<DynamicsY.zmpstate<< std::endl;
-      //std::cout<<":"<<uX<<","<<ZmpBuffer[0](0)<<","<< DynamicsX.State(0)<<","<<DynamicsX.zmpstate<< std::endl;
 
-      //std::cout<<"U:"<<uX<<" "<<uY<<std::endl;
       DynamicsX.Update(uX,errorX);
       DynamicsY.Update(uY,errorY);
 
@@ -109,11 +86,9 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 
          //Estimated COM position
         COM(0)=DynamicsX.State(0);
-        COM(1)=DynamicsY.State(0);       //+0.5*(State(1)+1/2*State(2)*OurRobot.getWalkParameter(Ts))*OurRobot.getWalkParameter(Ts);//
+        COM(1)=DynamicsY.State(0);
         predictedErrorX=DynamicsX.zmpstateNew-ZMPReferenceX(0);
         predictedErrorY=DynamicsY.zmpstateNew-ZMPReferenceY(0);
-        xddot=DynamicsX.State(2);
-        yddot=DynamicsY.State(2);
 
         /*flog.insert("ZMPx",DynamicsX.zmpstate);
         flog.insert("ZMPy",DynamicsY.zmpstate);
@@ -132,7 +107,6 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 void LIPMPreviewController::solveConstrainedMPC()
 {
 
-	KPROF_SCOPE(walkprof,"solveConstrainedMPC")
 	KMath::FunctionAffine<float,2*LagN,CONST_SIZE> af1,af2,af3,af4;
 	KMath::FunctionQuadraticPenalty<float,2*LagN,CONST_SIZE> c1(af1),c2(af2),c3(af3),c4(af4);
 
@@ -149,10 +123,10 @@ void LIPMPreviewController::solveConstrainedMPC()
 
 	httaX=(Ky*(Phitransp*pX*2));
 	httaY=(Ky*(Phitransp*pY*2));
-	/*std::cout<<httaX(0)<<std::endl;
-	std::cout<<httaY(0)<<std::endl;*/
 	htta.zero();
 	return;
+
+	/** Constrained MPC Procedure **/
 	for(unsigned i=0;i<LagN;i++)
 	{
 		htta(i)=httaX(i);
@@ -268,7 +242,6 @@ void LIPMPreviewController::solveConstrainedMPC()
 		//htta.prettyPrint();
 		//httaX.prettyPrint();
 		//httaY.prettyPrint();
-		KPROF_SCOPE(walkprof,"solver.solve");
 		 htta=solver.solve(H,Hinv,f,htta);
 		 //htta.prettyPrint();
 

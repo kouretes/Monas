@@ -1,40 +1,42 @@
-//
-//  Stepplanner.h
-//  Kouretes Walk Engine
-//
-//  Created by Stelios Piperakis on 8/14/13.
-//  Copyright (c) 2013 SP. All rights reserved.
-//
-#ifndef STEPPLANNER_H_
-#define STEPPLANNER_H_
+#ifndef __STEPPLANNER_H__
+#define __STEPPLANNER_H__
 #include "RobotParameters.h"
 #include <core/elements/math/KMat.hpp>
 #include "WalkEngine.hpp"
 #include <queue>
 
 
-
-
-
 class Stepplanner
 {
-	private:
-		RobotParameters Robot;
-		bool  rightsupport;
-        KMath::KMat::GenMatrix<float,2,1> tempVec;
-        KMath::KMat::GenMatrix<float,2,2> RotFootZ,RotPelvisZ,RotStepZ;
-        KVecFloat3 Pelvis,anklel,ankler;
-        KVecFloat3 lastvelocity;
-        KDeviceLists::SupportLeg support;
-        KMath::KMat::GenMatrix<float,2,5> Foot;
-        float dx,dy,dtheta,Time;
-	public:
-		std::queue<WalkInstruction> inst;
-		Stepplanner();
-		int getStepcounter();
-		void oneStep(std::vector<float> v);
-		void initialize(RobotParameters );
+  private:
+	RobotParameters Robot;
+	/** Pelvis Rotation **/
+	KMath::KMat::GenMatrix<float, 2, 2> RotPelvisZ;
+	/** Pelvis and ankle Position wrt inertial frame of reference **/
+	KVecFloat3 Pelvis, anklel, ankler;
+	/** Desired Pelvis velocity **/
+	KVecFloat3 lastvelocity, velocity, tv;
+	/** Support Leg **/
+	KDeviceLists::SupportLeg support;
+  public:
+	/** Designed step buffer **/
+	std::queue<WalkInstruction> inst;
+	//Stepplanner();
 
+	/** @fn void initialize(RobotParameters )
+	 *  @brief initiliazes the Stepplanner
+	 *  by adding two zero speed,
+	 *  and a double support instructions
+	 */
 
-  	};
+	void initialize(RobotParameters );
+
+	/** @fn void oneStep(std::vector<float> )
+     *  @brief adds a walking instruction
+     *  with a desired speed
+     */
+
+	void oneStep(std::vector<float> );
+
+};
 #endif

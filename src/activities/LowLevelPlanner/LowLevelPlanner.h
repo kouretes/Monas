@@ -20,9 +20,6 @@
 #include "hal/robot/nao/generic_nao/aldebaran-motion.h"
 
 
-/**
- Useful NameSpace
- **/
 
 enum {
 	DO_NOTHING =0, INIT_WALK, DO_STEPS,IDLE, FINAL_STEP, WAIT_TO_FINISH, DCM_RUN, DCM_STOP
@@ -85,7 +82,8 @@ class LowLevelPlanner: public IActivity
 		std::vector<float> alljoints;
 		AL::ALValue commands;
 		/****/
-		float fsr_position[4][2][2];
+		KMath::KMat::GenMatrix<double, 3, 4> fsrposl, fsrposr;
+		KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
 
 		unsigned int dcm_counter;
 

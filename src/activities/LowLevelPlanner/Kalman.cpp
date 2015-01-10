@@ -22,16 +22,17 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 	StatePredict.zero();
 
 }
-
+/** Kalman filter to  deal with Delay, and  Noise **/
  void Kalman::Filter(float ZMPMeasured,float CoMMeasured){
 
 
-	/** Kalman filter to  deal with Delay, Bias , Noise **/
 
         /** Predict **/
 
 		StateKalman=StateKalman+Bkalman*uBuffer.front();
-
+        /** Estimated ZMP from the COM measurement
+		 * using the Cart and Table Model
+		 **/
 		float ct1=0.000,ct2=0.000;
 		float zmpfromcom=0.000;
 
@@ -51,13 +52,9 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 				combuffer.pop();
 				combuffer.push(ct1);
 
-				//std::cout<<"CoMMeasured:"<<CoMMeasured<<std::endl;
-				//std::cout<<"ct1:"<<ct1<<std::endl;
-				//std::cout<<"ct2:"<<ct2<<std::endl;
+
 				float comddot=(CoMMeasured-2*ct1+ct2)/(OurRobot.getWalkParameter(Ts)*OurRobot.getWalkParameter(Ts) );
-				//std::cout<<"comddot:"<<comddot<<std::endl;
 				zmpfromcom=CoMMeasured-(OurRobot.getWalkParameter(ComZ)/OurRobot.getWalkParameter(g))*comddot;
-				//std::cout<<"zmpfromcom:"<<zmpfromcom<<std::endl;
 			}
 
 		}
@@ -68,8 +65,10 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 		//StateKalman.prettyPrint();
 		if(doup)
 		{
+			/** innovation value **/
 			ykalman=KVecFloat2(ZMPMeasured,zmpfromcom);
-			ykalman+=(Ckalman*(StateKalman)).scalar_mult(-1.0);/** innovation value **/
+			ykalman+=(Ckalman*(StateKalman)).scalar_mult(-1.0);
+
 			s=Ckalman*P*Ckalman.transp()+MeasurementNoise;
 			s.fast_invert();
 			Kgain=(P*Ckalman.transp())*s;
@@ -89,7 +88,7 @@ Kalman::Kalman(RobotParameters &robot):OurRobot(robot)
 			uBuffer.pop();
 
 
-
+     /** Getting Rid of the ZMP delay **/
 	StatePredict=StateKalman;
 	unsigned bufsize=uBuffer.size();
 	for(unsigned i=0;i<bufsize;i++)

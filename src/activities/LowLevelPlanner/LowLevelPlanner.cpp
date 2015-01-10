@@ -78,53 +78,7 @@ int LowLevelPlanner::Execute()
 		firstrun = false;
 	}
 
-	/*static int counter = 0; //just for testing
-	if ((counter % 2 == 0))
-	{
-		MotionWalkMessage* wmot = new MotionWalkMessage();
-		float x = rand() / ((float) RAND_MAX);
-		x = (x - 0.5);
-		float y = rand() / ((float) RAND_MAX);
-		y = (y - 0.5);
-		float z = rand() / ((float) RAND_MAX);
-		z = (z - 0.5);
-		float s = rand() / ((float) RAND_MAX);
 
-		x =0.00;
-		y =0.000;
-		z = 0.000;
-		s = 1;
-		wmot->set_command("setWalkTargetVelocity");
-		wmot->add_parameter(x);
-		wmot->add_parameter(y);
-		wmot->add_parameter(z);
-		wmot->add_parameter(s);
-
-		_blk.publishSignal(*wmot, "motion");
-		delete wmot;
-	}
-	counter++;*/
-
-	/**
-	 Message GetSpeed from high level
-
-	 **/
-
-	/**
-	 Check if after Stepping the Target is reached
-	 **/
-	/*wm = _blk.readSignal<MotionWalkMessage>("motion");
-	if (wm != NULL)
-	{
-		if (wm->command() == "setWalkTargetVelocity")
-		{
-
-		} else
-		{
-			return 0;
-		}
-	} else
-		return 0;*/
 
     if (state == DO_NOTHING)
     {
@@ -138,19 +92,8 @@ int LowLevelPlanner::Execute()
 	speed.push_back(0);
 	speed.push_back(0);
 
-	/*if (dcm_length[next_2B_inserted] != 0)
-	{
-		std::cout << "Buffers are full" << std::endl;
-		return 0;
-	}*/
 
-	if (speed.size() < 3)
-		std::cerr << "Not Enought Speed Values" << std::endl;
 
-	/*if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
-		state = FINAL_STEP;*/
-
-	//std::cout << " State " << state <<  " next_2B_inserted " << next_2B_inserted << std::endl;
     boost::shared_ptr<const ButtonMessage> bm = _blk.readSignal<ButtonMessage>("buttonevents");
     int chest=0;
     if(bm)
@@ -178,25 +121,23 @@ int LowLevelPlanner::Execute()
 
 		case INIT_WALK:
 			dcm_state = INIT_WALK;
-			//engine->Reset();
 			engine->addInit();
 			NaoPlanner.initialize(NaoRobot);
-			//NaoPlanner.initialize(NaoRobot);
-			//NaoPlanner.initialize(NaoRobot);
+
 			while(NaoPlanner.inst.size()>0)
 			{
 					engine->walkbuffer.add(NaoPlanner.inst.front());
 					NaoPlanner.inst.pop();
 			}
-			NaoPlanner.oneStep(std::vector<float>(3,0));
-			NaoPlanner.oneStep(std::vector<float>(3,0));
-			NaoPlanner.oneStep(std::vector<float>(3,0));
 			//NaoPlanner.oneStep(std::vector<float>(3,0));
-			while(NaoPlanner.inst.size()>0)
-			{
-					engine->walkbuffer.add(NaoPlanner.inst.front());
-					NaoPlanner.inst.pop();
-			}
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
+			//NaoPlanner.oneStep(std::vector<float>(3,0));
+			//while(NaoPlanner.inst.size()>0)
+			//{
+			//		engine->walkbuffer.add(NaoPlanner.inst.front());
+			//		NaoPlanner.inst.pop();
+			//}
 
 			state=IDLE;
 			break;
@@ -211,15 +152,6 @@ int LowLevelPlanner::Execute()
 						NaoPlanner.inst.pop();
 				}
 			}
-			/*Plan two consecutive Steps with the Predefined Speed
-			 **/
-			//NaoPlanner.oneStep(speed);
-			//NaoPlanner.oneStep(speed);
-
-
-			//Calculate_Tragectories();
-
-			//dcm_state = DCM_RUN;
 			break;
 
 		case FINAL_STEP:
@@ -227,9 +159,6 @@ int LowLevelPlanner::Execute()
 			 Plan a step and make another FINAL so
 			 both Feet come parallel
 			 **/
-			//NaoPlanner.oneStep(speed);
-			//NaoPlanner.finalStep();
-			//Calculate_Tragectories();
 			state = WAIT_TO_FINISH;
 			break;
         case IDLE:
@@ -260,7 +189,6 @@ int LowLevelPlanner::DCMcallback()
 		alljoints[j] = *jointPtr[i];
 	alljoints[KDeviceLists::R_LEG+KDeviceLists::HIP_YAW_PITCH]=alljoints[KDeviceLists::L_LEG+KDeviceLists::HIP_YAW_PITCH];
 
-	KMath::KMat::GenMatrix<double,4,1> fsrl,fsrr;
 	fsrl.zero();
 	fsrr.zero();
 	for(int i=0;i<4;i++)
@@ -283,15 +211,14 @@ int LowLevelPlanner::DCMcallback()
 
 	if (joints_action.size() != 12)
 	{
-		//std::cerr << "Not enough joint values" << std::endl;
+		std::cerr << "Not enough joint values" << std::endl;
 
 			int *test;
 			test=0;
 			*test=5;
 		return 0;
 	}
-	//std::cout<<joints_action[0]<<std::endl;
-	//std::cout<<joints_action[KDeviceLists::LEG_SIZE]<<std::endl;
+
     joints_action[0]=0;
     joints_action[KDeviceLists::LEG_SIZE]=0;
 	int p;
@@ -299,7 +226,6 @@ int LowLevelPlanner::DCMcallback()
 
 		commands[5][(p)][0] = (float) joints_action[p];
 	//Left Shoulder use right hip value
-	//std::cout << p;
 	try{
 
 	commands[5][p+KDeviceLists::SHOULDER_PITCH][0] =engine->armangles(0);
@@ -371,9 +297,9 @@ void LowLevelPlanner::initialise_devices()
 	std::vector<std::string> jointKeys = KDeviceLists::getJointKeys();
 	std::vector<std::string> sensorKeys = KDeviceLists::getSensorKeys();
 
-	KMath::KMat::GenMatrix<double,3,4> fsrposl,fsrposr;
 	fsrposl.zero();
 	fsrposr.zero();
+
 	fsrposl(0,0)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontLeft/Sensor/XPosition");
 	fsrposl(0,1)=memory->getData("Device/SubDeviceList/LFoot/FSR/FrontRight/Sensor/XPosition");
 	fsrposl(0,2)=memory->getData("Device/SubDeviceList/LFoot/FSR/RearLeft/Sensor/XPosition");
@@ -394,8 +320,7 @@ void LowLevelPlanner::initialise_devices()
 	fsrposr(1,1)=memory->getData("Device/SubDeviceList/RFoot/FSR/FrontRight/Sensor/YPosition");
 	fsrposr(1,2)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearLeft/Sensor/YPosition");
 	fsrposr(1,3)=memory->getData("Device/SubDeviceList/RFoot/FSR/RearRight/Sensor/YPosition");
-	//fsrposl.prettyPrint();
-	//fsrposr.prettyPrint();
+
 	engine->initFSR(fsrposl,fsrposr);
 
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
@@ -409,13 +334,10 @@ void LowLevelPlanner::initialise_devices()
 	{
 
 		jointPtr[i] = (float *) memory->getDataPtr(jointKeys[i]);
-		//std::cout << jointKeys[i] << i << " " << jointPtr[i] << std::endl;
-		//sleep(1);
+
 
 	}
 
-	//std::cout << " Number of position joints " << jointPtr.size() << std::endl;
-	//std::cout << " Number of sensor values " << sensorPtr.size() << std::endl;
 	createHardnessActuatorAlias();
 	createJointsPositionActuatorAlias();
 	prepareJointsPositionActuatorCommand();
@@ -437,14 +359,12 @@ void LowLevelPlanner::prepareJointsPositionActuatorCommand()
 	commands[3] = 0;
 
 	commands[4].arraySetSize(1);
-//commands[4][0]  Will be the new time
-// to control
+
 
 	commands[5].arraySetSize(KDeviceLists::LEG_SIZE * 2 +KDeviceLists::ARM_SIZE*2 ); // For joints //2legs + 2 hip_pitch
 
 	for (int i = 0; i < KDeviceLists::LEG_SIZE * 2  +KDeviceLists::ARM_SIZE*2; i++)
 		commands[5][i].arraySetSize(1);
-//commands[5][i][0] will be the new angle
 
 }
 

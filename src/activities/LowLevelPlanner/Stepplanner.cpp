@@ -1,17 +1,10 @@
-//
-//  Stepplanner.h
-//  Kouretes Walk Engine
-//
-//  Created by Stelios Piperakis on 8/14/13.
-//  Copyright (c) 2013 SP. All rights reserved.
-//
 #include "Stepplanner.h"
 
-Stepplanner::Stepplanner()
+/*Stepplanner::Stepplanner()
 {
     ;
 
-}
+}*/
 
 void Stepplanner::initialize(RobotParameters OurRobot)
 {
@@ -37,46 +30,27 @@ void Stepplanner::initialize(RobotParameters OurRobot)
 	i.targetSupport=KDeviceLists::SUPPORT_LEG_RIGHT;
 	i.targetZMP=KDeviceLists::SUPPORT_LEG_BOTH;
 	inst.push(i);
-	Pelvis.zero();//Init
-
+	Pelvis.zero();
 
 
 }
 
 
 void Stepplanner::oneStep(std::vector<float> v)
-{    /**     If Walk Engine just Started this procedure determines which leg will move first
-     **/
+{
 	WalkInstruction i;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
-    /*if( (v[1]>0 ||v[2]>0)&&support==KDeviceLists::SUPPORT_LEG_RIGHT)
-	{
-		std::vector<float> speed;
-		speed.push_back(0);
-		speed.push_back(0);
-		speed.push_back(0);
-		oneStep(speed);
-		return oneStep(v);
-	}
-	else if( (v[1]<0||v[2]<0)&&support==KDeviceLists::SUPPORT_LEG_LEFT)
-	{
-		std::vector<float> speed;
-		speed.push_back(0);
-		speed.push_back(0);
-		speed.push_back(0);
-		oneStep(speed);
-		return oneStep(v);
-	}*/
 
 
-    //Switch Support for next step
+    /** Switch Support for next step **/
     if(support==KDeviceLists::SUPPORT_LEG_LEFT)
 		support=KDeviceLists::SUPPORT_LEG_RIGHT;
 	else if(support==KDeviceLists::SUPPORT_LEG_RIGHT)
 		support=KDeviceLists::SUPPORT_LEG_LEFT;
-	else//BOTH! choose where to put the support
+	else /** BOTH --- choose where to put the support foot **/
 	{
-
+		 /**     If Walk Engine just Started this procedure determines which leg will move first Refactor
+		     **/
 		if( v[1]>0||v[2]>0)
 		{
 			support=KDeviceLists::SUPPORT_LEG_RIGHT;
@@ -89,26 +63,21 @@ void Stepplanner::oneStep(std::vector<float> v)
 	}
 
 	KVecFloat2 h=KVecFloat2(Robot.getWalkParameter(HX),Robot.getWalkParameter(H0));
-	if(support==KDeviceLists::SUPPORT_LEG_RIGHT)
-		h(1)=h(1);//duh
-	else
-		h(1)=-h(1);//duh
-    KVecFloat3 velocity,tv;
-
+	if(support!=KDeviceLists::SUPPORT_LEG_RIGHT)
+		h(1)=-h(1);
 
 	KVecFloat2 a(v[0],v[1]);
 	a=RotPelvisZ*a;
 
-
-
-    if(velocity.norm2()==0)
-	    lastvelocity.zero();
-
-
     velocity(0)= a(0) * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepX);
 	velocity(1)= a(1) * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepY);
     velocity(2) = v[2] *  Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepTheta);
+
+    if(velocity.norm2()==0)
+    	    lastvelocity.zero();
+
     velocity=velocity*0.1+lastvelocity*0.9;
+
 
     tv=velocity;
     tv(0)/= Robot.getWalkParameter(MaxStepX);
@@ -118,7 +87,9 @@ void Stepplanner::oneStep(std::vector<float> v)
     mt=max(mt,(float)tv(2));
 
     lastvelocity=velocity;
-
+    /** Either reduce the step i or increase it
+     * depending to the current velocity
+     */
     float tstep=Robot.getWalkParameter(Tstep);
     if(mt>1)
     {
@@ -132,13 +103,7 @@ void Stepplanner::oneStep(std::vector<float> v)
         tstep*=mt;
     }
 
-
-    std::cout<<tstep<<" "<<mt<<std::endl;
-
-
-
-
-
+    /** Compute the ankle location and orientation **/
     Pelvis+=velocity;
     KMath::KMat::transformations::makeRotation(RotPelvisZ,(float)Pelvis(2));
     h=RotPelvisZ*h;
@@ -148,9 +113,10 @@ void Stepplanner::oneStep(std::vector<float> v)
 	i.target(1)+=h(1);
 	i.targetSupport=support;
 	i.targetZMP=support;
-	i.target=i.target+velocity;
+	/**  Foot is equal to the imaginary Pelvis **/
+	i.target=i.target+velocity*0.5;
+	/** Double Support Phase time interval **/
 	i.ttlspeed=sqrt(velocity.norm2());
-	//i.target.prettyPrint();
 	if(support==KDeviceLists::SUPPORT_LEG_LEFT)
 		ankler=i.target;
 	else
