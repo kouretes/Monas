@@ -37,6 +37,7 @@ class Dynamics
     **/
     void Update(float u,KVecFloat2 error);
 
+    void RolloutUpdate(float u);
 
 };
 #endif

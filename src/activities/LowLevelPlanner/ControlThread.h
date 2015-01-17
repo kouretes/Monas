@@ -24,6 +24,9 @@
 #include "RobotParameters.h"
 #include "Kalman.h"
 #include "Dynamics.h"
+#include "cem.h"
+//#define KPROFILING_ENABLED
+//#include "core/architecture/time/Profiler.hpp"
 
 class LIPMPreviewController{
 private:
@@ -87,7 +90,8 @@ private:
 	 *  control problem
 	 */
 	void solveConstrainedMPC();
-
+	//mutable KProfiling::profiler walkprof;
+	cem cemBalance;
 
 public:
 

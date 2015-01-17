@@ -161,8 +161,8 @@ int LowLevelPlanner::Execute()
 			 **/
 			state = WAIT_TO_FINISH;
 			break;
-        case IDLE:
-            break;
+		case IDLE:
+		    break;
 		case WAIT_TO_FINISH:
 			return 0;
 			break; // nothing to do
@@ -460,8 +460,35 @@ void LowLevelPlanner::createHardnessActuatorAlias()
 
 void LowLevelPlanner::setStiffnessDCM(const float &stiffnessValue)
 {
-	AL::ALValue stiffnessCommands;
 	int DCMtime;
+	/** Read Values of joints **/
+	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+		alljoints[j] = *jointPtr[i];
+
+	int l=0;
+	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::L_LEG + j];
+	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::R_LEG + j];
+	for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::L_ARM + j];
+	for (int j = 0; j <  KDeviceLists::ARM_SIZE; j++, l++)
+		commands[5][(l)][0] = alljoints[KDeviceLists::R_ARM + j];
+
+	try
+	{
+		/// Get time in 0 ms
+		DCMtime = dcm->getTime(10);
+		commands[4][0] = DCMtime;
+		dcm->setAlias(commands);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("DcmStiffness", "execute_action", "Error when sending command to DCM : " + e.toString());
+	}
+	
+	
+	AL::ALValue stiffnessCommands;
+
 	// increase stiffness with the "jointStiffness" Alias created at initialisation
 	try
 	{

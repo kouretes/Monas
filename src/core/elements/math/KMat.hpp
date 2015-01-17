@@ -982,6 +982,33 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 		return athis;
 	};
 
+	//Cholesky factorization using Cholesky–Banachiewicz algorithm, operates in-place
+	template<typename A, unsigned S>
+	GenMatrix<A, S, S> & cholesky_decomposition(GenMatrix<A, S, S> & athis) {
+		//std::cout<<"COHLSK"<<std::endl;
+		for (unsigned k = 0; k < S; k++) {
+
+			if (athis(k, k) <= 0) {
+
+				std::string d("KMat:cholesky_decomposition<T,S,S>() ");
+				throw SingularMatrixInvertionException(d);
+			}
+			for (unsigned j = k + 1; j < S; j++) {
+				for (unsigned q = j; q < S; q++)
+					athis(q, j) = athis(q, j)
+							- (athis(q, k) * athis(j, k)) / athis(k, k);
+			}
+			A rt = sqrt(athis(k, k));
+			for (unsigned q = k; q < S; q++)
+				athis(q, k) = athis(q, k) / rt;
+			//prettyPrint(athis);
+		}
+		for (unsigned k = 0; k < S; k++)
+			for (unsigned q = k + 1; q < S; q++)
+				athis(k, q) = 0;
+		return athis;
+
+	};
 
 	//invert function declaration, used below as friend
 	template <typename A, unsigned S>

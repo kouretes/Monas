@@ -93,6 +93,20 @@ Dynamics::Dynamics(RobotParameters &robot): OurRobot(robot)
 	startup=0;
 
 }
+
+void Dynamics::RolloutUpdate(float u)
+{
+    /** Updating the Dynamics **/
+
+    Stateold=State;
+    State=Ad*State;
+    temp=Bd;
+    temp.scalar_mult(u);
+    State+=temp;
+    zmpstateNew=(State(0)+Cd(2)*State(2));
+}
+
+
 void Dynamics::Update(float u,KVecFloat2 error)
 {
     /** Updating the Dynamics **/

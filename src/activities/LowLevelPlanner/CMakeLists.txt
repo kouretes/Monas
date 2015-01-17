@@ -18,6 +18,8 @@ set ( ActivitySrcs	LowLevelPlanner.cpp
 			Dynamics.h
 			Dynamics.cpp
 			matlog.cpp
+			cem.cpp
+			cem.h
 			)
 
 include ( ../activTemplate.cmake )

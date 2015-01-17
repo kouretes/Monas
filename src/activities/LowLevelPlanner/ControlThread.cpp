@@ -6,7 +6,7 @@
 #define BASISM 2.0
 #define BASISD 2.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -14,6 +14,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp
 
 	/** Compute MPC Gains **/
     DMPC();
+    cemBalance.init_cem();
 
 	//Initializing Variables
     DeltauX=0.000;
@@ -30,7 +31,17 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) : OurRobot(rp
     flog.insert("Uy",0);
     flog.insert("Bx",0);
     flog.insert("By",0);
+    flog.insert("MUx",uX);
+    flog.insert("MUy",uY);
+    //flog.insert("Bx",DynamicsX.State(3));
+    //flog.insert("By",DynamicsY.State(3));
+    for(int i=0; i<CEM_M;i++)
+    	flog.insert("xTheta_"+_toString(i),cemBalance.cemconfig[0].theta(i));
+    for(int i=0; i<CEM_M;i++)
+        flog.insert("yTheta_"+_toString(i),cemBalance.cemconfig[1].theta(i));
+    flog.periodic_save();
     */
+
 }
 
 
@@ -56,7 +67,9 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 			ZMPtheta(i-1)		 = ZmpBuffer[ZmpBuffer.size() - 1](2);
 		}
 	}
-
+      float muX=0,muY=0;
+      //if(balance>0)
+	//cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
 
       DynamicsX.AugmentState();
       DynamicsY.AugmentState();
@@ -96,8 +109,14 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         flog.insert("refZMPy",ZmpBuffer[0](1));
         flog.insert("COMx",DynamicsX.State(0));
         flog.insert("COMy",DynamicsY.State(0));
+        flog.insert("COMxdot",DynamicsX.State(1));
+	flog.insert("COMydot",DynamicsY.State(1));
+	flog.insert("COMxddot",DynamicsX.State(2));
+	flog.insert("COMyddot",DynamicsY.State(2));
         flog.insert("Ux",uX);
         flog.insert("Uy",uY);
+        flog.insert("MUx",muX);
+	flog.insert("MUy",muY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
         flog.periodic_save();*/
