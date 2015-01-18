@@ -162,6 +162,7 @@ int LowLevelPlanner::Execute()
 			state = WAIT_TO_FINISH;
 			break;
 		case IDLE:
+
 		    break;
 		case WAIT_TO_FINISH:
 			return 0;
@@ -207,7 +208,8 @@ int LowLevelPlanner::DCMcallback()
 	}
 	if (dcm_state == DCM_STOP) //Nothing to execute
 		return 0;
-      std::vector<float>joints_action=engine->runStep();
+
+    std::vector<float>joints_action=engine->runStep();
 
 	if (joints_action.size() != 12)
 	{

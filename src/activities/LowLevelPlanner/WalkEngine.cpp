@@ -75,7 +75,7 @@ void WalkEngine::Reset()
 	planned.targetSupport=KDeviceLists::SUPPORT_LEG_NONE;
 
 	predicterror.zero();
-
+	balance=0;
 };
 
 
@@ -314,7 +314,7 @@ std::vector<float> WalkEngine::Calculate_IK()
 
 
 
-void WalkEngine::Calculate_Desired_COM()
+void WalkEngine::Calculate_Desired_COM(int balance)
 {
 
 
@@ -327,7 +327,7 @@ void WalkEngine::Calculate_Desired_COM()
 	CoMm.scalar_mult(1.0/1000.0);
     /** Get Target Com in Inertial Frame **/
 	NaoLIPM.isDoubleSupport=double_support;
-	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1));
+	NaoLIPM.LIPMComPredictor(Zbuffer,CoMm(0),CoMm(1),copi(0),copi(1),balance);
 
 	KVecFloat3 e(NaoLIPM.predictedErrorX,NaoLIPM.predictedErrorY,0);
 	if(e(0)>NaoRobot.getWalkParameter(AdaptiveStepTolx) || e(1)>NaoRobot.getWalkParameter(AdaptiveStepToly))
@@ -473,6 +473,10 @@ void WalkEngine::feed()
 	if(walkbuffer.size() == 0)
 	{
 		addInit();
+		//balancing now
+		//no more steps
+		balance=1;
+		cout << "BAAAAAAAALAAAAAAAAAAANCCEEEEEEEEE" << endl;
 	}
 
 
@@ -657,7 +661,7 @@ std::vector<float> WalkEngine::runStep()
 		startR=dr;//getPositionInertial((NAOKinematics::Effectors)KDeviceLists::CHAIN_R_LEG);
 	}
 
-	Calculate_Desired_COM();
+	Calculate_Desired_COM(balance);
 
 	return  Calculate_IK();
 

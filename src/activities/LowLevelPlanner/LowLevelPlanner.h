@@ -107,7 +107,7 @@ class LowLevelPlanner: public IActivity
 
 		void setStiffnessDCM(const float &stiffnessValue);
 
-		int state, dcm_state;
+		int state, dcm_state; //balance=1;
 	};
 	ACTIVITY_END
 #endif

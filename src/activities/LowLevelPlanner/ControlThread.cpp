@@ -21,12 +21,16 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(r
     DeltauY=0.000;
     uX=0.000;
     uY=0.000;
-    /* flog.insert("ZMPx",0);
+    flog.insert("ZMPx",0);
     flog.insert("ZMPy",0);
     flog.insert("refZMPx",0);
     flog.insert("refZMPy",0);
     flog.insert("COMx",0);
     flog.insert("COMy",0);
+    flog.insert("COMxdot",DynamicsX.State(1));
+	flog.insert("COMydot",DynamicsY.State(1));
+	flog.insert("COMxddot",DynamicsX.State(2));
+	flog.insert("COMyddot",DynamicsY.State(2));
     flog.insert("Ux",0);
     flog.insert("Uy",0);
     flog.insert("Bx",0);
@@ -40,13 +44,13 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(r
     for(int i=0; i<CEM_M;i++)
         flog.insert("yTheta_"+_toString(i),cemBalance.cemconfig[1].theta(i));
     flog.periodic_save();
-    */
+
 
 }
 
 
 
-void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY )
+void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMMeasuredX,float CoMMeasuredY,float ZMPMeasuredX,float ZMPMeasuredY, int balance )
 {
     KalmanX.Filter(ZMPMeasuredX,CoMMeasuredX);
 
@@ -68,11 +72,12 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
 		}
 	}
       float muX=0,muY=0;
-      //if(balance>0)
-	//cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
 
       DynamicsX.AugmentState();
       DynamicsY.AugmentState();
+
+      if(balance>0)
+    	  cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
 
       /**define Laguerre Coefficients **/
       solveConstrainedMPC();
@@ -103,23 +108,23 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         predictedErrorX=DynamicsX.zmpstateNew-ZMPReferenceX(0);
         predictedErrorY=DynamicsY.zmpstateNew-ZMPReferenceY(0);
 
-        /*flog.insert("ZMPx",DynamicsX.zmpstate);
+        flog.insert("ZMPx",DynamicsX.zmpstate);
         flog.insert("ZMPy",DynamicsY.zmpstate);
         flog.insert("refZMPx",ZmpBuffer[0](0));
         flog.insert("refZMPy",ZmpBuffer[0](1));
         flog.insert("COMx",DynamicsX.State(0));
         flog.insert("COMy",DynamicsY.State(0));
         flog.insert("COMxdot",DynamicsX.State(1));
-	flog.insert("COMydot",DynamicsY.State(1));
-	flog.insert("COMxddot",DynamicsX.State(2));
-	flog.insert("COMyddot",DynamicsY.State(2));
+		flog.insert("COMydot",DynamicsY.State(1));
+		flog.insert("COMxddot",DynamicsX.State(2));
+		flog.insert("COMyddot",DynamicsY.State(2));
         flog.insert("Ux",uX);
         flog.insert("Uy",uY);
         flog.insert("MUx",muX);
-	flog.insert("MUy",muY);
+        flog.insert("MUy",muY);
         flog.insert("Bx",DynamicsX.State(3));
         flog.insert("By",DynamicsY.State(3));
-        flog.periodic_save();*/
+        flog.periodic_save();
 
 }
 
@@ -345,8 +350,8 @@ void LIPMPreviewController::generateLaguerre()
 	L0(0)=1;
 	for(unsigned i=1;i<LagN;i++)
 	{
-		v(i)=pow(-alpha,i-1)*beta;
-		L0(i)=pow(-alpha,i);
+		v(i)=pow(-alpha,(int)i-1)*beta;
+		L0(i)=pow(-alpha,(int)i);
 	}
 
 	L0.scalar_mult(sqrt(beta));

@@ -131,8 +131,7 @@ private:
 
 	/** Measured Center of Mass from the joint encoders **/
 	KVecDouble3 measuredcom;
-
-
+	int balance;
 
    /** @fn void feed()
     *  @brief Filling the Command and ZMP buffers
@@ -142,7 +141,7 @@ private:
 	/** @fn void Calculate_Desired_COM()
 	 *  @brief Computation of the Target Center of Mass wrt the Inertial Frame of Reference
     **/
-	void Calculate_Desired_COM();
+	void Calculate_Desired_COM(int balance);
 
 	/** @fn std::vector<float> Calculate_IK()
 	 *  @brief Computation of leg joint angles

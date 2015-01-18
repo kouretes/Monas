@@ -108,7 +108,7 @@ public:
 	 *  @brief Computes the desired COM
 	 */
 
-	void LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMmeasuredX, float CoMmeasuredY, float ZMPMeasuredX, float ZMPMeasuredY);
+	void LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuffer, float CoMmeasuredX, float CoMmeasuredY, float ZMPMeasuredX, float ZMPMeasuredY, int balance);
 
 	/** @fn void DMPC()
 	 *  @brief Computes the MPC gains
