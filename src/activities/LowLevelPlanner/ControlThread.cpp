@@ -6,7 +6,7 @@
 #define BASISM 2.0
 #define BASISD 2.0
 
-LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp), KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
+LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(rp), OurRobot(rp), DynamicsX(rp), DynamicsY(rp),  PseudoDynamicsY(rp), PseudoDynamicsX(rp),KalmanX(rp), KalmanY(rp),flog("log",RAW,20)
 {
     KalmanX.uBuffer.push(0.000);
     KalmanY.uBuffer.push(0.000);
@@ -27,10 +27,12 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters &rp ) :cemBalance(r
     flog.insert("refZMPy",0);
     flog.insert("COMx",0);
     flog.insert("COMy",0);
-    flog.insert("COMxdot",DynamicsX.State(1));
-	flog.insert("COMydot",DynamicsY.State(1));
-	flog.insert("COMxddot",DynamicsX.State(2));
-	flog.insert("COMyddot",DynamicsY.State(2));
+    flog.insert("PseudoCOMx",PseudoDynamicsX.State(0));
+    flog.insert("PseudoCOMy",PseudoDynamicsY.State(0));
+    flog.insert("PseudoCOMxdot",PseudoDynamicsX.State(1));
+	flog.insert("PseudoCOMydot",PseudoDynamicsY.State(1));
+	flog.insert("PseudoCOMxddot",PseudoDynamicsX.State(2));
+	flog.insert("PseudoCOMyddot",PseudoDynamicsY.State(2));
     flog.insert("Ux",0);
     flog.insert("Uy",0);
     flog.insert("Bx",0);
@@ -76,8 +78,15 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
       DynamicsX.AugmentState();
       DynamicsY.AugmentState();
 
-      if(balance>0)
-    	  cemBalance.calculate_action(muX,muY,DynamicsX,DynamicsY,ZmpBuffer);
+      PseudoDynamicsX.AugmentState();
+      PseudoDynamicsY.AugmentState();
+      //if(balance>10)
+      cemBalance.calculate_action(muX,muY,PseudoDynamicsX,PseudoDynamicsY,ZmpBuffer);
+      KVecFloat2 PseudoError;
+      PseudoError.zero();
+      PseudoDynamicsX.Update(muX,PseudoError);
+      PseudoDynamicsY.Update(muY,PseudoError);
+
 
       /**define Laguerre Coefficients **/
       solveConstrainedMPC();
@@ -114,10 +123,12 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
         flog.insert("refZMPy",ZmpBuffer[0](1));
         flog.insert("COMx",DynamicsX.State(0));
         flog.insert("COMy",DynamicsY.State(0));
-        flog.insert("COMxdot",DynamicsX.State(1));
-		flog.insert("COMydot",DynamicsY.State(1));
-		flog.insert("COMxddot",DynamicsX.State(2));
-		flog.insert("COMyddot",DynamicsY.State(2));
+        flog.insert("PseudoCOMx",PseudoDynamicsX.State(0));
+        flog.insert("PseudoCOMy",PseudoDynamicsY.State(0));
+        flog.insert("PseudoCOMxdot",PseudoDynamicsX.State(1));
+		flog.insert("PseudoCOMydot",PseudoDynamicsY.State(1));
+		flog.insert("PseudoCOMxddot",PseudoDynamicsX.State(2));
+		flog.insert("PseudoCOMyddot",PseudoDynamicsY.State(2));
         flog.insert("Ux",uX);
         flog.insert("Uy",uY);
         flog.insert("MUx",muX);

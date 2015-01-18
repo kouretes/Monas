@@ -105,8 +105,10 @@ private:
 			Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L);
 
 	bool cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
-			cemconfig_t & config, float converge_value);
-
+			cemconfig_t & config, float converge_value, float Zref);
+	void run_rollouts_and_update(Dynamics & sys,
+			cemconfig_t & config, float converge_value, GNx1_t Zref);
+	float calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, float Zref);
 };
 
 #endif // CEM_H

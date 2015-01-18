@@ -473,10 +473,9 @@ void WalkEngine::feed()
 	if(walkbuffer.size() == 0)
 	{
 		addInit();
-		//balancing now
-		//no more steps
-		balance=1;
-		cout << "BAAAAAAAALAAAAAAAAAAANCCEEEEEEEEE" << endl;
+		balance++;
+		if(balance > 10);
+			cout << "BALAAAANCEE" << endl << endl << endl;
 	}
 
 

@@ -100,6 +100,8 @@ public:
 	Kalman KalmanX, KalmanY;
 
 	Dynamics DynamicsX, DynamicsY;
+	Dynamics PseudoDynamicsX, PseudoDynamicsY;
+
 
 	LIPMPreviewController(RobotParameters&);
 
