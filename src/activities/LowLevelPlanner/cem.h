@@ -7,7 +7,7 @@
 #include <vector>
 #include "CircularBuffer.hpp"
 
-#define CEM_N  10 //Number of time steps per rollout
+#define CEM_N  50 //Number of time steps per rollout
 #define CEM_M  3  //Number of paramaters
 #define CEM_S  3  //Number of state Variables
 #define AXIS 2
@@ -105,10 +105,9 @@ private:
 			Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L);
 
 	bool cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
-			cemconfig_t & config, float converge_value, float Zref);
-	void run_rollouts_and_update(Dynamics & sys,
 			cemconfig_t & config, float converge_value, GNx1_t Zref);
-	float calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, float Zref);
+	void run_rollouts_and_update(Dynamics & sys,cemconfig_t & config, float converge_value, GNx1_t Zref);
+	float calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, GNx1_t Zref);
 };
 
 #endif // CEM_H

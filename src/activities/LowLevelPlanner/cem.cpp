@@ -81,8 +81,8 @@ float cem::Gaussian(float t, float cm, float sm) {
 void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 		Dynamics & sys, cemconfig_t & config, GNx1_t Zref, GMxM_t L) {
 	float cum_cost;
-	float u;
-	int k, t, m;
+	float u, Yfb;
+	int k, t, m,l,s;
 	GMx1_t theta_k, randn;
 	GSx1_t State_old;
 	theta_k.zero();
@@ -95,6 +95,8 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 	GMx1_t x_pre;
 	x.zero();
 	x_pre.zero();
+
+
 	for (k = 0; k < cemconfig::K; k++) {
 		cum_cost = 0;
 		for (m = 0; m < CEM_M; m++)
@@ -105,14 +107,25 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 
 		//Initialize Dynamics with incoming state
 		sys.State = init_state;
-		x(0) = sys.State(0);
-		x(1) = sys.State(1);
-		x(2) = sys.State(2);
+		for(s=0;s<CEM_S;s++)
+			x(s) = sys.State(s);
+
 		cum_cost = 0;
+		Yfb=0;
 		for (t = 0; t < CEM_N; t++) {
 
 			//calculate action
-			u = x.transp() * theta_k;
+			for(l=0; l<CEM_N; l++)
+				if(t+1+l < CEM_N)
+					x(CEM_S+l) = Zref(l);
+				else
+					x(CEM_S+l) =  Zref(CEM_N-1);
+			x(CEM_S) = sys.zmpstateNew - x(CEM_S);
+
+			u = x.transp() * theta_k + Yfb;
+
+			Yfb = Yfb + x(CEM_S)*theta_k(CEM_S);
+
 //			if(u > 50)
 //				u=50;
 //			if(u<-50)
@@ -120,9 +133,10 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 			x_pre = x;
 			//run simulation
 			sys.RolloutUpdate(u); //get next_state
-			x(0) = sys.State(0);
-			x(1) = sys.State(1);
-			x(2) = sys.State(2);
+			for(s=0;s<CEM_S;s++)
+				x(s) = sys.State(s);
+
+
 
 			if (abs(x(0)) > 10) {
 				cout << "fallen ";
@@ -131,7 +145,7 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 			}
 
 
-			cum_cost += calculate_cost(sys, config,theta_k,  Zref(t));
+			cum_cost += calculate_cost(sys, config,theta_k,  Zref);
 			if (isnan(cum_cost)) {
 				cout << " k: " << k << " t: " << t << " u: " << u << " cost: ";
 				cout << cum_cost << endl;
@@ -162,10 +176,9 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 	}
 }
 
-float cem::calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, float Zref){
-	float state_cost, action_cost;
-	state_cost = (sys.zmpstateNew - Zref )
-						* (sys.zmpstateNew - Zref ); // x.transp()* config.Q * x;
+float cem::calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, GNx1_t Zref){
+	float state_cost=0, action_cost=0;
+	state_cost = (sys.zmpstateNew - Zref(0) )*(sys.zmpstateNew - Zref(0) ); // x.transp()* config.Q * x;
 	action_cost = theta_k.transp() * config.R * theta_k;
 	return  state_cost + action_cost;
 }
@@ -173,7 +186,7 @@ float cem::calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, f
 //Get new dtheta
 //rolls must be sorted
 bool cem::cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
-		cemconfig_t & config, float converge_value, float ZmpRef) {
+		cemconfig_t & config, float converge_value, GNx1_t ZmpRef) {
 	GMx1_t SUM;
 	int k = 0; //, t=0, m=0;
 	SUM.zero();
@@ -181,7 +194,7 @@ bool cem::cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
 	sigma_temp.zero();
 	temp.zero();
 
-	float state_cost, action_cost, old_cost;
+	float old_cost;
 
 	//Update the theta parameters
 	//Update the covariance Matrix
@@ -201,20 +214,20 @@ bool cem::cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
 	cout << "Stmp: ";
 	config.cov.prettyPrint();
 
-	GMx1_t x;
-	x.zero();
-	x(0) = sys.State(0);
-	x(1) = sys.State(1);
-	x(2) = sys.State(2);
-	state_cost = x.transp() * config.Q * x;
-	action_cost = config.theta.transp() * config.R * config.theta;
+	//GMx1_t x;
+	//x.zero();
+	//x(0) = sys.State(0);
+	//x(1) = sys.State(1);
+	//x(2) = sys.State(2);
+	//state_cost = x.transp() * config.Q * x;
+	//action_cost = config.theta.transp() * config.R * config.theta;
 
 	old_cost = config.cost;
 	config.cost = calculate_cost(sys, config,config.theta, ZmpRef);//state_cost + action_cost;
-	cout << "new cost " << config.cost << " oldcost " << old_cost << endl;
-	if (fabs(config.cost - old_cost) < converge_value)
-		return false;
-	else
+	cout << "new cost " << config.cost << " oldcost " << old_cost << " diff:  " << fabs(config.cost - old_cost) <<  endl;
+//	if (fabs(config.cost - old_cost) < converge_value)
+//		return false;
+//	else
 		return true;
 
 }
@@ -238,7 +251,7 @@ void cem::run_rollouts_and_update( Dynamics & InputSys,
 		run_rollouts(rollouts, InputSys.State, rolloutSys, config, Zref, L);
 		sort(rollouts.begin(), rollouts.end());
 		cout << " Convergence loop " << count_conv++ << endl;
-	} while (cem_update(rollouts, InputSys, config, converge_value,Zref(0))); //while not converged
+	} while (cem_update(rollouts, InputSys, config, converge_value,Zref )); //while not converged
 
 }
 
@@ -286,7 +299,7 @@ void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
 	x.zero();
 	x(0) = Dx.State(0);
 	x(1) = Dx.State(1);
-	x(2) = Dx.State(3);
+	x(2) = Dx.State(2);
 
 	ux = cemconfig[0].theta.transp() * x;
 
