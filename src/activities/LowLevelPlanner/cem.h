@@ -8,7 +8,7 @@
 #include "CircularBuffer.hpp"
 
 #define CEM_N  50 //Number of time steps per rollout
-#define CEM_M  3  //Number of paramaters
+#define CEM_M  3 + CEM_N  //Number of paramaters
 #define CEM_S  3  //Number of state Variables
 #define AXIS 2
 
@@ -40,6 +40,7 @@ typedef struct cemconfig {
 	static int K_e;
 	static int K; //Number of rolluts per update
 	float cost;
+	float fb;
 
 } cemconfig_t;
 
@@ -72,10 +73,9 @@ class cem {
 public:
 	vector<float> sumGt;
 	float * P;
-
 	cem(RobotParameters robot);
 	void init_cem();
-	void calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
+	void compute_actions(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
 			CircularBuffer<KVecFloat3> & ZmpBuffer);
 	virtual ~cem();
 	mutable KProfiling::profiler cemprof;
@@ -108,6 +108,8 @@ private:
 			cemconfig_t & config, float converge_value, GNx1_t Zref);
 	void run_rollouts_and_update(Dynamics & sys,cemconfig_t & config, float converge_value, GNx1_t Zref);
 	float calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, GNx1_t Zref);
+	float calculate_action(GMx1_t & state, Dynamics & sys,GMx1_t & theta, GNx1_t Zref, int t, float &fb);
+
 };
 
 #endif // CEM_H

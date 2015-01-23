@@ -81,7 +81,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<KVecFloat3> & ZmpBuf
       PseudoDynamicsX.AugmentState();
       PseudoDynamicsY.AugmentState();
       //if(balance>10)
-      cemBalance.calculate_action(muX,muY,PseudoDynamicsX,PseudoDynamicsY,ZmpBuffer);
+      cemBalance.compute_actions(muX,muY,PseudoDynamicsX,PseudoDynamicsY,ZmpBuffer);
       KVecFloat2 PseudoError;
       PseudoError.zero();
       PseudoDynamicsX.Update(muX,PseudoError);

@@ -1,6 +1,6 @@
 
 set ( ActivityName LowLevelPlanner )
-
+set(CMAKE_BUILD_TYPE Debug)
 set ( ActivitySrcs	LowLevelPlanner.cpp 
 			LowLevelPlanner.h
 			RobotParameters.cpp 

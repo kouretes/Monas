@@ -30,6 +30,7 @@ cem::~cem() {
 }
 
 void cem::init_cem() {
+
 	ZMPReferenceX.zero();
 	ZMPReferenceY.zero();
 
@@ -45,6 +46,7 @@ void cem::init_cem() {
 		cemconfig[i].R_inv.scalar_mult(1.0 / cemconfig[i].R_val);
 		cemconfig[i].theta.zero();
 		cemconfig[i].cov.identity();
+		cemconfig[i].fb=0;
 	}
 	cemconfig::l = 4 + floorf(3 + logf(CEM_M));
 	cemconfig::K_e = floorf(cemconfig->l / 2.0);
@@ -115,17 +117,18 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 		for (t = 0; t < CEM_N; t++) {
 
 			//calculate action
-			for(l=0; l<CEM_N; l++)
-				if(t+1+l < CEM_N)
-					x(CEM_S+l) = Zref(l);
-				else
-					x(CEM_S+l) =  Zref(CEM_N-1);
-			x(CEM_S) = sys.zmpstateNew - x(CEM_S);
+//			for(l=0; l<CEM_N; l++)
+//				if(t+1+l < CEM_N)
+//					x(CEM_S+l) = Zref(l);
+//				else
+//					x(CEM_S+l) =  Zref(CEM_N-1);
+//			x(CEM_S) = sys.zmpstateNew - x(CEM_S);
+//
+//			u = x.transp() * theta_k + Yfb;
+//
+//			Yfb = Yfb + x(CEM_S)*theta_k(CEM_S);
 
-			u = x.transp() * theta_k + Yfb;
-
-			Yfb = Yfb + x(CEM_S)*theta_k(CEM_S);
-
+			u = calculate_action(x, sys,theta_k, Zref,  t, Yfb);
 //			if(u > 50)
 //				u=50;
 //			if(u<-50)
@@ -133,6 +136,7 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 			x_pre = x;
 			//run simulation
 			sys.RolloutUpdate(u); //get next_state
+
 			for(s=0;s<CEM_S;s++)
 				x(s) = sys.State(s);
 
@@ -176,6 +180,26 @@ void cem::run_rollouts(vector<rollout_result_t> & rolls, GSx1_t init_state,
 	}
 }
 
+float cem::calculate_action(GMx1_t & state, Dynamics & sys,GMx1_t & theta, GNx1_t Zref, int t, float &fb)
+{
+	for(int s=0;s<CEM_S;s++)
+		state(s) = sys.State(s);
+
+	for(int l=0; l<CEM_N; l++)
+		if(t+l < CEM_N)
+			state(CEM_S + l) = Zref(t+l);
+		else
+			state(CEM_S + l) = Zref(CEM_N - 1);
+	//(ZMP-ZMPy(1,1))
+	state(CEM_S) = sys.zmpstateNew - state(CEM_S);
+
+	float u = state.transp() * theta + fb;
+
+	fb = fb + state(CEM_S)*theta(CEM_S);
+
+	return u;
+}
+
 float cem::calculate_cost(Dynamics & sys, cemconfig_t & config,GMx1_t theta_k, GNx1_t Zref){
 	float state_cost=0, action_cost=0;
 	state_cost = (sys.zmpstateNew - Zref(0) )*(sys.zmpstateNew - Zref(0) ); // x.transp()* config.Q * x;
@@ -207,12 +231,12 @@ bool cem::cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
 
 	}
 	config.theta = SUM;
-	cout << "Update  config.theta " << endl;
-	config.theta.prettyPrint();
+	//cout << "Update  config.theta " << endl;
+	//config.theta.prettyPrint();
 
 	config.cov = sigma_temp;
-	cout << "Stmp: ";
-	config.cov.prettyPrint();
+	//cout << "Stmp: ";
+	//config.cov.prettyPrint();
 
 	//GMx1_t x;
 	//x.zero();
@@ -225,10 +249,10 @@ bool cem::cem_update(vector<rollout_result_t> & rolls, Dynamics & sys,
 	old_cost = config.cost;
 	config.cost = calculate_cost(sys, config,config.theta, ZmpRef);//state_cost + action_cost;
 	cout << "new cost " << config.cost << " oldcost " << old_cost << " diff:  " << fabs(config.cost - old_cost) <<  endl;
-//	if (fabs(config.cost - old_cost) < converge_value)
-//		return false;
+	//if (fabs(config.cost - old_cost) < converge_value)
+		return false;
 //	else
-		return true;
+	//	return true;
 
 }
 
@@ -241,6 +265,7 @@ void cem::run_rollouts_and_update( Dynamics & InputSys,
 		L = cholesky_decomposition(L);
 	} catch (KMath::KMat::SingularMatrixInvertionException e) {
 		cerr << " SingularMatrixInvertionException 0: " << e.what() << endl;
+		L.prettyprint();
 		return;
 	}
 	//cout << "After Chol" << endl;
@@ -256,7 +281,7 @@ void cem::run_rollouts_and_update( Dynamics & InputSys,
 }
 
 
-void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
+void cem::compute_actions(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
 		CircularBuffer<KVecFloat3> & ZmpBuffer) {
 	KPROF_SCOPE(cemprof,"cem");
 
@@ -297,12 +322,12 @@ void cem::calculate_action(float & ux, float &uy, Dynamics Dx, Dynamics Dy,
 //	cemconfig[1].theta.prettyPrint();
 	GMx1_t x;
 	x.zero();
-	x(0) = Dx.State(0);
-	x(1) = Dx.State(1);
-	x(2) = Dx.State(2);
-
-	ux = cemconfig[0].theta.transp() * x;
-
+//	x(0) = Dx.State(0);
+//	x(1) = Dx.State(1);
+//	x(2) = Dx.State(2);
+//
+//	ux = cemconfig[0].theta.transp() * x;
+	ux = calculate_action(x, Dx,cemconfig[0].theta, ZMPReferenceX,  0, cemconfig[0].fb);
 	x(0) = Dy.State(0);
 	x(1) = Dy.State(1);
 	x(2) = Dy.State(2);
