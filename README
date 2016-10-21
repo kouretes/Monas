@@ -1,106 +1,103 @@
-If you are reading these lines, it means that you have successfully created 
-a clone of the Kouretes 2013 code from the Monas repository. 
+                     Kouretes Robocup Team
+                        www.kouretes.gr
+                  Intelligent Systems Laboratory
+                  Technical University of Crete
 
-REQUIRED PACKAGES:
+LINUX:
 
-libtinyxml-dev (only for BUILD)
-OpenCV+QT4 (only for TOOLS) [See https://help.ubuntu.com/community/OpenCV]
+  * install the latest Ubuntu 32bit LTS with all updates
+  * go to https://help.github.com/articles/generating-shh-keys
+  * follow instructions to add and verify your ssh key to link your github account
+
+
+PACKAGES:
+
+  * install the following packages using a manager or sudo apt-get install 
+    git cmake cmake-qt-gui libboost-all-dev libtinyxml-dev qt4-designer 
+    OpenCV (needed only for TOOLS) [see https://help.ubuntu.com/community/OpenCV]
+
+
+KOURETES MONAS:
+  
+  * create folder Kouretes in $HOME   (or use your folder of choice)
+  * inside the folder Kouretes: git clone https://github.com/kouretes/Monas.git
+  * folder Monas should appear inside folder Kouretes
+  * alternatively, unpack the file Monas.zip (obtained from github) inside folder Kouretes
+
+
+GOOGLE PROTOBUF (skip this, for reference only):
+
+  * in folder /external/protobuf: ./configure
+  * make
+  * in folder /src/messages: ./../../external/protobuf/src/protoc --cpp_out=. *.proto
 
 
 BUILD (for local execution):
 
-- Create a folder named local under Monas/make
+  * navigate to Kouretes/Monas/make and create folder local
+  * inside the folder local: cmake-gui 
+    - Source: $HOME/Kouretes/Monas
+    - Build: $HOME/Kouretes/Monas/make/local
+    - Press Configure 
+    - Choose generator "Unix Makefiles"
+    - Choose "Use default native compilers" 
+    - Press Finish
+    - Change TargetPlatform to linux
+    - Change TargetRobot to host
+    - Press Configure and repeat until everything is resolved
+    - Install missing packages if necessary
+    - Press Configure and repeat until everything is resolved
+    - Press Generate
+    - Exit
+  * inside the folder local: make -j4 install   [change 4 to your number of CPU cores]
 
-- Enter folder local
+  * go get a coffee and be patient ... 
 
-- Execute: cmake ../..
+  * enter binaries/linux
+  * execute: export LD_LIBRARY_PATH=./lib 
+  * execute: ./bin/Monas to start Monas
+  * WARNING: remove from the agent.xml file all the activities that 
+    won't compile when target is linux (e.g. Vision, MotionController, etc.)
 
-- Execute: ccmake .
-
-- Change TargetPlatform to linux
-
-- Change TargetRobot to host
-
-- Press c to configure
-
-- Press c to configure again.
-
-- Execute: cmake ../..
-
-- Execute: make -jk install, where k is the number of cores in your system. 
-
-- Enter binaries/linux
-
-- Execute: export LD_LIBRARY_PATH=./lib 
-
-- Execute: ./bin/Monas to start Monas
-
---- Be carefull, remove from the agent.xml all the activities that don't compile when the target is linux (e.g. Vision, MotionController, etc)
 
 CROSSBUILD (for on-board execution):
 
-- Create a folder named crossbuild under Monas/make
+  * unpack the latest nao-cross-toolchain-XX.YY.ZZ.tar.gz 
+    to folder Kouretes/nao-cross-toolchain-XX.YY.ZZ
 
-- Enter folder crossbuild
+  * navigate to Kouretes/Monas/make and create folder cross
+  * inside the folder cross: cmake-gui 
+    - Source: $HOME/Kouretes/Monas
+    - Build: $HOME/Kouretes/Monas/make/cross
+    - Press Configure 
+    - Choose generator "Unix Makefiles"
+    - Choose "Specify toolchain file for cross-compiling" 
+    - Press Next
+    - Toolchain: $HOME/Kouretes/nao-cross-toolchain-XX.YY.ZZ/toolchain-geode.cmake
+    - Press Finish
+    - Change TargetPlatform to linux
+    - Change TargetRobot to nao
+    - Press Configure and repeat until everything is resolved
+    - Install missing packages if necessary
+    - Press Configure and repeat until everything is resolved
+    - Press Generate
+    - Exit
+  * inside the folder cross: make -j4 install   [change 4 to your number of CPU cores]
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path-to-naoqi-ctc>/toolchain-geode.cmake ../..
-
-- Execute: ccmake .
-
-- Change TargetPlatform to linux
-
-- Change TargetRobot to nao
-
-- Press c to configure
-
-- Check the values of NaoQiVersion, RobotPlatform 
-
-  NaoQiVersion must be the latest NaoQi version, currently 1.12.5 
-  RobotPlatform must be nao
-  TargetPlatform must be linux
-
-- Real-time execution for the nao requires the code to be compiled as a shared object at the moment.
-
-- Press c to configure again, then g to generate and exit. 
-
-- Execute: make -jk install, where k is the number of cores in your system. 
-
-- Get another coffee and be even more patient ... 
-
-
-COMPILE PROTO MESSAGE:
-
-- Configure /external/protobuf (./configure)
-- make
-- /src/messages (./../../external/protobuf/src/protoc --cpp_out=. proto_name.proto)
-
+  * get another coffee and be even more patient ... 
 
 Use the python scripts in the script directory to upload the code to a robot.
 To do so, you need a valid config directory in /home/nao/naoqi/ (on the robot)
 and a valid autoload.ini in /home/nao/naoqi/preferences/autoload.ini (again, on the robot)
 to start the krobot module.
 
+
 FLASH DISK FORMAT:
 
-- open flasher (sudo)
+  * lookup /media/<user>/OpenNao-system/usr/share/opennao/core-version.txt
+    to find the current Naoqi version on your USB 
 
-- select image geode
-
-- check factory reset settings
-
-- connect to nao locally (username: nao pass: nao) via browser
-
-- change name, volume and check deactivation
-
-- restart robot
-
-- use initializeScript.py from script folder path
-
-- create directory crossbuild on make file
-
-- use cmake-gui to make the project
-
-- use upload.py located on the script folder, from the crossbuild folder to upload code
-
-- check ssh connect
-
+  * Unpack NaoQi SDK: naoqi-sdk-XX.YY.ZZ-linux.tar.gz
+  * Flash Nao USB Keys with NaoQi XX.YY.ZZ
+  * Instructions in $SDK/doc/site_en/reddoc/software_update/flash_process.html
+  * basically: sudo $SDK/bin/flash-usbstick nao-system-image-robocup-XX.YY.ZZ.gz
