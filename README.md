@@ -14,9 +14,11 @@
 ###### Packages:
 
   * Install the following packages using a package manager or ``sudo apt-get install``
+  
     ```
     git cmake cmake-qt-gui libboost-all-dev libtinyxml-dev qt4-designer
     ```
+    
     ***Note:*** [OpenCV](https://help.ubuntu.com/community/OpenCV) is required only for Tools.
 
 
@@ -24,6 +26,7 @@
 
   * Create a folder ``Kouretes`` in ``$HOME`` (or use a folder of your choice)
   * Inside the folder ``Kouretes`` clone ***Monas*** by running:
+  
     ```
     git clone https://github.com/kouretes/Monas.git
     ```
@@ -35,11 +38,13 @@
 ###### Google Protobuf (You can skip this one, for reference only):
 
   * In folder ``/external/protobuf`` run:
+  
     ```
     ./configure
     make
     ```
   * In folder ``/src/messages`` run:
+  
     ```
     ./../../external/protobuf/src/protoc --cpp_out=. *.proto
     ```
@@ -69,6 +74,7 @@
   * Go get a coffee and be patient...
 
   * Enter ``binaries/linux`` and run:
+  
     ```
     export LD_LIBRARY_PATH=./lib
     ./bin/Monas
@@ -116,6 +122,7 @@ and a valid ``autoload.ini`` script in ``/home/nao/naoqi/preferences/autoload.in
   * Flash *Nao* USB Keys using ``NaoQi XX.YY.ZZ``.
   * Instructions in ``$SDK/doc/site_en/reddoc/software_update/flash_process.html``.
   * Basically you run:
+  
     ```
     sudo $SDK/bin/flash-usbstick nao-system-image-robocup-XX.YY.ZZ.gz
     ```
